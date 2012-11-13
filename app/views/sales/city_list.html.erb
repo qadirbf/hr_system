@@ -1,0 +1,5 @@
+<h1 class="title"><%= @title %></h1>
+<%= page_links @cities %>
+<% @cities.each do |c| %>
+  <div><%= c.name_cn %></div>
+<% end %>

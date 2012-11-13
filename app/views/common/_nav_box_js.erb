@@ -1,0 +1,13 @@
+<script>
+  $(function(){
+    var nav_tabs = $('.nav-tabs > li')
+    nav_tabs.find('a').attr('href','javascript:void(0)')
+    nav_tabs.click(function(){
+      var me = $(this)
+      nav_tabs.removeClass('active')
+      me.addClass('active')
+      $('.nav_box').hide()
+      $('#'+me.attr('bb')).fadeIn()
+    })
+  })
+</script>

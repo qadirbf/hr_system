@@ -1,0 +1,5 @@
+<% unless params[:object].blank? %>
+  <%= select params[:object], params[:field], @positions, {:include_blank => true} %>
+<% else %>
+  <%= select_tag params[:field], options_for_select([['', '']]+@positions) %>
+<% end %>

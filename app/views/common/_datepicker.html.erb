@@ -1,0 +1,16 @@
+<link type="text/css" href="/jquery/timepicker/jquery-ui-timepicker-addon.css" rel="stylesheet" />
+<script type="text/javascript" src="/jquery/timepicker/jquery-ui-sliderAccess.js"></script>
+<script type="text/javascript" src="/jquery/timepicker/jquery-ui-timepicker-addon.min.js"></script>
+<script type="text/javascript" src="/jquery/timepicker/localization/jquery-ui-timepicker-zh-CN.js"></script>
+<script>
+  $(function(){
+    var args = {
+      hourGrid:4,minuteGrid:10,
+      dateFormat:'yy-mm-dd',changeYear:true,changeMonth:true,showMonthAfterYear:true,
+      dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"],
+      monthNamesShort:['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月']
+    }
+    $('.dtimepicker').datetimepicker(args)
+    $('.datepicker').datepicker(args)
+  })
+</script>

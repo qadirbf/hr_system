@@ -1,0 +1,13 @@
+<table class="list_tb">
+  <tr class="title"><td>ID</td><td>公司</td><td>招聘时间</td><td>职业类型</td><td>职位类型</td>
+    <td>年薪</td><td>状态</td><td>工作地点</td><td>负责人</td><td>最后更新</td></tr>
+  <% demands.each do |d| %>
+    <tr><td><%= open_demand_page d.id, d.id %></td>
+      <td><%= open_firm_page d.firm.firm_name, d.firm_id %></td>
+      <td><%= format_date d.created_at, :date %></td><td><%= d.firm_type %></td>
+      <td><%= d.position_type %></td><td><%= d.salary_value %></td><td><%= d.status %></td>
+      <td><%= d.work_place %></td><td><%= d.firm.lead_by_id(1).employee %></td>
+      <td><%= d.updated_user %> <div class="gray_info">at <%= format_date(d.updated_at, :min) %></div> </td>
+    </tr>
+  <% end %>
+</table>

@@ -1,0 +1,87 @@
+<h1 class="title"><%= @title %></h1>
+<%= include_datepicker %>
+<%= form_for @demand, :url => "/#{params[:db_type]}/demand_update" do |f| %>
+  <%= errors_for @demand %>
+  <%= f.hidden_field :firm_id %><%= hidden_field_tag :id, params[:id] %>
+  <table class="blue_tb">
+    <tr>
+      <td colspan="6"><%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
+        <%= button_to_function "取消", "window.close()", :class => "btn" %></td>
+    </tr>
+    <tr>
+      <th>职业类型</th>
+      <td><%= f.select :firm_type_id, @firm_types, {:include_blank => true} %></td>
+      <th>职位类型</th>
+      <td id="position_td"><%= f.select :position_type_id, @positions, {:include_blank => true} %></td>
+      <th rowspan="2">年薪备注</th>
+      <td rowspan="2"><%= f.text_area :salary_notes, :rows => 3, :style => "width:90%;" %></td>
+    </tr>
+    <tr>
+      <th>年薪范围</th>
+      <td><%= f.select :salary_type_id, Contact::SALARY_TYPES, {:include_blank => true} %></td>
+      <th>年薪备注</th>
+      <td><%= f.text_field :salary_value %></td>
+    </tr>
+    <tr>
+      <th>招聘人数</th>
+      <td><%= f.text_field :contact_num %></td>
+      <th>工作省份</th>
+      <td><%= f.select :province_id, @provinces, {:include_blank => true} %></td>
+      <th>工作城市</th>
+      <td id="city_td"><%= f.select :city_id, @cities, {}, :style => "color:gray" %></td>
+    </tr>
+    <tr>
+      <!--
+      <th>工作地点</th>
+      <td><%= f.text_area :work_place, :rows => 3, :style => "width:80%" %></td> -->
+      <th rowspan="2">需求备注</th>
+      <td rowspan="2" colspan="3"><%= f.text_area :demand_notes, :rows => 5, :style => "width:90%" %></td>
+    </tr>
+    <tr>
+      <th>需要补充招聘</th>
+      <td><%= f.check_box :need_ad_recruit, {}, 1, 0 %></td>
+    </tr>
+    <tr>
+      <th>补充招聘备注</th>
+      <td colspan="5"><%= f.text_area :ad_recruit_notes, :rows => 3, :style => "width:90%" %></td>
+    </tr>
+    <tr>
+      <th>猎头方向<br/>（销售调查客户竞争<br/>对手企业名称写入其中，<br/>或录入些指导性建议<br/>帮助顾问猎取目标）</th>
+      <td colspan="5"><%= f.text_area :sales_notes, :rows => 3, :style => "width:90%" %></td>
+    </tr>
+    <tr>
+      <th>协议期限</th>
+      <td colspan="2">
+        &ge; <%= f.text_field :contract_start,  :class => "datepicker" %>
+        &le; <%= f.text_field :contract_end,  :class => "datepicker" %>
+      </td>
+      <th>到账金额</th>
+      <td colspan="2">
+        <%= f.text_field :order_income, :style=>"width:60px;" -%>
+        已到账？ <%= f.select :is_pay, [["Yes", 1], ["No", 0]], {:include_blank => true}, :style=>"width:100px;" -%>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="6"><%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
+        <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
+    </tr>
+  </table>
+<% end %>
+<script>
+  $(function () {
+
+    $('#contact_demand_firm_type_id').change(function () {
+      var tid = $(this).val(), position_td = $('#position_td')
+      if ($.trim(tid) == '') return
+      position_td.html($('<span>').text('Loading...').css('color', 'red'))
+      position_td.load("/sales/get_positions", {id:tid, object:'contact_demand', field:'position_type_id'})
+    })
+
+    $('#contact_demand_province_id').change(function () {
+      var pid = $(this).val(), city_td = $('#city_td')
+      if ($.trim(pid) == '') return
+      city_td.html($('<span>').text('Loading...').css('color', 'red'))
+      city_td.load("/sales/get_cities", {id:pid, object:'contact_demand', field:'city_id'})
+    })
+  })
+</script>

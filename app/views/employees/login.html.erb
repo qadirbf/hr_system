@@ -1,0 +1,39 @@
+<h1>CRK HR System</h1>
+<div class="block" id="block-login">
+  <h2><%= @title %></h2>
+
+  <div class="content login">
+    <div class="flash">
+      <% if flash[:notice] -%>
+        <div class="message error">
+          <p><%= "用户名密码错误！" -%></p>
+        </div>
+      <% end -%>
+    </div>
+    <%= form_tag "/login.php", {:class=>"form login"} do %>
+      <div class="group wat-cf">
+        <div class="left">
+          <label class="label right">Username</label>
+        </div>
+        <div class="right">
+          <%= text_field_tag "username", nil, :class => "text_field" -%>
+        </div>
+      </div>
+      <div class="group wat-cf">
+        <div class="left">
+          <label class="label right">Password</label>
+        </div>
+        <div class="right">
+          <%= password_field_tag "password", nil, :class => "text_field" -%>
+        </div>
+      </div>
+      <div class="group navform wat-cf">
+        <div class="right">
+          <button class="button" type="submit">
+            <img src="/images/web-app-theme/icons/key.png" alt="Save"/> Login
+          </button>
+        </div>
+      </div>
+    <% end -%>
+  </div>
+</div>

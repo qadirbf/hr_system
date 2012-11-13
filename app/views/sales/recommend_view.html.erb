@@ -1,0 +1,56 @@
+<h1 class="title"><%= @title %>
+  <% if @can_edit %>
+    <%= button_to_function "修改", "go_url('/#{params[:db_type]}/recommend_edit/#{@recommend.id}')", :class => "btn" %>
+    <%= button_to_function "删除", "confirm_url('确定删除？','/#{params[:db_type]}/recommend_destroy/#{@recommend.id}')", :class => "btn" %>
+  <% end %>
+  <% if @can_follow %>
+    <% if @recommend.recommend? %>
+      <%= button_to_function "接受", "change_status('确定接受？',2)",:class => "btn" %>
+      <%= button_to_function "拒绝", "change_status('确定拒绝？',4)",:class => "btn" %>
+    <% end %>
+    <%= button_to_function "退回", "change_status('确定退回？',1)",:class => "btn" if @recommend.accepted? %>
+    <% if @recommend.status_id>=2 %>
+      <%= button_to_function "反馈", "go_url('/#{params[:db_type]}/recommend_edit/#{@recommend.id}')", :class => "btn" %>
+    <% end %>
+  <% end %>
+</h1>
+<table class="common_tb firm_info" style="width:100%;margin-bottom: 20px;;">
+  <tr>
+    <td style="width:80%">
+      <table style="width:80%">
+        <tr><td colspan="2">推荐备注： <%= @recommend.notes %></td></tr>
+        <tr><td>面试时间： <%= format_date @recommend.interview_date,:date %></td>
+          <td>反馈时间： <%= format_date @recommend.feedback_date, :date %></td></tr>
+        <tr><td colspan="2">反馈备注： <%= @recommend.feedback_notes %></td></tr>
+      </table>
+    </td>
+    <td>
+      <div class="follow_info_title">跟进信息</div>
+      <div class="follow_info">阶段：<%= @recommend.status %> <br><%= @req_firm.grab_user_info %></div>
+    </td>
+  </tr>
+</table>
+<ul class="nav nav-tabs">
+  <li bb='contacts' class="active"><a href="#">候选人</a></li>
+  <li bb='cur_firm'><a href="#">所在公司</a></li>
+  <li bb='req_firm'><a href="#">招聘公司</a></li>
+  <li bb='demands'><a href="#">招聘需求</a></li>
+</ul>
+<div id="contacts" style="display:block;" class="nav_box">
+  <%= render :partial => "contact_info",:locals=>{:contact=>@contact} %>
+</div>
+<div id="cur_firm" class="nav_box">
+  <%= render :partial => "firm_info",:locals=>{:firm=>@cur_firm} %>
+</div>
+<div id="req_firm" class="nav_box">
+  <%= render :partial => "firm_info",:locals=>{:firm=>@req_firm} %>
+</div>
+<div id="demands" class="nav_box">
+  <%= render :partial => "demand_info", :locals => {:demand => @demand} %>
+</div>
+<%= include_nav_box_js %>
+<script>
+  function change_status(txt,sid){
+    confirm_url(txt,'/<%= params[:db_type] -%>/change_recommend_status/<%=@recommend.id%>?status_id='+sid)
+  }
+</script>

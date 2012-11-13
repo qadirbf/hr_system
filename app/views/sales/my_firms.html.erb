@@ -1,0 +1,45 @@
+<h1 class="title"><%= @title -%>
+  <div style="float:right; margin-right: 100px;">
+    <%= link_to_function "全选", "$('.chk').attr('checked', true)" -%> &nbsp;&nbsp;
+    <%= link_to_function "取消选择", "$('.chk').attr('checked', false)" -%> &nbsp;&nbsp;
+    <%= button_to_function "释放公司", "batch_ungrab()", :class => "btn" -%>
+  </div>
+</h1>
+<%= page_links @firms %>
+<table class="list_tb">
+  <tr class="title">
+    <td style="width:40%;">公司名称</td>
+    <td>跟进的销售</td>
+    <td>获取时间</td>
+  </tr>
+  <% @firms.each do |f| -%>
+    <tr>
+      <td>
+        <%= check_box_tag "ids", f.id, nil, {:class => "chk"} -%>
+        <%= link_to_function f.firm_name, "open_url('/#{params[:db_type]}/firm_show/#{f.id}')" -%></td>
+      <td><%= f.firm_leads[0].emp -%></td>
+      <td><%= f.firm_leads[0].grab_date.format_date(:date) -%></td>
+    </tr>
+  <% end -%>
+</table>
+<%= page_links @firms %>
+<script language="javascript">
+  function batch_ungrab() {
+    var ids = _.compact(_.map($(".chk"), function (c) {
+      return (c.checked ? c.value : null);
+    })).join(",");
+    if (ids.length == 0) {
+      alert("请选择公司！");
+    }
+    else {
+      if (confirm("确定要释放吗?")) {
+        $.post("<%= url_for(:action=>"ungrab_firm_batch", :controller => params[:db_type]) -%>", { ids:ids },
+            function (data) {
+              alert("成功释放！");
+              window.location.reload();
+            });
+      }
+    }
+
+  }
+</script>

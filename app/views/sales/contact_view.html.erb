@@ -1,0 +1,51 @@
+<h1 class="title">
+  <%= candidate_label if @contact.is_candidate? -%>
+  <%= @title %>
+  <% if @can_edit -%>
+      <%= button_to_function "修改联系人", "go_url('/#{params[:db_type]}/contact_edit.php?id=#{@contact.id}')", :class => "btn" %>
+      <%= button_to_function "删除联系人", "confirm_url('确定删除？','/#{params[:db_type]}/contact_destroy?id=#{@contact.id}')", :class => "btn" %>
+      <% if current_user.is_res? -%>
+          <%= button_to_function "设置为候选人", "confirm_url('确定设置为候选人？','/#{params[:db_type]}/set_contact_candidate.php?id=#{@contact.id}')",
+                                 :class => "btn btn-info" unless @contact.is_candidate? %>
+          <%= button_to_function "取消候选人", "confirm_url('确定取消候选人？','/#{params[:db_type]}/set_contact_candidate.php?id=#{@contact.id}&cancel=1')",
+                                 :class => "btn btn-info" if @contact.is_candidate? %>
+      <% end -%>
+  <% end -%>
+</h1>
+<%= render :partial => "contact_info", :locals => {:contact => @contact} %>
+<ul class="nav nav-tabs">
+  <li bb='recall' class="active"><a href="#">跟进任务</a></li>
+  <li bb='firm'><a href="#">公司信息</a></li>
+  <li bb='recommend'><a href="#">推荐记录</a></li>
+</ul>
+<div id="recall" style="display:block;" class="nav_box">
+  <%= render :partial => "/sales/recall/recall_form" %>
+</div>
+<div id="firm" class="nav_box">
+  <%= render :partial => "firm_info", :locals => {:firm => @firm} %>
+</div>
+<div id="recommend" class="nav_box">
+  <table class="list_tb">
+    <tr class="title">
+      <td>推荐记录</td>
+      <td>招聘公司</td>
+      <td>招聘需求</td>
+      <td>状态</td>
+      <td>面试时间</td>
+      <td>反馈时间</td>
+      <td>反馈备注</td>
+    </tr>
+    <% @contact.recommend_histories.each do |r| %>
+        <tr>
+          <td><%= open_link "点击查看", "/#{params[:db_type]}/recommend_view/#{r.id}" %></td>
+          <td><%= open_link r.firm.firm_name, "/#{params[:db_type]}/firm_show/#{r.firm_id}" %></td>
+          <td><%= open_link "点击查看", "/#{params[:db_type]}/demand_show/#{r.contact_demand_id}" %></td>
+          <td><%= r.status %></td>
+          <td><%= format_date r.interview_date, :date %></td>
+          <td><%= format_date r.feedback_date, :date %></td>
+          <td><%= r.feedback_notes %></td>
+        </tr>
+    <% end %>
+  </table>
+</div>
+<%= include_nav_box_js %>

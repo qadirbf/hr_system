@@ -1,0 +1,46 @@
+<table class="common_tb firm_info" style="width:100%;margin-bottom: 20px;;">
+  <tr>
+    <td style="width:80%">
+      <table style="width:100%">
+        <tr>
+          <td>
+            <%= open_firm_page contact.firm.firm_name, contact.firm.id %> <br/>
+            <%= candidate_label contact -%> <%= open_contact_page contact.full_name(true,true), contact.id %> <br/>
+            职业类型： <%= contact.firm_type %> <br/>
+            职位类型： <%= contact.position %> <br/>
+            当前职位： <%= contact.position_cn %><br/>
+            地址：<%= contact.address %> <br/>
+          </td>
+          <td>
+            期望职业类型：<%= contact.expect_firm_type %> <br/>
+            期望职位类型：<%= contact.expect_position %> <br/>
+            期望年薪：<%= contact.expect_salary_type %> <br/>
+            期望工作地点：<%= contact.expect_work_place %> <br/>
+          </td>
+          <td>
+            出生日期：  <%= format_date contact.birthday, :date %> <br/>
+            年龄： <%= contact.age_label %> <br/>
+            开始工作时间： <%= format_date contact.start_work_date, :mon %> <br/>
+            工作年数： <%= contact.work_year_label %> <br/>
+            简历： <%= link_to '下载', {:action => "download_resume", :id => contact.id} if contact.resume_file%>
+          </td>
+          <td>
+            <img src="/images/phone.gif"><%= contact.phone %> <br/>
+            <i style="font-weight: bold;font-size: 14px;margin-right:5px;">f</i><%= contact.fax %> <br/>
+            <img src="/images/mobile.gif"><%= contact.mobile %> <br/>
+            <img src="/images/email.gif"><%= contact.email %> <br/>
+          </td>
+        </tr>
+        <tr><td colspan="4">备注： <%= h contact.notes %></td> </tr>
+        <tr><td colspan="4">期望职位备注： <%= h contact.expect_prof_notes %></td> </tr>
+        <tr><td colspan="4">期望年薪备注： <%= h contact.salary_notes %></td> </tr>
+      </table>
+    </td>
+    <td>
+      <div class="follow_info_title">跟进信息</div>
+      <div class="follow_info"><%= contact.firm.grab_user_info %> <br/>
+        <%= contact.candidate.grab_info if contact.is_candidate? -%>
+      </div>
+    </td>
+  </tr>
+</table>

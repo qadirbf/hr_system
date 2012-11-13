@@ -1,0 +1,23 @@
+<table class="common_tb firm_info" style="width:100%;margin-bottom: 20px;;">
+  <tr>
+    <td style="width:80%">
+      <table style="width:80%">
+        <tr><td>ID: <%= open_link demand.id, "/#{params[:db_type]}/demand_view/#{demand.id}" %> <br/>
+          职业类型： <%= demand.firm_type %> <br>职位类型： <%= demand.position_type %> <br/>
+          招聘人数： <%= demand.contact_num %></td>
+          <td>年薪范围： <%= demand.salary_type %> <br/>年薪备注： <%= demand.salary_value %><br/>
+            备注： <%= demand.salary_notes %></td>
+          <td>工作省份： <%= demand.province %> <br/> 工作城市： <%= demand.city %> <br/>
+            <!-- 工作地点： <%= demand.work_place %> -->
+          </td>
+        </tr>
+        <tr><td colspan="3"><%= demand.demand_notes %></td> </tr>
+        <tr><td colspan="3">猎头方向: <%= demand.sales_notes %></td> </tr>
+      </table>
+    </td>
+    <td>
+      <div class="follow_info_title">跟进信息</div>
+      <div class="follow_info">阶段：<%= demand.status %> <br><%= demand.firm.grab_user_info %></div>
+    </td>
+  </tr>
+</table>

@@ -1,0 +1,61 @@
+<h1 class="title"><%= @title %> </h1>
+<%= include_datepicker %>
+<% user = current_user %>
+<%= form_for @recommend, :url => "/#{params[:db_type]}/recommend_update" do |f| %>
+    <%= errors_for @recommend %>
+    <%= f.hidden_field :contact_demand_id %> <%= f.hidden_field :firm_id %> <%= hidden_field_tag :id, params[:id] %>
+    <table style="width:60%" class="blue_tb">
+      <tr>
+        <th style="width:20%;">公司</th>
+        <td><%= open_link(@firm.firm_name, "/#{params[:db_type]}/firm_show/#{@firm.id}") %> &nbsp;
+          <%= open_link('查看招聘需求', "/#{params[:db_type]}/demand_view/#{@recommend.contact_demand_id}") %></td>
+      </tr>
+      <% if user.is_res? %>
+          <% if @contact -%>
+              <tr>
+                <th>候选人</th>
+                <td><%= @contact.full_name(true, true) -%>
+                  <%= f.hidden_field :contact_id %></td>
+              </tr>
+          <% else -%>
+              <tr>
+                <th>联系人ID</th>
+                <td><%= f.text_field :contact_id %></td>
+              </tr>
+          <% end -%>
+          <tr>
+            <th>推荐备注</th>
+            <td><%= f.text_area :notes, :rows => 5, :style => "width:80%" %></td>
+          </tr>
+      <% else %>
+          <tr>
+            <th>候选人</th>
+            <td><%= open_link @recommend.contact.full_name(true, true), "/#{params[:db_type]}/contact_show/#{@recommend.contact_id}" %></td>
+          </tr>
+          <tr>
+            <th>推荐备注</th>
+            <td><%= @recommend.notes %></td>
+          </tr>
+          <tr>
+            <th>面试时间</th>
+            <td><%= f.text_field :interview_date, :value => format_date(@recommend.interview_date, :date), :class => "datepicker" %></td>
+          </tr>
+          <tr>
+            <th>反馈时间</th>
+            <td><%= f.text_field :feedback_date, :value => format_date(@recommend.feedback_date, :date), :class => "datepicker" %></td>
+          </tr>
+          <tr>
+            <th>反馈备注</th>
+            <td><%= f.text_area :feedback_notes, :rows => 5, :style => "width:80%" %></td>
+          </tr>
+          <tr>
+            <th>最终结果</th>
+            <td><%= f.select :ret_id, [['已拒绝', 4], ['已成功', 5]], {:include_blank => true} %></td>
+          </tr>
+      <% end %>
+      <tr>
+        <td colspan="2"><%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
+          <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
+      </tr>
+    </table>
+<% end %>

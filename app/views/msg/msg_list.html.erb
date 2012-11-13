@@ -1,0 +1,53 @@
+<style>form select,form input[type=text]{width:120px;}</style>
+<h1 class="title"><%= @title %></h1>
+<%= include_datepicker %>
+<%= form_tag "/msg/msg_list" do %>
+  发件人： <%= select_tag :from_id_eq, options_for_select([['', '']]+@emps, params[:from_id_eq].to_i) %>
+  主题： <%= text_field_tag :title_like,params[:title_like] %>
+  内容： <%= text_field_tag :content_like,params[:content_like] %>
+  发送时间： &ge;<%= text_field_tag :created_at_gte, params[:created_at_gte], :class => "datepicker" %>
+  &le;<%= text_field_tag :created_at_lte, params[:created_at_lte], :class => "datepicker" %>
+  已读？ <%= select_tag :viewed_eq, options_for_select([['', ''],['是','1'],['否','0']], params[:viewed_eq]) %>
+  <%= submit_tag "搜索", :class => "btn btn-primary" %>
+<% end %>
+
+<%= form_tag "/msg/set_viewed" do %>
+  <%= hidden_field_tag :b_action, params[:action] %>
+  <%= button_to_function "设置为已读", "set_viewed(this)", :class => "btn", :style => "float:left" %>
+<%= page_links @msgs %>
+<table style="clear:both" class="list_tb">
+  <tr class="title"><td><%= check_box_tag :sel_all, 1, false %></td>
+    <td>发件人</td><td>标题</td><td style="width:35%">内容</td><td>发送时间</td></tr>
+  <% @msgs.each do |msg| %>
+  <tr><td><%= check_box_tag "ids[]", msg.id, false, :class=>'m' %></td>
+    <td><%= msg.from_user %></td><td><%= open_link msg.title,"/msg/msg_view/#{msg.id}" %></td>
+    <td><%=simple_format msg.content %></td>
+    <td><%= format_date msg.created_at, :full %></td></tr>
+  <% end %>
+</table>
+<%= page_links @msgs %>
+<% end %>
+<script>
+  $(function(){
+    $('#sel_all').click(function(){
+      var me = $(this)[0]
+      $('.m').each(function(){
+        $(this).attr('checked',me.checked)
+      })
+    })
+
+  })
+
+  function set_viewed(obj){
+    var flag = false;
+    $('.m').each(function(){
+      if($(this)[0].checked) flag=true
+    })
+    if(flag){
+      obj.form.submit()
+    }else{
+      alert('请选择消息！')
+      return false
+    }
+  }
+</script>

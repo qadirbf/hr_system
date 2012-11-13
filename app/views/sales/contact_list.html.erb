@@ -1,0 +1,124 @@
+<style>.common_tb select {
+    width: 100px
+}
+
+.notes input[type=text] {
+    width: 100px;
+}
+</style>
+<%= include_datepicker %>
+<h1 class="title"><%= @title %></h1>
+<%= form_tag "/sales/contact_list" do %>
+    <table class="common_tb" style="width:95%">
+      <tr>
+        <td>负责顾问</td>
+        <td><%= select_tag :res_id, options_for_select([['', '']]+@emps, params[:res_id].to_i) %></td>
+        <td>当前职业类型</td>
+        <td><%= select_tag :firm_type_id_eq, options_for_select([['', '']]+@firm_types, params[:firm_type_id_eq].to_i) %></td>
+        <td>期望职业类型</td>
+        <td><%= select_tag :expect_firm_type_id_eq, options_for_select([['', '']]+@firm_types, params[:expect_firm_type_id_eq].to_i) %></td>
+        <td rowspan="3">期望年薪</td>
+        <td rowspan="3">
+          <%= select_tag :expect_salary_in, options_for_select([['所有', '']]+@salary_types, params[:expect_salary_in]),
+                         :multitype => true, :size => 7 %></td>
+      </tr>
+      <tr>
+        <td>姓名</td>
+        <td> <%= text_field_tag :full_name, params[:full_name], :style => "width:100px;" %>
+          年龄: <%= text_field_tag :age, params[:age], :style => "width:30px;" %> 至
+          <%= text_field_tag :age1, params[:age1], :style => "width:30px;" %></td>
+        <td>当前职位类型</td>
+        <td>
+          <span id="position_td"><%= select_tag :position_type_id_eq, options_for_select(@positions, params[:position_type_id_eq].to_i) %></span>
+        </td>
+        <td>期望职位类型</td>
+        <td>
+          <span id="exp_position_td"><%= select_tag :expect_position_type_id_eq, options_for_select(@exp_positions, params[:expect_position_type_id_eq].to_i) %></span>
+        </td>
+      </tr>
+      <tr>
+        <td>开始工作时间</td>
+        <td> <%= text_field_tag :start_work_date_gte, params[:start_work_date_gte], :class => 'datepicker' %> 至
+          <%= text_field_tag :start_work_date_lte, params[:start_work_date_lte], :class => 'datepicker' %></td>
+        <td>性别</td>
+        <td> <%= select_tag :sex_eq, options_for_select([['所有', ''], ['男', 1], ['女', 2]], params[:sex_eq].to_i) %></td>
+        <td>近期考虑工作变动？</td>
+        <td> <%= select_tag :want_new_job_eq, options_for_select([['所有', ''], ['是', '1'], ['否', '0']], params[:want_new_job_eq]) %></td>
+      </tr>
+      <tr class="notes">
+        <td>公司</td>
+        <td> <%= text_field_tag :firm_name, params[:firm_name] %></td>
+        <td>备注</td>
+        <td> <%= text_field_tag :notes_like, params[:notes_like] %></td>
+        <td>期望工作地点</td>
+        <td> <%= text_field_tag :expect_work_place_like, params[:expect_work_place_like] %></td>
+        <td colspan="2"><%= submit_tag "搜索", :class => "btn btn-primary" %></td>
+      </tr>
+    </table>
+<% end %>
+
+<%= page_links @contacts %>
+<table class="list_tb">
+  <tr class="title">
+    <td>姓名/ID</td>
+    <td>公司</td>
+    <td>职业类型</td>
+    <td>职位类型</td>
+    <td>期望工作地点</td>
+    <td>期望年薪</td>
+    <td>推荐顾问</td>
+    <td>最后更新</td>
+    <td>操作</td>
+  </tr>
+  <% @contacts.each do |c| %>
+      <tr>
+        <td><%= open_link "#{c.full_name(true)}/#{c.id}", "/#{params[:db_type]}/contact_show/#{c.id}" %>
+          <% if c.is_employed? -%>
+            <br/>
+            <%= content_tag "span", "雇佣成功", :class => "label label-info"  -%>
+              起始时间: <%= c.employed_start_date.format_date(:date) -%>
+          <% end -%>
+        </td>
+        <td><%= open_link c.firm_name, "/#{params[:db_type]}/firm_show/#{c.firm_id}" %></td>
+        <td><%= c.firm_type %></td>
+        <td><%= c.position %></td>
+        <td><%= c.expect_work_place %></td>
+        <td><%= c.expect_salary_type %></td>
+        <td><%= c.username %></td>
+        <td><%= c.candidate.submit_res %>
+          <div class="gray_info">at <%= format_date c.updated_at, :min %></div>
+        </td>
+        <td><%= link_to "下载简历", {:action => "download_resume", :id => c.id} %>
+          <%= link_to_function "推荐", "recommend_contact(#{c.id})", :class => "btn" -%>
+        </td>
+      </tr>
+  <% end %>
+</table>
+<%= page_links @contacts %>
+
+<script>
+    function recommend_contact(contact_id) {
+        var demand_id = prompt("请输入需求ID：", "")
+        if (demand_id != null && demand_id != ""){
+            window.open("<%=url_for(:controller => params[:db_type],
+                :action => "recommend_edit", :format=>"php")%>?demand_id="+demand_id+"&contact_id="+contact_id)
+        }
+    }
+    $(function () {
+        $('#firm_type_id_eq').change(function () {
+            var tid = $(this).val(), position_td = $('#position_td')
+            if ($.trim(tid) == '') return
+            position_td.html($('<span>').text('Loading...').css('color', 'red'))
+            position_td.load("/sales/get_positions", {id:tid, field:'position_type_id_eq'})
+        })
+
+        $('#expect_firm_type_id_eq').change(function () {
+            var tid = $(this).val(), position_td = $('#exp_position_td')
+            if ($.trim(tid) == '') return
+            position_td.html($('<span>').text('Loading...').css('color', 'red'))
+            position_td.load("/sales/get_positions", {id:tid, field:'expect_position_type_id_eq'})
+        })
+
+    })
+
+</script>

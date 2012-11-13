@@ -1,0 +1,7 @@
+<h1 class="title"><%= @title %></h1>
+<p>发件人: <%= @msg.from_user %> 于 <%= format_date @msg.created_at, :full %></p>
+<p>收件人： <%= @msg.to_names %></p>
+<p>标题： <%= @msg.title %></p>
+<div style="border:1px solid #dddddd; padding:10px;">
+  <%= simple_format @msg.content %>
+</div>

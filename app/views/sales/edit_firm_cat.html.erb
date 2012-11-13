@@ -1,0 +1,13 @@
+<h1 class="title">修改公司行业类型</h1>
+<%= form_tag "/#{params[:db_type]}/edit_firm_cat.php" do %>
+<div>
+  <% FirmCategory.all.each do |c| -%>
+  <div>
+    <%= check_box_tag "ids[]", c.id, @firm_cat_ids.include?(c.id) -%> <%= c.name -%>
+  </div>
+  <% end -%>
+  <br/>
+  <%= hidden_field_tag "firm_id", @firm.id -%>
+  <%= submit_tag "提交保存", {:class=>"btn"} -%>
+</div>
+<% end -%>

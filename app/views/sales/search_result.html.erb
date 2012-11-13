@@ -1,0 +1,104 @@
+<h1 class="title"><%= @title %>
+  <%= button_to_function "添加公司", "go_url('/#{params[:db_type]}/firm_edit.php?add_now=1')", :class => "btn" if params[:add_now]=='1' %>
+  <div style="float:right; margin-right: 100px;">
+    <%= link_to_function "全选", "$('.chk').attr('checked', true)" -%> &nbsp;&nbsp;
+    <%= link_to_function "取消选择", "$('.chk').attr('checked', false)" -%> &nbsp;&nbsp;
+    <%= button_to_function "获取公司", "batch_grab()", :class => "btn" -%>
+  </div>
+</h1>
+<%= page_links @firms %>
+<table class="list_tb">
+  <tr class="title">
+    <td style="width:40%;">公司名称</td>
+    <td>跟进的销售</td>
+    <% if res_sys? -%>
+        <td>联系人</td>
+        <td>职位</td>
+        <td>联系方式</td>
+        <td>期待薪资</td>
+        <td>备注</td>
+    <% else -%>
+        <td>联系人</td>
+        <td>联系方式</td>
+    <% end -%>
+  </tr>
+  <% @firms.each_with_index do |f, idx|
+    bcolor = idx%2==0 ? '' : '#f8f8f8'
+    contacts = f.contacts
+    rows = [contacts.size, 1].max
+    fc = contacts.shift %>
+      <tr style="background-color: <%=bcolor%>;">
+        <td rowspan="<%= rows %>">
+          <%= check_box_tag "ids", f.id, nil, {:class => "chk"} -%>
+          <%= open_firm_page f.firm_name, f.id %>
+          <%= ["(评级：", f.rating_type, ")"].join if f.rating -%>
+          <%= [f.province.name_cn, f.city.name_cn].join(' ') if f.province&&f.city %> <br/>
+          <%= link_to_function f.website, "open_url('http://#{f.website}')" if f.website %>
+          <br/>
+          <%= f.notes %>
+        </td>
+        <td rowspan="<%= rows %>"><%= f.grab_user_info %></td>
+        <% if fc %>
+            <% if res_sys? -%>
+                <td><%= candidate_label fc -%> <%= open_contact_page fc.full_name(true), fc.id %></td>
+                <td> <%= fc.position_cn -%> </td>
+                <td> <%= fc.phone1 -%> <%= fc.mobile %></td>
+                <td> <%= fc.expect_salary_type -%> <%= simple_format fc.salary_notes -%> </td>
+                <td> <%= fc.notes -%> </td>
+            <% else -%>
+                <td><%= link_to_function fc.full_name(true), "open_url('/#{params[:db_type]}/contact_show.php?id=#{fc.id}')" %></td>
+                <td style="width:30%;">
+                  <img src="/images/phone.gif"><%= fc.phone1 %> &nbsp;<img src="/images/mobile.gif"><%= fc.mobile %>
+                </td>
+            <% end -%>
+        <% else %>
+            <% if res_sys? -%>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            <% else -%>
+                <td></td>
+                <td></td>
+            <% end -%>
+        <% end %>
+      </tr>
+      <% contacts.each do |c| %>
+          <tr style="background-color: <%=bcolor%>;">
+            <% if res_sys? -%>
+                <td><%= candidate_label c -%> <%= open_contact_page c.full_name(true), c.id %></td>
+                <td> <%= c.position_cn -%> </td>
+                <td> <%= c.phone1 -%> <%= c.mobile %></td>
+                <td> <%= c.expect_salary_type -%> <%= simple_format c.salary_notes -%> </td>
+                <td> <%= c.notes -%> </td>
+            <% else -%>
+                <td><%= open_contact_page c.full_name(true), c.id %></td>
+                <td><img src="/images/phone.gif"><%= c.phone1 %> &nbsp;<img src="/images/mobile.gif"><%= c.mobile %>
+                </td>
+            <% end -%>
+          </tr>
+      <% end %>
+  <% end %>
+</table>
+<%= page_links @firms %>
+<script language="javascript">
+    function batch_grab() {
+        var ids = _.compact(_.map($(".chk"), function (c) {
+            return (c.checked ? c.value : null);
+        })).join(",");
+        if (ids.length == 0) {
+            alert("请选择公司！");
+        }
+        else {
+            if (confirm("确定要获取吗?")) {
+                $.post("<%= url_for(:action=>"grab_firm_batch", :controller => params[:db_type]) -%>", { ids:ids },
+                        function (data) {
+                            alert("成功获取！");
+                            //window.location.reload();
+                        });
+            }
+        }
+
+    }
+</script>

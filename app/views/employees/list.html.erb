@@ -1,0 +1,33 @@
+<style>table select,table input[type=text]{width:120px;}</style>
+<h1 class="title"><%= @title %>
+  <%= button_to_function "添加员工", "open_url('/employees/edit')", :class => "btn" %>
+</h1>
+<%= include_datepicker %>
+<%= form_tag "/employees/list" do %>
+<table style="width:80%;">
+  <tr><td>用户名： <%= text_field_tag :username_like, params[:username_like] %></td>
+    <td>入职日期： &ge;<%= text_field_tag :join_date_gte, params[:join_date_gte], :class => "datepicker" %>
+      &le;<%= text_field_tag :join_date_lte, params[:join_date_lte], :class => "datepicker" %>
+    </td>
+    <td>部门： <%= select_tag :department_id_eq, options_for_select([['', '']]+@departments, params[:department_id_eq].to_i) %></td>
+   </tr>
+  <tr><td>手机： <%= text_field_tag :mobile_like, params[:mobile_like] %></td>
+    <td>离职日期： &ge;<%= text_field_tag :leave_date_gte, params[:leave_date_gte], :class => "datepicker" %>
+    &le;<%= text_field_tag :leave_date_lte, params[:leave_date_lte], :class => "datepicker" %></td>
+    <td>可以登录？ <%= select_tag :active_eq, options_for_select([['', ''], ['是', '1'], ['否', '0']], params[:actiive_eq]) %>
+      <%= submit_tag "搜索", :class => "btn" %>
+    </td>
+  </tr>
+</table>
+<% end %>
+
+<%= page_links @employees %>
+<table class="list_tb">
+  <tr class="title"><td>用户名</td><td>部门</td><td>可以登录？</td><td>手机</td><td>入职日期</td><td>离职日期</td></tr>
+  <% @employees.each do |e| %>
+  <tr><td><%= open_link e.username, "/employees/view/#{e.id}" %></td>
+    <td><%= e.department %></td><td><%= e.active_label %></td><td><%= e.mobile %></td>
+    <td><%= format_date e.join_date,:date %></td><td><%= format_date e.leave_date,:date %></td></tr>
+  <% end %>
+</table>
+<%= page_links @employees %>

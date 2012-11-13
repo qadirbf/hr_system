@@ -1,0 +1,36 @@
+<style>
+  table select,table input[type=text]{width:120px;}
+</style>
+<h1 class="title"><%= @title %></h1>
+<%= form_tag "/#{params[:db_type]}/demand_list" do %>
+<table style="width:90%" class="common_tb">
+  <tr><td>跟进员工： <%= select_tag :employee_id_eq, options_for_select([['所有', '']]+@emps, params[:employee_id_eq].to_i) %></td>
+    <td>招聘职业类型： <%= select_tag :firm_type_id_eq, options_for_select([['所有', '']]+@firm_types, params[:firm_type_id_eq].to_i) %></td>
+    <td>招聘职位类型：<span id="position_td"><%= select_tag :position_type_id_eq, options_for_select([['所有', '']]+@positions, params[:position_type_id_eq].to_i) %></span> </td>
+    <td rowspan="3">年薪范围： <%= select_tag "salary_type_id_in[]", options_for_select([['所有', '']]+@salary_types,
+                                           params[:salary_type_id_in]),:multitype=>true,:size=>7 %></td>
+  </tr>
+  <tr><td>公司名称：<%= text_field_tag :firm_name, params[:firm_name] %></td>
+    <td>工作地点： <%= text_field_tag :work_place_like, params[:work_place_like] %></td>
+    <td>年薪备注：<%= text_field_tag :salary_notes_like, params[:salary_notes_like] %></td>
+  </tr>
+  <tr><td>需求备注：<%= text_field_tag :demand_notes_like, params[:demand_notes_like] %></td>
+    <td colspan="2">状态： <%= select_tag :status_id_eq, options_for_select([['所有', '']]+@status, params[:status_id_eq].to_i) %>
+      &nbsp;&nbsp;<%= submit_tag "搜索", :class => "btn btn-primary" %></td></tr>
+</table>
+<% end %>
+
+<%= page_links @demands %>
+<%= render :partial => "demand_list_box", :locals => {:demands => @demands} %>
+<%= page_links @demands %>
+
+<script>
+  $(function(){
+    $('#firm_type_id_eq').change(function(){
+      var tid = $(this).val(),position_td = $('#position_td')
+      if($.trim(tid)=='') return
+      position_td.html($('<span>').text('Loading...').css('color','red'))
+      position_td.load("/sales/get_positions",{id:tid,field:'position_type_id_eq'})
+    })
+  })
+</script>

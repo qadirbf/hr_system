@@ -1,0 +1,68 @@
+<h1 class="title"><%= @title %>
+  <% if @can_edit %>
+    <%= button_to_function "修改", "go_url('/#{params[:db_type]}/demand_edit/#{@demand.id}')", :class => "btn" %>
+    <% if @demand.draft? %>
+      <%= button_to_function "删除", "confirm_url('确定删除？','/#{params[:db_type]}/demand_destroy/#{@demand.id}')", :class => "btn" %>
+      <%= button_to_function "发布", "confirm_url('确定发布？','/#{params[:db_type]}/change_demand_status/#{@demand.id}?status_id=2')", :class => "btn" %>
+    <% end %>
+    <%= button_to_function "取消发布", "change_status('确定取消发布？',1)", :class => "btn" if @demand.published? %>
+    <%= button_to_function "设置为已到款", "change_status('确定已到款？',5)", :class => "btn" if @demand.feedback? %>
+    <%= button_to_function "设置为已结束", "change_status('确定已结束？',6)", :class => "btn" if @demand.paid? %>
+  <% end %>
+  <% if @can_recommend %>
+    <%= button_to_function "推荐候选人", "open_url('/#{params[:db_type]}/recommend_edit?demand_id=#{@demand.id}')", :class => "btn" %>
+  <% end %>
+</h1>
+<%= render :partial => "demand_info", :locals => {:demand => @demand} %>
+<ul class="nav nav-tabs">
+  <li bb='firm' class="active"><a href="#">公司信息</a></li>
+  <li bb='contacts'><a href="#">已推荐候选人</a></li>
+</ul>
+<div id="firm" style="display:block;" class="nav_box">
+  <%= render :partial => "firm_info", :locals => {:firm => @firm} %>
+</div>
+<div id="contacts" class="nav_box">
+  <table class="list_tb">
+    <tr class="title">
+      <td>姓名/ID</td>
+      <td>公司</td>
+      <td>当前职位</td>
+      <td>职业类型</td>
+      <td>期望工作地点</td>
+      <td>期望年薪</td>
+      <td>负责顾问</td>
+      <td>简历</td>
+      <td>最后更新</td>
+      <td>操作</td>
+    </tr>
+    <% @demand.recommend_histories.each do |r|
+      contact, firm = r.contact, r.firm
+      lead = firm.lead_by_id(2) %>
+      <tr>
+        <td><%= open_link("#{contact.full_name(true)} - #{contact.id}", "/#{params[:db_type]}/contact_show/#{contact.id}") %></td>
+        <td><%= open_link(firm.firm_name, "/#{params[:db_type]}/firm_show/#{firm.id}") %></td>
+        <td><%= contact.position %></td>
+        <td><%= contact.firm_type %></td>
+        <td><%= contact.expect_work_place %></td>
+        <td><%= contact.expect_salary_type %></td>
+        <td><%= lead.employee %></td>
+        <td><%= link_to "下载", {:action => "download_resume", :id => r.contact_id} if contact.resume_file %></td>
+        <td><%= r.updated_user %>
+          <div class="gray_info"><%= format_date(r.updated_at, :min) %></div>
+        </td>
+        <td><%= open_link("查看推荐记录", "/#{params[:db_type]}/recommend_show/#{r.id}") %> &nbsp;
+          <% if r.recommend?&&@can_recommend %>
+            <%= link_to '删除', {:action => "recommend_destroy", :controller => params[:db_type], :id => r.id}, :confirm => "确定删除？" %> &nbsp;
+            <%= open_link '修改', "/#{params[:db_type]}/recommend_edit/#{r.id}" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+</div>
+<%= include_nav_box_js %>
+<script>
+  function change_status(txt, sid) {
+    confirm_url(txt, "/<%= params[:db_type] -%>/change_demand_status/<%=@demand.id%>?status_id=" + sid)
+  }
+</script>

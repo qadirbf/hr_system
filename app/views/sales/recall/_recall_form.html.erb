@@ -1,0 +1,26 @@
+<%= include_datepicker %>
+<%= form_tag "/#{params[:db_type]}/recall_update", :target => "_blank" do %>
+  <%= hidden_field :recall, :firm_id %> <%= hidden_field_tag :id, @recall.id %>
+<table class="list_tb">
+  <tr class="title"><td>安排时间</td><td>联系人</td><td>联系方式</td><td>阶段</td><td>跟进员工</td><td>备注</td></tr>
+  <tr><td><%= text_field :recall, :appt_date,:class=>"dtimepicker",:value=>format_date(@recall.appt_date,:min) %></td>
+    <td><%= select :recall, :contact_id, @contacts, {:include_blank => true} %></td>
+    <td><%= select :recall, :contact_by_id, Recall::CONTACT_BY, {:include_blank => true} %></td>
+    <td><%= select :recall, :stage_id, Recall::STAGES, {:include_blank => true} %></td>
+    <td><%= select :recall, :employee_id, @emps,{:include_blank=>true}%></td>
+    <td rowspan="2"><%= text_area :recall, :notes, :rows=>5,:style=>"width:90%" %></td> </tr>
+  <tr><td colspan="5"><%= check_box :recall, :complete, {}, 1, 0 %> 完成任务
+    重要性： <%= select :recall, :important, Recall::IMPORTANT_TYPES, {:include_blank => true} %> &nbsp;
+    <% if @firm.is_followed_by?(current_user) %>
+      <%= submit_tag "保存",:class=>"btn btn-primary" %>
+      <% if @recall.id&&@recall.employee_id==current_user.id %>
+        <%= button_to_function "删除任务", "confirm_url('确定删除？','/#{params[:db_type]}/recall_destroy/#{@recall.id}')", :class => "btn" %>
+      <% end %>
+    <% end %>
+  </td> </tr>
+  <tr class="item_title"><td colspan="6">最近5条未完成的任务：</td></tr>
+  <%= render :partial=>"/sales/recall/recall_list",:locals=>{:recalls=>@pending_calls} %>
+  <tr class="item_title"><td colspan="6">最近5条已完成的任务：</td></tr>
+  <%= render :partial=>"/sales/recall/recall_list",:locals=>{:recalls=>@com_calls} %>
+</table>
+<% end %>

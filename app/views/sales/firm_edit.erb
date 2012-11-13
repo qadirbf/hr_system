@@ -1,0 +1,38 @@
+<h1 class="title"><%= @title %></h1>
+<%= form_for @firm,:url=>"/#{params[:db_type]}/firm_update" do |f|%>
+  <%= errors_for @firm %>
+  <%= hidden_field_tag :id, params[:id] %>
+  <table class="blue_tb">
+    <tr><th>公司名称</th><td colspan="3"><%= f.text_field :firm_name,:class=>"input-xxlarge" %></td>
+    <th>评级</th><td> <%= f.select :rating, Firm::RATING_TYPE, {:include_blank => true} -%> </td>
+    </tr>
+    <tr>
+      <th>省份</th><td><%= f.select :province_id, @provinces, {:include_blank => true} %></td>
+      <th>城市</th><td id="city_td"><%= f.select :city_id, @cities,{},:style=>"color:gray"%></td>
+    </tr>
+    <tr><th>公司类型</th><td><%= f.select :firm_type_id, @firm_types, {:include_blank => true} %></td>
+      <th>内资？</th><td><%= f.select :foreign_type_id,@foreign_types , {:include_blank => true} %></td>
+      <th>网站</th><td>http://<%= f.text_field :website %></td>
+    </tr>
+    <tr><th>电话</th><td><%= f.text_field :phone %></td><th>传真</th><td><%= f.text_field :fax %></td>
+      <th>Email</th><td><%= f.text_field :email %></td>
+    </tr>
+    <tr><th>地址</th><td colspan="3"><%= f.text_field :address,:class=>"input-xxlarge" %></td>
+      <th>邮编</th><td><%= f.text_field :postcode %></td>
+    </tr>
+    <tr><th>地址2</th><td colspan="5"><%= f.text_field :address2,:class=>"input-xxlarge" %></td></tr>
+    <tr><th>备注</th><td colspan="5"><%= f.text_area :notes,:size=>"50x5",:style=>"width:80%" %></td></tr>
+    <tr><td colspan="5"><%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
+      <%= button_to_function "取消", "cancel()", :class => "btn" %></td></tr>
+  </table>
+<% end %>
+<script>
+  $(function(){
+    $('#firm_province_id').change(function(){
+      var pid = $(this).val(),city_td = $('#city_td')
+      if($.trim(pid)=='') return
+      city_td.html($('<span>').text('Loading...').css('color','red'))
+      city_td.load("/sales/get_cities",{id:pid,object:'firm',field:'city_id'})
+    })
+  })
+</script>

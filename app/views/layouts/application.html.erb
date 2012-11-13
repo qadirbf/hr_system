@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><%= ['HrSystem', @sys_title, @title].compact.join(' - ') %></title>
+  <link type="text/css" href="/stylesheets/web-app-theme/base.css" rel="stylesheet" />
+  <link type="text/css" href="/stylesheets/web-app-theme/themes/bec/style.css" rel="stylesheet" />
+  <link type="text/css" href="/stylesheets/web-app-theme/override.css" rel="stylesheet" />
+  <link type="text/css" href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+  <link type="text/css" href="/jquery/css/redmond/jquery-ui-1.8.23.custom.css" rel="stylesheet" />
+  <script type="text/javascript" src="/jquery/js/jquery-1.8.0.min.js"></script>
+  <script type="text/javascript" src="/jquery/js/jquery-ui-1.8.23.custom.min.js"></script>
+  <script src="/bootstrap/js/bootstrap.min.js"></script>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+<style>
+  #main{background-color: #FFF;}
+</style>
+<div id="container">
+  <div id="header">
+    <h1><a href="/">CRK HR System</a></h1>
+    <div id="user-navigation">
+      <ul class="wat-cf">
+        <% unless logged_in? %>
+        <% else %>
+          <li><span style="color: #FFF;"><%= current_user.username %></span></li>
+          <% msg_label = @msg_count>0 ? "(#{@msg_count.to_s.red})<img src='/images/msg.gif'>" : "(0)" %>
+          <li> <%= link_to "返回首页",{:controller=>"main"} %></li>
+          <li><%= link_to "未读消息#{msg_label}".html_safe,
+                      {:controller => "msg", :action => "unviewed_list"},:style=>"margin:0px 15px 0px 10px;" %> </li>
+          <li><%= link_to "退出", {:controller => "employees", :action => "logout"} %> </li>
+        <% end %>
+      </ul>
+    </div>
+    <div id="main-navigation">
+      <ul class="wat-cf">
+        <% @sys_nav_menus&&@sys_nav_menus.each do |m|
+          c = (request.env["PATH_INFO"]&&request.env["PATH_INFO"].include?(m[0]) ? "selected" : "plain")%>
+          <li> <%= link_to m[1], url_with_session(m[0]),:class=>c %> </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <div id="wrapper" class="wat-cf">
+    <div class="flash">
+      <% flash.each do |type, message| -%>
+        <div class="message <%= type %>">
+          <p><%= message %></p>
+        </div>
+      <% end -%>
+    </div>
+    <div id="main" style="width:98%;">
+      <%= yield %>
+      <!--
+      <div id="footer">
+        <div class="block">
+          <p>Copyright &copy; <%= Time.now.year %> CRK China.</p>
+        </div>
+      </div> -->
+    </div>
+    <!--
+    <div id="sidebar">
+      <%= yield :sidebar %>
+    </div>  -->
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<h1 class="title"><%= @title %>
+  <% if @can_edit %>
+    <%= button_to_function "修改公司", "go_url('/#{params[:db_type]}/firm_edit.php?id=#{@firm.id}')", :class => "btn" %>
+    <%= button_to_function "释放公司", "confirm_url('确定释放？','/#{params[:db_type]}/ungrab_firm.php?id=#{@firm.id}')", :class => "btn" %>
+    <%= button_to_function "添加联系人", "open_url('/#{params[:db_type]}/contact_edit.php?firm_id=#{@firm.id}')", :class => "btn" %>
+    <% if @firm.sales_followed_by?(current_user) %>
+      <%= button_to_function "删除公司", "confirm_url('确定删除？','/#{params[:db_type]}/firm_destroy.php?id=#{@firm.id}')", :class => "btn" %>
+      <%= button_to_function "添加招聘需求", "open_url('/#{params[:db_type]}/demand_edit.php?firm_id=#{@firm.id}')", :class => "btn" %>
+    <% end %>
+  <% elsif @can_grab %>
+    <%= button_to_function "获取公司", "confirm_url('确定获取？', '/#{params[:db_type]}/grab_firm.php?id=#{@firm.id}')",:class=>"btn" %>
+  <% end %>
+</h1>
+<%= render :partial => "firm_info",:locals=>{:firm=>@firm} %>
+
+<h5><a href="#">跟进任务</a></h5>
+<div id="recall">
+  <%= render :partial => "/sales/recall/recall_form" %>
+</div>
+<h5><a href="#">联系人</a></h5>
+<div id="contacts">
+  <% @firm.contacts.each do |c| %>
+    <%= render :partial => "contact_info", :locals => {:contact => c} %>
+  <% end %>
+</div>
+<h5><a href="#">招聘需求</a></h5>
+<div id="demands">
+  <%= render :partial => "demand_list_box", :locals => {:demands => @firm.contact_demands} %>
+</div>
+<%= include_nav_box_js %>

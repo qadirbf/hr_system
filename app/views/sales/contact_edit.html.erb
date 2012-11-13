@@ -1,0 +1,123 @@
+<h1 class="title"><%= [@title, @contact.firm.firm_name].join(' - ') %></h1>
+<%= form_for @contact, :url => "/#{params[:db_type]}/contact_update", :html => {:multipart => true} do |f| %>
+  <%= errors_for @contact %>
+  <%= f.hidden_field :firm_id %> <%= hidden_field_tag :id, params[:id] %>
+  <table class="blue_tb">
+    <tr>
+      <td colspan="4"><%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
+        <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
+      <td colspan="2"><%= f.check_box :resigned, {}, 1, 0 %> 联系人已离职</td>
+    </tr>
+    <tr>
+      <th>姓</th>
+      <td><%= f.text_field :last_name %></td>
+      <th>名</th>
+      <td><%= f.text_field :first_name %></td>
+      <th>称呼</th>
+      <td><%= f.select :salutation, ['先生', '女士', '小姐'], {:include_blank => true} %></td>
+    </tr>
+    <tr>
+      <th>出生日期</th>
+      <td colspan="3"><%= f.date_select :birthday, {:start_year => 1900, :use_month_numbers => true,
+                                                    :include_blank => true}, :style => "width:100px;" %></td>
+      <th>开始工作时间</th>
+      <td><%= f.date_select :start_work_date, {:start_year => 1900, :discard_day => true,
+                                               :use_month_numbers => true, :include_blank => true}, :style => "width:100px;" %></td>
+    </tr>
+    <tr>
+      <th>职业类型</th>
+      <td><%= f.select :firm_type_id, @firm_types, {:include_blank => true} %></td>
+      <th>职位类型</th>
+      <td id="position_td"><%= f.select :position_type_id, @positions, {:include_blank => true} %></td>
+      <th>邮箱</th>
+      <td><%= f.text_field :email %></td>
+    </tr>
+    <tr>
+      <th>职位</th>
+      <td><%= f.text_field :position_cn %></td>
+      <th>手机</th>
+      <td colspan="3"><%= f.text_field :mobile %></td>
+    </tr>
+    <tr>
+      <th>电话</th>
+      <td><%= f.text_field :phone %></td>
+      <th>传真</th>
+      <td><%= f.text_field :fax %></td>
+      <th>邮编</th>
+      <td><%= f.text_field :postcode %></td>
+    </tr>
+    <tr>
+      <th>省份</th>
+      <td><%= f.select :province_id, @provinces, {:include_blank => true} %></td>
+      <th>城市</th>
+      <td id="city_td"><%= f.select :city_id, @cities, {}, :style => "color:gray" %></td>
+    </tr>
+    <tr>
+      <th>联系电话和公司一样</th>
+      <td><%= f.select :contact_no_same_as_firm, [['No', 0], ['Yes', 1]] %></td>
+      <th>地址</th>
+      <td colspan="3"><%= f.text_field :address, :style => "width:90%" %></td>
+    </tr>
+    <tr>
+      <th>地址和公司一样</th>
+      <td><%= f.select :address_same_as_firm, [['No', 0], ['Yes', 1]] %></td>
+      <th>地址2</th>
+      <td colspan="3"><%= f.text_field :address2, :style => "width:90%" %></td>
+    </tr>
+    <tr>
+      <th>备注</th>
+      <td colspan="5"><%= f.text_area :notes, :size => "50x5", :style => "width:80%" %></td>
+    </tr>
+    <tr>
+      <td class="splitor" colspan="6">
+        <%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
+        <%= button_to_function "取消", "cancel()", :class => "btn" %>
+        <%= f.check_box :want_new_job, {:style => "margin-left:30px;"}, 1, 0 %> 联系人考虑进行工作变动 &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <th>期望职业类型</th>
+      <td><%= f.select :expect_firm_type_id, @firm_types, {:include_blank => true} %></td>
+      <th>期望职位类型</th>
+      <td id="exp_position_td"><%= f.select :expect_position_type_id, @exp_positions, {:include_blank => true} %></td>
+      <th>期望年薪</th>
+      <td><%= f.select :expect_salary, @salary_types, {:include_blank => true} %></td>
+    </tr>
+    <tr>
+      <th>期望工作地点</th>
+      <td><%= f.text_area :expect_work_place, :rows => 2, :style => "width:80%" %></td>
+      <th>期望职位备注</th>
+      <td><%= f.text_area :expect_prof_notes, :rows => 2, :style => "width:80%" %></td>
+      <th>期望年薪备注</th>
+      <td><%= f.text_area :salary_notes, :rows => 2, :style => "width:80%" %></td>
+    </tr>
+    <tr>
+      <th>简历</th>
+      <td colspan="5"><%= file_field_tag :resume %></td>
+    </tr>
+  </table>
+<% end %>
+<script>
+  $(function () {
+    $('#contact_firm_type_id').change(function () {
+      var tid = $(this).val(), position_td = $('#position_td')
+      if ($.trim(tid) == '') return
+      position_td.html($('<span>').text('Loading...').css('color', 'red'))
+      position_td.load("/sales/get_positions", {id:tid, object:'contact', field:'position_type_id'})
+    })
+
+    $('#contact_expect_firm_type_id').change(function () {
+      var tid = $(this).val(), position_td = $('#exp_position_td')
+      if ($.trim(tid) == '') return
+      position_td.html($('<span>').text('Loading...').css('color', 'red'))
+      position_td.load("/sales/get_positions", {id:tid, object:'contact', field:'expect_position_type_id'})
+    })
+
+    $('#contact_province_id').change(function () {
+      var pid = $(this).val(), city_td = $('#city_td')
+      if ($.trim(pid) == '') return
+      city_td.html($('<span>').text('Loading...').css('color', 'red'))
+      city_td.load("/sales/get_cities", {id:pid, object:'contact', field:'city_id'})
+    })
+  })
+</script>

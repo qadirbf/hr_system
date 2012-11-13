@@ -1,0 +1,9 @@
+.firm_info td{padding-bottom: 5px;}
+.firm_info img{margin-right:5px;}
+.list_tb{width:100%;}
+.list_tb tr.title{background-color: #D9EDF7;border-top: 1px solid #dddddd;border-bottom: 1px solid #dddddd;}
+.list_tb tr td{padding:5px;vertical-align: top;}
+.list_tb tr select{width:120px;}
+.list_tb tr.item_title{font-weight: bold;border-bottom: 1px dashed gray;}
+input.datepicker{width:100px;}
+input.dtimepicker{width:150px;}
