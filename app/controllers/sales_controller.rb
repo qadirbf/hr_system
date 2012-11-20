@@ -494,6 +494,15 @@ class SalesController < ApplicationController
 
   end
 
+  # delete demand
+  def demand_delete
+    if ContactDemand.exists?(params[:id])
+      ContactDemand.delete(params[:id])
+      flash[:notice] = "删除成功"
+      redirect_to :action => "demand_list"
+    end
+  end
+
   def city_list
     @title = "城市列表"
     @cities = City.paginate :order => "id", :per_page => 30, :page => params[:page]
