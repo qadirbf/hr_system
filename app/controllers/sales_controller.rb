@@ -200,6 +200,7 @@ class SalesController < ApplicationController
       @contact.candidate.destroy
       flash[:notice] = "成功取消候选人！"
     else
+      user = current_user
       @contact.candidate = Candidate.new(:employee_id => current_user.id)
       @contact.employee_id ||= user.id if user.is_res?
       @contact.save!
@@ -305,6 +306,10 @@ class SalesController < ApplicationController
     @emps = Employee.active_emps.dep_emps(user.department_id).select('id,username').order("username").map { |e| [e.username, e.id] }
     unless params[:complete].blank?
       params[:complete]=='1' ? params[:completed_at_not_null]=true : params[:completed_at_null] = true
+    end
+
+    if params[:appt_date_gte].blank? && params[:appt_date_lte].blank?
+      params[:appt_date_gte] = params[:appt_date_lte] = Time.now.format_date(:date)
     end
     params[:employee_id_eq] = user.id
     @recalls = Recall.dep_recalls(user.department_id).paginate :conditions => Recall.get_sql_by_hash(params),

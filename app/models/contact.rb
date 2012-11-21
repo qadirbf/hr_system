@@ -84,6 +84,12 @@ class Contact < ActiveRecord::Base
     self.candidate
   end
 
+  def is_protected?(firm_id)
+    history = RecommendHistory.where("contact_id = ? and firm_id = ?", self.id, firm_id).successed.first
+    return false if history.blank?
+    history.contract_end_date > Time.now
+  end
+
   def is_employed?
     RecommendHistory.includes(:contact_demand).where("contact_id = ? and contact_demands.status_id = 5", self.id).successed.first
   end

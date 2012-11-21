@@ -1,5 +1,5 @@
 <h1 class="title">
-  <%= candidate_label if @contact.is_candidate? -%>
+  <%= candidate_label(@contact) if @contact.is_candidate? -%>
   <%= @title %>
   <% if @can_edit -%>
       <%= button_to_function "修改联系人", "go_url('/#{params[:db_type]}/contact_edit.php?id=#{@contact.id}')", :class => "btn" %>

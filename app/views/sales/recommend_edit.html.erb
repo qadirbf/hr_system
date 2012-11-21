@@ -52,6 +52,12 @@
             <th>最终结果</th>
             <td><%= f.select :ret_id, [['已拒绝', 4], ['已成功', 5]], {:include_blank => true} %></td>
           </tr>
+          <tr style="display: none;" id="contract_end_date_tr">
+            <th>协议到期时间</th>
+            <td>
+              <%= f.text_field :contract_end_date, :value => format_date(@recommend.contract_end_date, :date), :class => "datepicker" -%>
+            </td>
+          </tr>
       <% end %>
       <tr>
         <td colspan="2"><%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
@@ -59,3 +65,16 @@
       </tr>
     </table>
 <% end %>
+<script type="text/javascript">
+    $(function () {
+        $('#recommend_history_ret_id').change(function () {
+            var ret_id = $(this).val();
+            if (ret_id == 5) {
+                $("#contract_end_date_tr").show();
+            }
+            else {
+                $("#contract_end_date_tr").hide();
+            }
+        })
+    })
+</script>
