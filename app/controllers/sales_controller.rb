@@ -42,6 +42,7 @@ class SalesController < ApplicationController
     @title = @firm.firm_name
     @can_edit = @firm.is_followed_by?(user)
     @can_grab = @firm.can_grab_by?(user)
+    @is_special_firm = (@firm.id == 4)
     preload_recall
     render :template => "/sales/firm_view"
   end

@@ -62,7 +62,7 @@
   <tr class="title">
     <td>姓名/ID</td>
     <td>公司</td>
-    <td>职业类型</td>
+    <td>产品备注</td>
     <td>职位类型</td>
     <td>期望工作地点</td>
     <td>期望年薪</td>
@@ -80,7 +80,7 @@
           <% end -%>
         </td>
         <td><%= open_link c.firm_name, "/#{params[:db_type]}/firm_show/#{c.firm_id}" %></td>
-        <td><%= c.firm_type %></td>
+        <td><%= h c.firm.try(:product_notes) %></td>
         <td><%= c.position %></td>
         <td><%= c.expect_work_place %></td>
         <td><%= c.expect_salary_type %></td>

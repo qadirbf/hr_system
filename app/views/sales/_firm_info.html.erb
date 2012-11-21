@@ -3,22 +3,35 @@
     <td style="width:80%">
       <table style="width:100%">
         <tr>
-          <td><%= link_to_function firm.firm_name,"open_url('/#{params[:db_type]}/firm_show.php?id=#{firm.id}')" %> <br/>
+          <td><%= link_to_function firm.firm_name, "open_url('/#{params[:db_type]}/firm_show.php?id=#{firm.id}')" %>
+            <br/>
             <%= firm.address %>
           </td>
           <td><img src="/images/phone.gif"><%= firm.phone %> <br/>
             <i style="font-weight: bold;font-size: 14px;margin-right:5px;">f</i><%= firm.fax %> <br/>
             <img src="/images/email.gif"><%= firm.email %> <br/>
-            <img src="/images/website.gif"><%= link_to firm.website,"http://#{firm.website}",:popup=>true %><br/>
+            <img src="/images/website.gif"><%= link_to firm.website, "http://#{firm.website}", :popup => true %>
+            <br/>
           </td>
         </tr>
-        <tr><td colspan="2">行业类型： <%= h firm.firm_categories.map{|c| c.name}.join("/") %>
-          <%= link_to "修改", {:controller => params[:db_type],
-                             :action => "edit_firm_cat", :firm_id => firm.id}, {:target => "_blank"} if @can_edit -%>
-        </td></tr>
-        <tr><td colspan="2">
-          评级： <%= firm.rating_type -%> &nbsp;&nbsp;&nbsp;&nbsp;
-          备注： <%= h firm.notes %></td></tr>
+        <tr>
+          <td colspan="2">行业类型： <%= h firm.firm_categories.map { |c| c.name }.join("/") %>
+            <%= link_to "修改", {:controller => params[:db_type],
+                               :action => "edit_firm_cat", :firm_id => firm.id}, {:target => "_blank"} if @can_edit -%>
+          </td>
+        </tr>
+        <% unless firm.product_notes.blank? -%>
+            <tr>
+              <td colspan="2">
+                产品备注： <%= h firm.product_notes -%>
+              </td>
+            </tr>
+        <% end -%>
+        <tr>
+          <td colspan="2">
+            评级： <%= firm.rating_type -%> &nbsp;&nbsp;&nbsp;&nbsp;
+            备注： <%= h firm.notes %></td>
+        </tr>
       </table>
     </td>
     <td>

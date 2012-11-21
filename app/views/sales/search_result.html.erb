@@ -15,7 +15,6 @@
         <td>联系人</td>
         <td>职位</td>
         <td>联系方式</td>
-        <td>期待薪资</td>
         <td>备注</td>
     <% else -%>
         <td>联系人</td>
@@ -43,7 +42,6 @@
                 <td><%= candidate_label fc -%> <%= open_contact_page fc.full_name(true), fc.id %></td>
                 <td> <%= fc.position_cn -%> </td>
                 <td> <%= fc.phone1 -%> <%= fc.mobile %></td>
-                <td> <%= fc.expect_salary_type -%> <%= simple_format fc.salary_notes -%> </td>
                 <td> <%= fc.notes -%> </td>
             <% else -%>
                 <td><%= link_to_function fc.full_name(true), "open_url('/#{params[:db_type]}/contact_show.php?id=#{fc.id}')" %></td>
@@ -53,7 +51,6 @@
             <% end -%>
         <% else %>
             <% if res_sys? -%>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -70,7 +67,6 @@
                 <td><%= candidate_label c -%> <%= open_contact_page c.full_name(true), c.id %></td>
                 <td> <%= c.position_cn -%> </td>
                 <td> <%= c.phone1 -%> <%= c.mobile %></td>
-                <td> <%= c.expect_salary_type -%> <%= simple_format c.salary_notes -%> </td>
                 <td> <%= c.notes -%> </td>
             <% else -%>
                 <td><%= open_contact_page c.full_name(true), c.id %></td>

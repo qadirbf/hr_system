@@ -109,7 +109,10 @@
     </tr>
     <tr>
       <th>当前职位类型</th>
-      <td id="position_td"><%= select :contact, :position_type_id_eq, [['请先选择当前职业类型..', '']], {}, :style => "color:gray" %></td>
+      <td id="position_td">
+        <%= text_field :contact, :position_type_like %>
+        <%#= select :contact, :position_type_id_eq, [['请先选择当前职业类型..', '']], {}, :style => "color:gray" %>
+      </td>
       <th>期望职位类型</th>
       <td id="exp_position_td"><%= select :contact, :expect_position_type_id_eq, [['请先选择期望职业类型..', '']], {}, :style => "color:gray" %></td>
     </tr>
@@ -158,12 +161,12 @@
 <% end %>
 <script>
   $(function () {
-    $('#contact_firm_type_id_eq').change(function () {
-      var tid = $(this).val(), position_td = $('#position_td')
-      if ($.trim(tid) == '') return
-      position_td.html($('<span>').text('Loading...').css('color', 'red'))
-      position_td.load("/sales/get_positions", {id:tid, object:'contact', field:'position_type_id_eq'})
-    })
+//    $('#contact_firm_type_id_eq').change(function () {
+//      var tid = $(this).val(), position_td = $('#position_td')
+//      if ($.trim(tid) == '') return
+//      position_td.html($('<span>').text('Loading...').css('color', 'red'))
+//      position_td.load("/sales/get_positions", {id:tid, object:'contact', field:'position_type_id_eq'})
+//    })
 
     $('#contact_expect_firm_type_id_eq').change(function () {
       var tid = $(this).val(), position_td = $('#exp_position_td')

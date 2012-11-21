@@ -22,6 +22,7 @@ class Contact < ActiveRecord::Base
 
   include HrLib::Functions
   before_save :check_sex
+  before_save :save_position_type
 
   def self.resume_file_folder
     "public/resumes"
@@ -72,6 +73,11 @@ class Contact < ActiveRecord::Base
     if self.salutation_changed?&&!self.salutation.blank?
       self.sex = (self.salutation=='先生' ? 1 : 2)
     end
+  end
+
+  def save_position_type
+    position = ContactPosition.where("id = ?", self.position_type_id).first
+    self.position_type = (position.blank? ? "" : position.name)
   end
 
   def is_candidate?
