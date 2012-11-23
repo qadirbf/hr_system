@@ -122,12 +122,12 @@ class SalesController < ApplicationController
 
   def edit_firm_cat
     @firm = Firm.find(params[:firm_id])
-    @firm_cat_ids = @firm.firm_categories.map{|c| c.id}
+    @firm_cat_ids = @firm.firm_categories.map { |c| c.id }
     if request.post?
       Firm.transaction do
         @firm.firm_cat_links.clear
         params[:ids].each do |id|
-          @firm.firm_cat_links << FirmCatLink.new(:firm_category_id=>id)
+          @firm.firm_cat_links << FirmCatLink.new(:firm_category_id => id)
         end
         @firm.save
       end
@@ -300,6 +300,15 @@ class SalesController < ApplicationController
     redirect_to :action => "firm_show", :controller => params[:db_type], :id => r.firm_id, :format => 'php'
   end
 
+  def recall_finish
+    recall = Recall.where("id = ?", params[:id]).first
+    if !recall.update_attributes({:completed_at => Time.now, :completed_by => current_user.id})
+      render :json => {:result => "success", :msg => "更新成功"}
+    else
+      render :json => {:result => "false", :msg => "更新失败"}
+    end
+  end
+
   def my_recall
     @title = "我的跟进任务"
     user = current_user
@@ -420,7 +429,7 @@ class SalesController < ApplicationController
     con_sql = tab_arr.size>0 ? " id in (#{tab_arr.join(' union ')})" : "1=1"
 
     @firms = Firm.paginate_by_sql(["select * from (select * from firms where #{con_sql} order by rating desc, id desc limit 5000) sa", p_hash],
-                                  :page => params[:page], :order=>"rating desc, id desc", :per_page => 30)
+                                  :page => params[:page], :order => "rating desc, id desc", :per_page => 30)
   end
 
   def demand_edit

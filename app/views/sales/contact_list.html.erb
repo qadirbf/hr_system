@@ -80,7 +80,7 @@
           <% end -%>
         </td>
         <td><%= open_link c.firm_name, "/#{params[:db_type]}/firm_show/#{c.firm_id}" %></td>
-        <td><%= h c.firm.try(:product_notes) %></td>
+        <td><%= h c.firm.firm_categories.map { |c| c.name }.join("/") %></td>
         <td><%= c.position %></td>
         <td><%= c.expect_work_place %></td>
         <td><%= c.expect_salary_type %></td>
