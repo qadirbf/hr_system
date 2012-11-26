@@ -1,6 +1,6 @@
 <h1 class="title"><%= @title %></h1>
 <%= include_datepicker %>
-<%= form_for @demand, :url => "/#{params[:db_type]}/demand_update" do |f| %>
+<%= form_for @demand, :url => "/#{params[:db_type]}/demand_update", :html => {:multipart => true} do |f| %>
   <%= errors_for @demand %>
   <%= f.hidden_field :firm_id %><%= hidden_field_tag :id, params[:id] %>
   <table class="blue_tb">
@@ -12,15 +12,15 @@
       <th>职业类型</th>
       <td><%= f.select :firm_type_id, @firm_types, {:include_blank => true} %></td>
       <th>职位类型</th>
-      <td id="position_td"><%= f.select :position_type_id, @positions, {:include_blank => true} %></td>
+      <td id="position_td"><%= f.text_field :position_type_text %></td>
       <th rowspan="2">年薪备注</th>
       <td rowspan="2"><%= f.text_area :salary_notes, :rows => 3, :style => "width:90%;" %></td>
     </tr>
     <tr>
       <th>年薪范围</th>
       <td><%= f.select :salary_type_id, Contact::SALARY_TYPES, {:include_blank => true} %></td>
-      <th>年薪备注</th>
-      <td><%= f.text_field :salary_value %></td>
+      <th>职位描述</th>
+      <td><%= file_field_tag :position_description, :style => "width:100px;" %></td>
     </tr>
     <tr>
       <th>招聘人数</th>
@@ -70,12 +70,12 @@
 <script>
   $(function () {
 
-    $('#contact_demand_firm_type_id').change(function () {
-      var tid = $(this).val(), position_td = $('#position_td')
-      if ($.trim(tid) == '') return
-      position_td.html($('<span>').text('Loading...').css('color', 'red'))
-      position_td.load("/sales/get_positions", {id:tid, object:'contact_demand', field:'position_type_id'})
-    })
+//    $('#contact_demand_firm_type_id').change(function () {
+//      var tid = $(this).val(), position_td = $('#position_td')
+//      if ($.trim(tid) == '') return
+//      position_td.html($('<span>').text('Loading...').css('color', 'red'))
+//      position_td.load("/sales/get_positions", {id:tid, object:'contact_demand', field:'position_type_id'})
+//    })
 
     $('#contact_demand_province_id').change(function () {
       var pid = $(this).val(), city_td = $('#city_td')

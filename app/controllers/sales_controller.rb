@@ -209,6 +209,18 @@ class SalesController < ApplicationController
     redirect_to :action => "contact_view", :controller => params[:db_type], :id => @contact.id, :format => 'php'
   end
 
+  def download_position_description
+    if current_user.is_res?
+      demand = ContactDemand.find(params[:id])
+      filename = [Rails.root, ContactDemand.position_description_file_folder, demand.position_description].join('/')
+      if demand.position_description && File.exists?(filename)
+        send_file filename
+      else
+        render :text => "<script>alert('职位描述文件不存在，未上传或已被删除！');history.back()</script>".html_safe
+      end
+    end
+  end
+
   def download_resume
 
     if current_user.is_res?
@@ -453,6 +465,16 @@ class SalesController < ApplicationController
                                                                    :created_by => user.id, :updated_by => user.id))
     end
     if @demand.errors.empty?
+      unless params[:position_description].blank?
+        begin
+          old_resume = @demand.position_description
+          fm = FileManager.new({:root_folder_path => FileManager.expand_path(ContactDemand.position_description_file_folder), :file_max_size => 500.kilobytes, :file_exts => ['rar', 'zip', 'doc', 'docx', 'pdf']})
+          @demand.update_attributes(:position_description => fm.upload_file(params[:position_description]))
+          fm.kill_file(old_resume)
+        rescue RuntimeError => e
+          flash[:notice] = e.to_s
+        end
+      end
       flash[:notice] = "成功保存！"
       redirect_to :action => "demand_view", :controller => params[:db_type], :id => @demand.id, :format => "php"
     else

@@ -11,7 +11,36 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120914074725) do
+ActiveRecord::Schema.define(:version => 20121126131343) do
+
+  create_table "candidates", :force => true do |t|
+    t.integer  "contact_id"
+    t.integer  "employee_id"
+    t.integer  "grab_by"
+    t.datetime "grab_at"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "candidates", ["contact_id"], :name => "index_candidates_on_contact_id"
+  add_index "candidates", ["created_at"], :name => "index_candidates_on_created_at"
+  add_index "candidates", ["employee_id"], :name => "index_candidates_on_employee_id"
+  add_index "candidates", ["grab_at"], :name => "index_candidates_on_grab_at"
+  add_index "candidates", ["grab_by"], :name => "index_candidates_on_grab_by"
+  add_index "candidates", ["updated_at"], :name => "index_candidates_on_updated_at"
+
+  create_table "cities", :force => true do |t|
+    t.string   "name_cn"
+    t.string   "name"
+    t.string   "city_postcode"
+    t.string   "city_code"
+    t.integer  "country_id"
+    t.integer  "province_id"
+    t.integer  "city_type",      :limit => 2
+    t.integer  "parent_city_id"
+    t.datetime "created_at",                  :null => false
+    t.datetime "updated_at",                  :null => false
+  end
 
   create_table "construction_areas", :force => true do |t|
     t.string "name"
@@ -22,21 +51,28 @@ ActiveRecord::Schema.define(:version => 20120914074725) do
     t.integer  "employee_id"
     t.integer  "firm_type_id"
     t.integer  "position_type_id"
-    t.integer  "status_id",        :limit => 2
-    t.integer  "salary_type_id",   :limit => 2
+    t.integer  "status_id",            :limit => 2
+    t.integer  "salary_type_id",       :limit => 2
     t.string   "salary_value"
-    t.string   "salary_notes",     :limit => 2000
+    t.string   "salary_notes",         :limit => 2000
     t.integer  "province_id"
     t.integer  "city_id"
     t.string   "work_place"
-    t.integer  "contact_num",      :limit => 8
-    t.string   "demand_notes",     :limit => 3000
-    t.integer  "need_ad_recruit",  :limit => 2
-    t.string   "ad_recruit_notes", :limit => 3000
+    t.integer  "contact_num",          :limit => 8
+    t.string   "demand_notes",         :limit => 3000
+    t.integer  "need_ad_recruit",      :limit => 2
+    t.string   "ad_recruit_notes",     :limit => 3000
     t.integer  "created_by"
     t.integer  "updated_by"
-    t.datetime "created_at",                       :null => false
-    t.datetime "updated_at",                       :null => false
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+    t.string   "sales_notes",          :limit => 3000
+    t.datetime "contract_start"
+    t.datetime "contract_end"
+    t.integer  "is_pay"
+    t.integer  "order_income"
+    t.string   "position_type_text"
+    t.string   "position_description"
   end
 
   add_index "contact_demands", ["city_id"], :name => "idx_demand_city"
@@ -58,7 +94,7 @@ ActiveRecord::Schema.define(:version => 20120914074725) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "salutation"
-    t.string   "position"
+    t.string   "position_cn"
     t.integer  "sex",                     :limit => 2
     t.integer  "age",                     :limit => 3
     t.datetime "birthday"
@@ -67,7 +103,7 @@ ActiveRecord::Schema.define(:version => 20120914074725) do
     t.integer  "resigned",                :limit => 2
     t.integer  "want_new_job",            :limit => 2
     t.string   "phone"
-    t.string   "phone_ext",               :limit => 10
+    t.string   "phone_ext",               :limit => 100
     t.string   "mobile"
     t.string   "email"
     t.string   "fax"
@@ -95,6 +131,7 @@ ActiveRecord::Schema.define(:version => 20120914074725) do
     t.integer  "updated_by"
     t.datetime "created_at",                              :null => false
     t.datetime "updated_at",                              :null => false
+    t.string   "position_type"
   end
 
   add_index "contacts", ["city_id"], :name => "idx_ctc_city"
@@ -106,6 +143,22 @@ ActiveRecord::Schema.define(:version => 20120914074725) do
   add_index "contacts", ["status_id"], :name => "idx_ctc_status"
   add_index "contacts", ["updated_at"], :name => "idx_ctc_updated_at"
   add_index "contacts", ["updated_by"], :name => "idx_ctc_update_user"
+
+  create_table "countries", :force => true do |t|
+    t.string   "name_cn"
+    t.string   "name"
+    t.string   "full_name"
+    t.string   "full_name_en"
+    t.string   "abbv"
+    t.string   "currency_symbol"
+    t.decimal  "exchange_rate",      :precision => 10, :scale => 0
+    t.string   "access_code"
+    t.string   "short_code"
+    t.string   "continent_name"
+    t.string   "continent_position"
+    t.datetime "created_at",                                        :null => false
+    t.datetime "updated_at",                                        :null => false
+  end
 
   create_table "departments", :force => true do |t|
     t.string "name"
@@ -150,6 +203,19 @@ ActiveRecord::Schema.define(:version => 20120914074725) do
 
   add_index "employees", ["active"], :name => "idx_emp_active"
 
+  create_table "firm_cat_links", :force => true do |t|
+    t.integer  "firm_id"
+    t.integer  "firm_category_id"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+  end
+
+  create_table "firm_categories", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "firm_leads", :force => true do |t|
     t.integer  "firm_id"
     t.integer  "employee_id"
@@ -192,6 +258,8 @@ ActiveRecord::Schema.define(:version => 20120914074725) do
     t.integer  "updated_by"
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
+    t.integer  "rating"
+    t.string   "product_notes",   :limit => 2000
   end
 
   add_index "firms", ["city_id"], :name => "idx_firm_city"
@@ -200,6 +268,7 @@ ActiveRecord::Schema.define(:version => 20120914074725) do
   add_index "firms", ["firm_type_id"], :name => "idx_firm_type"
   add_index "firms", ["foreign_type_id"], :name => "idx_firm_foreign"
   add_index "firms", ["province_id"], :name => "idx_firm_provn"
+  add_index "firms", ["rating"], :name => "index_firms_on_rating"
   add_index "firms", ["updated_by"], :name => "idx_firm_uuser"
 
   create_table "leads_histories", :force => true do |t|
@@ -233,6 +302,16 @@ ActiveRecord::Schema.define(:version => 20120914074725) do
   add_index "login_histories", ["created_at"], :name => "login_his_time"
   add_index "login_histories", ["failed"], :name => "login_his_failed"
   add_index "login_histories", ["username"], :name => "login_his_user"
+
+  create_table "provinces", :force => true do |t|
+    t.string   "name_cn"
+    t.string   "name"
+    t.integer  "region_id"
+    t.integer  "country_id"
+    t.string   "short_py",   :limit => 5
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
+  end
 
   create_table "recalls", :force => true do |t|
     t.integer  "employee_id"
@@ -272,11 +351,36 @@ ActiveRecord::Schema.define(:version => 20120914074725) do
     t.integer  "updated_by"
     t.datetime "created_at",                        :null => false
     t.datetime "updated_at",                        :null => false
+    t.datetime "contract_end_date"
   end
 
   add_index "recommend_histories", ["contact_demand_id"], :name => "idx_rec_his_demand"
   add_index "recommend_histories", ["contact_id"], :name => "idx_rec_his_contact"
   add_index "recommend_histories", ["employee_id"], :name => "idx_rec_his_emp"
   add_index "recommend_histories", ["firm_id"], :name => "idx_rec_his_firm"
+
+  create_table "sessions", :force => true do |t|
+    t.string   "session_id", :null => false
+    t.text     "data"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
+  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+
+  create_table "user_sessions", :force => true do |t|
+    t.string   "session_id",               :default => "", :null => false
+    t.string   "username",   :limit => 45, :default => "", :null => false
+    t.integer  "user_id",                                  :null => false
+    t.integer  "last",                     :default => 0,  :null => false
+    t.string   "ip",         :limit => 20
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+  end
+
+  add_index "user_sessions", ["session_id"], :name => "user_session_sid"
+  add_index "user_sessions", ["user_id", "last"], :name => "user_session_user_id"
+  add_index "user_sessions", ["username"], :name => "user_session_username"
 
 end

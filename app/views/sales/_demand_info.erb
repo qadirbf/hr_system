@@ -3,12 +3,13 @@
     <td style="width:80%">
       <table style="width:80%">
         <tr><td>ID: <%= open_link demand.id, "/#{params[:db_type]}/demand_view/#{demand.id}" %> <br/>
-          职业类型： <%= demand.firm_type %> <br>职位类型： <%= demand.position_type %> <br/>
+          职业类型： <%= demand.position_type_text %> <br>职位类型： <%= demand.position_type %> <br/>
           招聘人数： <%= demand.contact_num %></td>
-          <td>年薪范围： <%= demand.salary_type %> <br/>年薪备注： <%= demand.salary_value %><br/>
-            备注： <%= demand.salary_notes %></td>
+          <td>年薪范围： <%= demand.salary_type %> <br/>年薪备注： <%= demand.salary_notes %><br/>
+            备注： <%= demand.demand_notes %></td>
           <td>工作省份： <%= demand.province %> <br/> 工作城市： <%= demand.city %> <br/>
             <!-- 工作地点： <%= demand.work_place %> -->
+            职位描述：<%= link_to "下载", {:action => "download_position_description", :id => demand.id} if demand.position_description -%>
           </td>
         </tr>
         <tr><td colspan="3"><%= demand.demand_notes %></td> </tr>

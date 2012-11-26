@@ -26,6 +26,10 @@ class ContactDemand < ActiveRecord::Base
     end
   end
 
+  def self.position_description_file_folder
+    "public/position_description"
+  end
+
   def status
     get_array_type_text STATUS,self.status_id
   end
