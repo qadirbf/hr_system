@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121126131343) do
+ActiveRecord::Schema.define(:version => 20121121091257) do
 
   create_table "candidates", :force => true do |t|
     t.integer  "contact_id"
@@ -73,6 +73,11 @@ ActiveRecord::Schema.define(:version => 20121126131343) do
     t.integer  "order_income"
     t.string   "position_type_text"
     t.string   "position_description"
+    t.string   "sales_notes",      :limit => 3000
+    t.datetime "contract_start"
+    t.datetime "contract_end"
+    t.integer  "is_pay"
+    t.integer  "order_income"
   end
 
   add_index "contact_demands", ["city_id"], :name => "idx_demand_city"

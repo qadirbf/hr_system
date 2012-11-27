@@ -314,7 +314,7 @@ class SalesController < ApplicationController
 
   def recall_finish
     recall = Recall.where("id = ?", params[:id]).first
-    if !recall.update_attributes({:completed_at => Time.now, :completed_by => current_user.id})
+    if recall.update_attributes({:completed_at => Time.now, :completed_by => current_user.id})
       render :json => {:result => "success", :msg => "更新成功"}
     else
       render :json => {:result => "false", :msg => "更新失败"}

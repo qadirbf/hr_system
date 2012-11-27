@@ -11,7 +11,7 @@
       <td><%= r.employee.username %></td>
       <td><%= simple_format r.notes %></td>
       <% if @show_firm_in_recall_list -%>
-          <td><%= link_to_function "完成", "finish_recall(#{r.id})" -%></td>
+          <td><%= link_to_function "点击完成", "finish_recall(#{r.id})" -%></td>
       <% end -%>
     </tr>
 <% end %>
