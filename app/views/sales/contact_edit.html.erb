@@ -79,7 +79,9 @@
       <th>期望职业类型</th>
       <td><%= f.select :expect_firm_type_id, @firm_types, {:include_blank => true} %></td>
       <th>期望职位类型</th>
-      <td id="exp_position_td"><%= f.select :expect_position_type_id, @exp_positions, {:include_blank => true} %></td>
+      <td id="exp_position_td"><%#= f.select :expect_position_type_id, @exp_positions, {:include_blank => true} %>
+        <%= f.text_field :expect_position_type %>
+      </td>
       <th>期望年薪</th>
       <td><%= f.select :expect_salary, @salary_types, {:include_blank => true} %></td>
     </tr>
@@ -106,12 +108,12 @@
       position_td.load("/sales/get_positions", {id:tid, object:'contact', field:'position_type_id'})
     })
 
-    $('#contact_expect_firm_type_id').change(function () {
-      var tid = $(this).val(), position_td = $('#exp_position_td')
-      if ($.trim(tid) == '') return
-      position_td.html($('<span>').text('Loading...').css('color', 'red'))
-      position_td.load("/sales/get_positions", {id:tid, object:'contact', field:'expect_position_type_id'})
-    })
+//    $('#contact_expect_firm_type_id').change(function () {
+//      var tid = $(this).val(), position_td = $('#exp_position_td')
+//      if ($.trim(tid) == '') return
+//      position_td.html($('<span>').text('Loading...').css('color', 'red'))
+//      position_td.load("/sales/get_positions", {id:tid, object:'contact', field:'expect_position_type_id'})
+//    })
 
     $('#contact_province_id').change(function () {
       var pid = $(this).val(), city_td = $('#city_td')

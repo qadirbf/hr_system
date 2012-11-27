@@ -7,3 +7,7 @@
 .list_tb tr.item_title{font-weight: bold;border-bottom: 1px dashed gray;}
 input.datepicker{width:100px;}
 input.dtimepicker{width:150px;}
+span.blue_span{
+    display: inline;
+    color:blue;
+}

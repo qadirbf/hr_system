@@ -298,7 +298,11 @@ class SalesController < ApplicationController
       @recall = Recall.create(params[:recall].merge(:created_by => user.id, :updated_by => user.id))
     end
     if @recall.errors.empty?
-      render :text => "<script>alert('成功保存');window.opener.location.reload();window.close()</script>".html_safe
+      if params[:id].blank?
+        render :text => "<script>alert('成功保存');window.opener.location.reload();window.close()</script>".html_safe
+      else
+        render :text => "<script>alert('成功保存');window.close();window.opener.close();</script>".html_safe
+      end
     else
       txt = @recall.errors.messages.values.unshift("<b>遇到错误：</b>").join("<br>")
       render :text => "#{txt}".html_safe

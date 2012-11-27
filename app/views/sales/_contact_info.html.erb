@@ -1,3 +1,6 @@
+<style type="text/css">
+
+</style>
 <table class="common_tb firm_info" style="width:100%;margin-bottom: 20px;;">
   <tr>
     <td style="width:80%">
@@ -10,23 +13,23 @@
                 <%= protect_label(contact, contact.firm.id) -%>
             <% end -%>
             <br/>
-            职业类型： <%= contact.firm_type %> <br/>
-            职位类型： <%= contact.position %> <br/>
-            当前职位： <%= contact.position_cn %>
+            职业类型： <span class="blue_span"><%= contact.firm_type %></span> <br/>
+            职位类型： <span class="blue_span"><%= contact.position %></span> <br/>
+            当前职位： <span class="blue_span"><%= contact.position_cn %></span>
             <br/>
             地址：<%= contact.address %> <br/>
           </td>
           <td>
-            期望职业类型：<%= contact.expect_firm_type %> <br/>
-            期望职位类型：<%= contact.expect_position %> <br/>
-            期望年薪：<%= contact.expect_salary_type %> <br/>
-            期望工作地点：<%= contact.expect_work_place %> <br/>
+            期望职业类型：<span class="blue_span"><%= contact.expect_firm_type %></span> <br/>
+            期望职位类型：<span class="blue_span"><%= contact.expect_position_type %></span> <br/>
+            期望年薪：<span class="blue_span"><%= contact.expect_salary_type %></span> <br/>
+            期望工作地点：<span class="blue_span"><%= contact.expect_work_place %></span> <br/>
           </td>
           <td>
-            出生日期：  <%= format_date contact.birthday, :date %> <br/>
-            年龄： <%= contact.age_label %> <br/>
-            开始工作时间： <%= format_date contact.start_work_date, :mon %> <br/>
-            工作年数： <%= contact.work_year_label %> <br/>
+            出生日期：  <span class="blue_span"><%= format_date contact.birthday, :date %></span> <br/>
+            年龄： <span class="blue_span"><%= contact.age_label %></span> <br/>
+            开始工作时间： <span class="blue_span"><%= format_date contact.start_work_date, :mon %></span> <br/>
+            工作年数： <span class="blue_span"><%= contact.work_year_label %></span> <br/>
             简历： <%= link_to '下载', {:action => "download_resume", :id => contact.id} if contact.resume_file %>
           </td>
           <td>
@@ -37,13 +40,13 @@
           </td>
         </tr>
         <tr>
-          <td colspan="4">备注： <%= h contact.notes %></td>
+          <td colspan="4">备注： <span class="blue_span"><%= h contact.notes %></span></td>
         </tr>
         <tr>
-          <td colspan="4">期望职位备注： <%= h contact.expect_prof_notes %></td>
+          <td colspan="4">期望职位备注： <span class="blue_span"><%= h contact.expect_prof_notes %></span></td>
         </tr>
         <tr>
-          <td colspan="4">期望年薪备注： <%= h contact.salary_notes %></td>
+          <td colspan="4">期望年薪备注： <span class="blue_span"><%= h contact.salary_notes %></span></td>
         </tr>
       </table>
     </td>
