@@ -322,14 +322,14 @@ class SalesController < ApplicationController
   end
 
   def my_recall
-    @title = "我的跟进任务"
+    @title = (params[:from] == "no_compt" ? "所有未完成的call" : "我的跟进任务")
     user = current_user
     @emps = Employee.active_emps.dep_emps(user.department_id).select('id,username').order("username").map { |e| [e.username, e.id] }
     unless params[:complete].blank?
       params[:complete]=='1' ? params[:completed_at_not_null]=true : params[:completed_at_null] = true
     end
 
-    if params[:appt_date_gte].blank? && params[:appt_date_lte].blank?
+    if params[:appt_date_gte].blank? && params[:appt_date_lte].blank? && params[:from] != "no_compt"
       params[:appt_date_gte] = params[:appt_date_lte] = Time.now.format_date(:date)
     end
     params[:employee_id_eq] = user.id

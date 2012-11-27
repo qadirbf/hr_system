@@ -1,15 +1,21 @@
 <% recalls.each do |r|
   contact = r.contact %>
     <tr>
+      <% if r.complete == 1
+            color = "black"
+        else
+            color = (r.appt_date > Time.now ? "blue" : "red")
+        end
+      -%>
       <% if @show_firm_in_recall_list -%>
-          <td><%= link_to_function r.firm.firm_name, "open_url('/#{params[:db_type]}/firm_show/#{r.firm_id}')" if r.firm -%></td>
+          <td><%= link_to_function r.firm.firm_name, "open_url('/#{params[:db_type]}/firm_show/#{r.firm_id}')", :style => "color: #{color}" if r.firm -%></td>
       <% end -%>
-      <td><%= link_to_function format_date(r.appt_date, :min), "open_url('/#{params[:db_type]}/recall_edit/#{r.id}')" %></td>
-      <td><%= link_to_function contact.full_name(true, true), "open_url('/#{params[:db_type]}/contact_show/#{contact.id}')" if contact %></td>
-      <td><%= r.contact_by_label %></td>
-      <td><%= r.stage %></td>
-      <td><%= r.employee.username %></td>
-      <td><%= simple_format r.notes %></td>
+      <td><%= link_to_function format_date(r.appt_date, :min), "open_url('/#{params[:db_type]}/recall_edit/#{r.id}')", :style => "color: #{color}" %></td>
+      <td><%= link_to_function contact.full_name(true, true), "open_url('/#{params[:db_type]}/contact_show/#{contact.id}')", :style => "color: #{color}" if contact %></td>
+      <td style="color: <%= color -%>"><%= r.contact_by_label %></td>
+      <td style="color: <%= color -%>"><%= r.stage %></td>
+      <td style="color: <%= color -%>"><%= r.employee.username %></td>
+      <td style="color: <%= color -%>"><%= simple_format r.notes %></td>
       <% if @show_firm_in_recall_list -%>
           <td><%= link_to_function "点击完成", "finish_recall(#{r.id})" -%></td>
       <% end -%>

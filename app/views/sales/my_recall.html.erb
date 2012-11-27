@@ -1,4 +1,6 @@
-<h1 class="title"><%= @title %></h1>
+<h1 class="title"><%= @title %>
+    <%= link_to "所有未完成的call", {:action => "my_recall", :complete => 0, :appt_date_gte => "", :appt_date_lte => "", :from => "no_compt"}, :style => "float:right;" -%>
+</h1>
 <%= include_datepicker %>
 <style>table select,table input[type=text]{width:120px;}</style>
 <%= form_tag "/#{params[:db_type]}/my_recall" do%>
