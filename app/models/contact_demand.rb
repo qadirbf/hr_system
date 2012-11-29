@@ -38,4 +38,12 @@ class ContactDemand < ActiveRecord::Base
     get_array_type_text Contact::SALARY_TYPES,self.salary_type_id
   end
 
+  def work_city
+     [self.province.to_s, self.city.to_s].join(" ")
+  end
+
+  def salary
+    [salary_value, salary_type, self.salary_notes].delete_if{|a| a.blank?}.join("<br/>").html_safe
+  end
+
 end

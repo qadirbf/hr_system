@@ -24,10 +24,11 @@
         $('.span_td').click(function () {
             var type_name = $(this).html();
             var td = $(this).parent();
+            alert(td.attr("id"));
             var text_id = "text_" + td.attr("id");
             td.html("");
             td.append($("<input class='input-xlarge' size='30' id=text_id/>").val(type_name));
-            td.append($("<input type='button' value='确定' style='width:60px;' onclick='update_type(text_id)'/>"))
+            td.append($("<input type='button' value='确定' style='width:60px;' onclick='update_type(this)'/>"))
         })
 
     })
