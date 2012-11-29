@@ -1,0 +1,39 @@
+<style>form select, form input[type=text] {
+    width: 120px;
+}</style>
+<h1 class="title"><%= @title %></h1>
+
+<%= form_tag "/msg/set_viewed" do %>
+    <%= page_links @firm_types %>
+    <table style="clear:both;" class="list_tb">
+      <tr class="title">
+        <td>名称</td>
+        <td>操作</td>
+      </tr>
+      <% @firm_types.each_with_index do |type, index| %>
+          <tr>
+            <td class="name_td" id="<%= type.id -%>"><span class="span_td"><%= type.name %></span></td>
+            <td><%= link_to "查看详细", {:action => :show, :id => type.id}, :target => "_blank" %></td>
+          </tr>
+      <% end %>
+    </table>
+    <%= page_links @firm_types %>
+<% end %>
+<script type="text/javascript">
+    $(function () {
+        $('.span_td').click(function () {
+            var type_name = $(this).html();
+            var td = $(this).parent();
+            var text_id = "text_" + td.attr("id");
+            td.html("");
+            td.append($("<input class='input-xlarge' size='30' id=text_id/>").val(type_name));
+            td.append($("<input type='button' value='确定' style='width:60px;' onclick='update_type(text_id)'/>"))
+        })
+
+    })
+
+    function update_type(id) {
+            alert(id);
+    }
+
+</script>

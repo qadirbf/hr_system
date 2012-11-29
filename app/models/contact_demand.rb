@@ -10,7 +10,7 @@ class ContactDemand < ActiveRecord::Base
   belongs_to :updated_user,:class_name=>"Employee",:foreign_key=>"updated_by"
   validates_presence_of :firm_id,:message=>"必须关联公司"
   validates_presence_of :firm_type_id,:message=>"请选择职业类型"
-  validates_presence_of :position_type_id,:message=>"请选择职位类型"
+  #validates_presence_of :position_type_id,:message=>"请选择职位类型"
   validates_presence_of :salary_type_id,:message=>"请选择年薪范围"
   validates_presence_of :province_id,:message=>"请选择工作所在省份"
   validates_presence_of :city_id,:message=>"请选择工作所在城市"

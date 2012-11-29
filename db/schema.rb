@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121127143952) do
+ActiveRecord::Schema.define(:version => 20121128033648) do
 
   create_table "candidates", :force => true do |t|
     t.integer  "contact_id"
@@ -133,6 +133,7 @@ ActiveRecord::Schema.define(:version => 20121127143952) do
     t.datetime "updated_at",                              :null => false
     t.string   "position_type"
     t.string   "expect_position_type"
+    t.integer  "distributors",            :limit => 2
   end
 
   add_index "contacts", ["city_id"], :name => "idx_ctc_city"

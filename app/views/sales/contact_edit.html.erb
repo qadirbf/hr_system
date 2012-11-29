@@ -36,7 +36,8 @@
       <th>职位</th>
       <td><%= f.text_field :position_cn %></td>
       <th>手机</th>
-      <td colspan="3"><%= f.text_field :mobile %></td>
+      <td><%= f.text_field :mobile %></td>
+      <td colspan="2"><%= f.check_box :distributors, {}, 1, 0 %>开拓经销商</td>
     </tr>
     <tr>
       <th>电话</th>
