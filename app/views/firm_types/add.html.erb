@@ -1,0 +1,11 @@
+<h1 class="title"><%= @title %></h1>
+<%= form_for :firm_type, :url => "/firm_types/add" do |f| -%>
+    <%= errors_for @firm_type %>
+    <table class="blue_tb">
+      <tr>
+        <th width=100>名称</th>
+        <td width=230><%= f.text_field :name %></td>
+        <td colspan="4"><%= submit_tag "保存", :class => "btn btn-primary" %></td>
+      </tr>
+    </table>
+<% end -%>

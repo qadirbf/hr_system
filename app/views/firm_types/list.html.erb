@@ -21,7 +21,10 @@
     padding-left: 50px;
 }
 </style>
-<h1 class="title"><%= @title %></h1>
+<h1 class="title"><%= @title %>
+  <%= button_to_function "添加职业类型", "go_url('/firm_types/add.php')", :class => "btn" %>
+  <%= button_to_function "添加职位类型", "go_url('/firm_types/add_position.php')", :class => "btn" %>
+</h1>
 
 <ul class="firm_ul">
   <% @firm_types.each do |type| %>
@@ -29,6 +32,7 @@
         <span class="ul_l_span" id="f_<%= type.id -%>"><%= type.name %></span>
         <span style="float:right;">
           <%= link_to_function "编辑", "edit('f_t', #{type.id})" -%>&nbsp;&nbsp;
+          <%= link_to "删除", {:action => "delete", :type => "firm_type", :id => type.id}, :confirm => "Are you sure?" -%>&nbsp;&nbsp;
           <%= link_to_function "查看职位类型", "show_positions(this, #{type.id})" %>
         </span>
       </li>

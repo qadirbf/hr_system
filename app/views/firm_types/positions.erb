@@ -4,6 +4,7 @@
           <span class="span_p_t" id="c_<%= p.id -%>"><%= p.name %></span>
         <span style="float:right;">
           <%= link_to_function "编辑", "edit('c_p', #{p.id})" -%>&nbsp;&nbsp;
+          <%= link_to "删除", {:action => "delete", :type => "contact_position", :id => p.id}, :confirm => "Are you sure?" -%>
         </span>
         </li>
     <% end -%>
