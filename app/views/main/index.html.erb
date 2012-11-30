@@ -33,7 +33,7 @@
 <%= link_to "员工列表", {:controller => "employees", :action => "list"} %>
 <% end -%>
 
-<% if false#user.is_admin? -%>
+<% if user.is_admin? -%>
     <h1 class="title">设置</h1>
     <%= link_to "职位类型一览", {:controller => "firm_types", :action => "list"}, :target => "_blank" %>
 <% end -%>
