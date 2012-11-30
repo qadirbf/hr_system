@@ -1,40 +1,80 @@
 <style>form select, form input[type=text] {
     width: 120px;
-}</style>
+}
+
+.firm_ul {
+    list-style: none;
+    width: 600px;
+}
+
+.firm_ul li {
+    width: 500px;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.ul_l_span {
+    float: left;
+}
+
+.span_p_t {
+    padding-left: 50px;
+}
+</style>
 <h1 class="title"><%= @title %></h1>
 
-<%= form_tag "/msg/set_viewed" do %>
-    <%= page_links @firm_types %>
-    <table style="clear:both;" class="list_tb">
-      <tr class="title">
-        <td>名称</td>
-        <td>操作</td>
-      </tr>
-      <% @firm_types.each_with_index do |type, index| %>
-          <tr>
-            <td class="name_td" id="<%= type.id -%>"><span class="span_td"><%= type.name %></span></td>
-            <td><%= link_to "查看详细", {:action => :show, :id => type.id}, :target => "_blank" %></td>
-          </tr>
-      <% end %>
-    </table>
-    <%= page_links @firm_types %>
-<% end %>
+<ul class="firm_ul">
+  <% @firm_types.each do |type| %>
+      <li id="li_f_<%= type.id -%>">
+        <span class="ul_l_span" id="f_<%= type.id -%>"><%= type.name %></span>
+        <span style="float:right;">
+          <%= link_to_function "编辑", "edit('f_t', #{type.id})" -%>&nbsp;&nbsp;
+          <%= link_to_function "查看职位类型", "show_positions(this, #{type.id})" %>
+        </span>
+      </li>
+  <% end %>
+</ul>
+
+
 <script type="text/javascript">
-    $(function () {
-        $('.span_td').click(function () {
-            var type_name = $(this).html();
-            var td = $(this).parent();
-            alert(td.attr("id"));
-            var text_id = "text_" + td.attr("id");
-            td.html("");
-            td.append($("<input class='input-xlarge' size='30' id=text_id/>").val(type_name));
-            td.append($("<input type='button' value='确定' style='width:60px;' onclick='update_type(this)'/>"))
-        })
+    function edit(type, id) {
+        if (type == "f_t") {
+            var span = $("#f_" + id);
+        }
+        if (type == "c_p") {
+            var span = $("#c_" + id);
+        }
+        var name = span.html();
+        span.html("");
+        var text_id = "text_" + id;
+        span.append($("<input class='input-xlarge' size='30'/>").attr("id", text_id).val(name));
+        span.append($("<input type='button' value='确定' style='width:60px;' onclick='update_type(this)'/>"))
+    }
 
-    })
+    function update_type(obj) {
+        var id = $(obj).parent().attr("id");
+        var name = $(obj).prev().val();
+        $.post("<%= url_for(:action=>"update", :controller => :firm_types) -%>", { id:id, name:name },
+                function (data) {
+                    alert("更新成功！");
+                    init_span(id, name);
+                })
+    }
 
-    function update_type(id) {
-            alert(id);
+    function init_span(span_id, name) {
+        var span = $("#" + span_id);
+        span.html(name);
+    }
+
+    function show_positions(obj, type_id) {
+        var li = $(obj).parent().parent();
+        var li_id = li.attr("id");
+        var div = $("<div style='display: none;'/>").attr("id", "div_" + li_id);
+        div.load("/firm_types/get_positions", {id:type_id}, function () {
+            li.parent().append(div);
+            li.after($("#div_" + li_id).html());
+        });
+        $("#div_" + li_id).remove();
     }
 
 </script>
