@@ -28,11 +28,16 @@
             期望工作地点：<span class="blue_span"><%= contact.expect_work_place %></span> <br/>
           </td>
           <td>
-            出生日期：  <span class="blue_span"><%= format_date contact.birthday, :date %></span> <br/>
+            出生日期： <span class="blue_span"><%= format_date contact.birthday, :date %></span> <br/>
             年龄： <span class="blue_span"><%= contact.age_label %></span> <br/>
             开始工作时间： <span class="blue_span"><%= format_date contact.start_work_date, :mon %></span> <br/>
             工作年数： <span class="blue_span"><%= contact.work_year_label %></span> <br/>
-            简历： <%= link_to '下载', {:action => "download_resume", :id => contact.id} if contact.resume_file %>
+            简历：
+            <% unless contact.contact_resumes.blank? -%>
+                <% contact.contact_resumes.each do |resume| -%>
+                    <%= link_to resume.load_path.split("/").last, {:action => "download_resume", :id => resume.id} %><br/>
+                <% end -%>
+            <% end -%>
           </td>
           <td>
             <img src="/images/phone.gif"><%= contact.phone %> <br/>

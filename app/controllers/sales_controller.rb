@@ -233,9 +233,9 @@ class SalesController < ApplicationController
       end
     end
 
-    c = Contact.find(params[:id])
-    filename = [Rails.root, Contact.resume_file_folder, c.resume_file].join('/')
-    if c.resume_file&&File.exists?(filename)
+    c = ContactResume.find(params[:id])
+    filename = [Rails.root, Contact.resume_file_folder, c.load_path].join('/')
+    if c.load_path&&File.exists?(filename)
       send_file filename
     else
       render :text => "<script>alert('简历文件不存在，未上传或已被删除！');history.back()</script>".html_safe
