@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121128033648) do
+ActiveRecord::Schema.define(:version => 20121129123111) do
 
   create_table "candidates", :force => true do |t|
     t.integer  "contact_id"
@@ -88,6 +88,17 @@ ActiveRecord::Schema.define(:version => 20121128033648) do
   end
 
   add_index "contact_positions", ["firm_type_id"], :name => "idx_position_firm_type"
+
+  create_table "contact_resumes", :force => true do |t|
+    t.integer  "contact_id"
+    t.integer  "upload_by"
+    t.string   "load_path"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "contact_resumes", ["contact_id"], :name => "index_contact_resumes_on_contact_id"
+  add_index "contact_resumes", ["upload_by"], :name => "index_contact_resumes_on_upload_by"
 
   create_table "contacts", :force => true do |t|
     t.integer  "firm_id"

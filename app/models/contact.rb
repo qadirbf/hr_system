@@ -13,6 +13,7 @@ class Contact < ActiveRecord::Base
   has_one :candidate
   has_many :recalls
   has_many :recommend_histories
+  has_many :contact_resumes
   validates_presence_of :last_name,:message=>"请填写联系人的姓"
   validates_presence_of :first_name,:message=>"请填写联系人的名字"
   validates_presence_of :salutation,:message=>"请填写联系人的称呼"

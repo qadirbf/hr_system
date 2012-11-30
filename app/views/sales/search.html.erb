@@ -56,7 +56,7 @@
       <th>网址</th>
       <td><%= text_field :firm, :website_like %></td>
     </tr>
-    <% if res_sys? -%>
+
     <tr>
       <td colspan="4" class="splitor"><b>联系人信息：</b></td>
     </tr>
@@ -126,6 +126,7 @@
       <th>负责的顾问</th>
       <td><%= select :contact, :res_id, @res, {:include_blank => true} %></td>
     </tr>
+    <% if res_sys? -%>
     <tr>
       <td colspan="4" class="splitor"><b>招聘需求：</b></td>
     </tr>

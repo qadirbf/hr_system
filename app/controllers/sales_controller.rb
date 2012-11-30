@@ -160,10 +160,11 @@ class SalesController < ApplicationController
       flash[:notice] = "成功保存！"
       unless params[:resume].blank?
         begin
-          old_resume = @contact.resume_file
+          #old_resume = @contact.resume_file
           fm = FileManager.new({:root_folder_path => FileManager.expand_path(Contact.resume_file_folder), :file_max_size => 500.kilobytes, :file_exts => ['rar', 'zip', 'doc', 'docx', 'pdf']})
-          @contact.update_attributes(:resume_file => fm.upload_file(params[:resume]))
-          fm.kill_file(old_resume)
+          #@contact.update_attributes(:resume_file => fm.upload_file(params[:resume]))
+          @contact.contact_resumes << ContactResume.new({:contact_id => @contact.id, :upload_by => user.id, :load_path => fm.upload_file(params[:resume])})
+          #fm.kill_file(old_resume)
         rescue RuntimeError => e
           flash[:notice] = e.to_s
         end

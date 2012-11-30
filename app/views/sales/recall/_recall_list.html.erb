@@ -2,10 +2,10 @@
   contact = r.contact %>
     <tr>
       <% if r.complete == 1
-            color = "black"
-        else
-            color = (r.appt_date > Time.now ? "blue" : "red")
-        end
+           color = "black"
+         else
+           color = (r.appt_date > Time.now ? "blue" : "red")
+         end
       -%>
       <% if @show_firm_in_recall_list -%>
           <td><%= link_to_function r.firm.firm_name, "open_url('/#{params[:db_type]}/firm_show/#{r.firm_id}')", :style => "color: #{color}" if r.firm -%></td>
@@ -17,7 +17,13 @@
       <td style="color: <%= color -%>"><%= r.employee.username %></td>
       <td style="color: <%= color -%>"><%= simple_format r.notes %></td>
       <% if @show_firm_in_recall_list -%>
-          <td><%= link_to_function "点击完成", "finish_recall(#{r.id})" -%></td>
+          <td>
+            <% if r.complete != 1 -%>
+                <%= link_to_function "点击完成", "finish_recall(#{r.id})" -%>
+            <% else -%>
+                已完成
+            <% end -%>
+          </td>
       <% end -%>
     </tr>
 <% end %>
@@ -31,7 +37,7 @@
                 if (data.result == "success") {
                     alert(data.msg);
                     location.reload();
-                }else{
+                } else {
                     alert(data.msg);
                 }
             },
