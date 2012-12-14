@@ -12,7 +12,6 @@
             职位描述：<%= link_to "下载", {:action => "download_position_description", :id => demand.id} if demand.position_description -%>
           </td>
         </tr>
-        <tr><td colspan="3"><%= demand.demand_notes %></td> </tr>
         <tr><td colspan="3">猎头方向: <%= demand.sales_notes %></td> </tr>
       </table>
     </td>
