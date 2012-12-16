@@ -63,6 +63,8 @@
     <td>姓名/ID</td>
     <td>公司</td>
     <td>产品备注</td>
+    <td>当前职位</td>
+    <td>期望职位</td>
     <td>职位类型</td>
     <td>期望工作地点</td>
     <td>期望年薪</td>
@@ -81,6 +83,8 @@
         </td>
         <td><%= open_link c.firm_name, "/#{params[:db_type]}/firm_show/#{c.firm_id}" %></td>
         <td><%= h c.firm.firm_categories.map { |c| c.name }.join("/") %></td>
+        <td><%= c.position_cn %></td>
+        <td><%= c.expect_position_type %></td>
         <td><%= c.position %></td>
         <td><%= c.expect_work_place %></td>
         <td><%= c.expect_salary_type %></td>

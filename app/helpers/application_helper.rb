@@ -21,6 +21,10 @@ module ApplicationHelper
     content_tag("span", "候选人", :class=>"label label-info") if contact.is_candidate?
   end
 
+  def interviewed_candidate_label(contact)
+    content_tag("span", "候选人", :class=>"label-successed") if contact.is_candidate?
+  end
+
   def protect_label(contact, firm_id)
     content_tag("span", "已保护", :class=>"label-pt") if contact.is_protected?(firm_id)
   end

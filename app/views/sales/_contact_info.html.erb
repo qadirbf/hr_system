@@ -8,7 +8,12 @@
         <tr>
           <td>
             <%= open_firm_page contact.firm.firm_name, contact.firm.id %> <br/>
-            <%= candidate_label contact -%> <%= open_contact_page contact.full_name(true, true), contact.id %>
+            <% if params[:action] == "recommend_view" and @recommend.try(:successed?) -%>
+                <%= interviewed_candidate_label contact -%>
+            <% else -%>
+                <%= candidate_label contact -%>
+            <% end -%>
+            <%= open_contact_page contact.full_name(true, true), contact.id %>
             <% if contact.want_new_job.to_i > 0 -%>
                 <font style="color:red;">（联系人考虑进行工作变动）</font><br/>
             <% end -%>
@@ -35,7 +40,8 @@
             简历：
             <% unless contact.contact_resumes.blank? -%>
                 <% contact.contact_resumes.each do |resume| -%>
-                    <%= link_to resume.load_path.split("/").last, {:action => "download_resume", :id => resume.id} %><br/>
+                    <%= link_to resume.load_path.split("/").last, {:action => "download_resume", :id => resume.id} %>
+                    <br/>
                 <% end -%>
             <% end -%>
           </td>
