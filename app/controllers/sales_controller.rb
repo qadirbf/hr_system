@@ -164,7 +164,7 @@ class SalesController < ApplicationController
           fm = FileManager.new({:root_folder_path => FileManager.expand_path(Contact.resume_file_folder), :file_max_size => 500.kilobytes, :file_exts => ['rar', 'zip', 'doc', 'docx', 'pdf']})
           #@contact.update_attributes(:resume_file => fm.upload_file(params[:resume]))
           @contact.contact_resumes << ContactResume.new({:contact_id => @contact.id, :upload_by => user.id, :load_path => fm.upload_file(params[:resume])})
-          #fm.kill_file(old_resume)
+            #fm.kill_file(old_resume)
         rescue RuntimeError => e
           flash[:notice] = e.to_s
         end
@@ -337,7 +337,10 @@ class SalesController < ApplicationController
     if params[:appt_date_gte].blank? && params[:appt_date_lte].blank? && params[:from] != "no_compt"
       params[:appt_date_gte] = params[:appt_date_lte] = Time.now.format_date(:date)
     end
-    params[:employee_id_eq] = user.id
+    unless user.is_admin?
+      params[:employee_id_eq] = user.id
+    end
+
     @recalls = Recall.dep_recalls(user.department_id).paginate :conditions => Recall.get_sql_by_hash(params),
                                                                :order => "appt_date desc", :per_page => 30, :page => params[:page]
   end
@@ -346,16 +349,27 @@ class SalesController < ApplicationController
     @title = (res_sys? ? "我的资源" : "我的公司")
     params[:user_id]||=current_user.id
 
-    if res_sys?
-      where_sql = ["firm_leads.employee_id = :user_id and contacts.employee_id = :user_id", {user_id: params[:user_id]}]
-      @firms = Firm.includes(:firm_leads, :contacts).where(where_sql).order("firm_leads.grab_date").paginate(
-          :page => params[:page], :per_page => 30)
-      render :template => "/sales/my_contacts"
+    if current_user.is_admin?
+      if res_sys?
+        where_sql = ["firm_leads.employee_id is not null and contacts.employee_id is not null"]
+        @firms = Firm.includes(:firm_leads, :contacts).where(where_sql).order("firm_leads.grab_date").paginate(
+            :page => params[:page], :per_page => 30)
+        render :template => "/sales/my_contacts"
+      else
+        @firms = Firm.includes(:firm_leads).where("firm_leads.employee_id is not null").order("firm_leads.grab_date").paginate(
+            :page => params[:page], :per_page => 30)
+      end
     else
-      @firms = Firm.includes(:firm_leads).where(["firm_leads.employee_id = ?", params[:user_id]]).order("firm_leads.grab_date").paginate(
-          :page => params[:page], :per_page => 30)
+      if res_sys?
+        where_sql = ["firm_leads.employee_id = :user_id and contacts.employee_id = :user_id", {user_id: params[:user_id]}]
+        @firms = Firm.includes(:firm_leads, :contacts).where(where_sql).order("firm_leads.grab_date").paginate(
+            :page => params[:page], :per_page => 30)
+        render :template => "/sales/my_contacts"
+      else
+        @firms = Firm.includes(:firm_leads).where(["firm_leads.employee_id = ?", params[:user_id]]).order("firm_leads.grab_date").paginate(
+            :page => params[:page], :per_page => 30)
+      end
     end
-
   end
 
   def search
