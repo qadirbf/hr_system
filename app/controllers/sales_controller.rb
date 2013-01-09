@@ -211,7 +211,7 @@ class SalesController < ApplicationController
   end
 
   def download_position_description
-    if current_user.is_res?
+    if current_user.is_res? or current_user.is_admin?
       demand = ContactDemand.find(params[:id])
       filename = [Rails.root, ContactDemand.position_description_file_folder, demand.position_description].join('/')
       if demand.position_description && File.exists?(filename)
