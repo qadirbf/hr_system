@@ -47,7 +47,15 @@
         <td><%= contact.expect_work_place %></td>
         <td><%= contact.expect_salary_type %></td>
         <td><%= lead.employee %></td>
-        <td><%= link_to "下载", {:action => "download_resume", :id => r.contact_id} if contact.resume_file %></td>
+        <td>
+          <% unless contact.contact_resumes.blank? -%>
+              <% contact.contact_resumes.each do |resume| -%>
+                  <%= link_to resume.load_path.split("/").last, {:action => "download_resume", :id => resume.id} %>
+                  <br/>
+              <% end -%>
+          <% end -%>
+          <%#= link_to "下载", {:action => "download_resume", :id => r.contact_id} if contact.resume_file %>
+        </td>
         <td><%= r.updated_user %>
           <div class="gray_info"><%= format_date(r.updated_at, :min) %></div>
         </td>
