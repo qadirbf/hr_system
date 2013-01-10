@@ -1,0 +1,25 @@
+<script type="text/javascript" src="/jquery/jquery.autocomplete.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css" />
+<script>
+    $(document).ready(function () {
+        $("#contact_position_like").autocomplete("/sales/auto_position", {
+            delay:10,
+            minChar:1,
+            multiple:true,
+            parse:function (data) {
+                return $.map(eval(data), function (item) {
+                    return {
+                        data:item,
+                        value:item.name,
+                        result:item.name
+                    }
+                });
+            },
+            formatItem:function (item) {
+                return item.name;
+            }
+        }).result(function (e, item) {
+                    $("#contact_position_like").val(item.name);
+                });
+    });
+</script>

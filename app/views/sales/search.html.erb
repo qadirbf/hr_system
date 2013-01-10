@@ -1,167 +1,168 @@
 <style>
-  table {
-    width: 80%
-  }
+    table {
+        width: 80%
+    }
 
-  #prov_box select {
-    width: 120px;
-  }
+    #prov_box select {
+        width: 120px;
+    }
 </style>
+<%= render :partial => "auto_complete" -%>
 <h1 class="title"><%= @title %></h1>
 <%= include_datepicker %>
 <%= form_tag "/#{params[:db_type]}/search_result.php" do %>
-  <%= hidden_field_tag :add_now, params[:add_now] %>
-  <table class="blue_tb">
-    <tr class="splitor">
-      <td colspan="2"><b>公司信息：</b></td>
-      <td colspan="2">
-        <%= submit_tag "搜索", :class => "btn btn-primary" %> &nbsp;
-        <%= button_to_function "重置", "reset()", :class => "btn" %>
-      </td>
-    </tr>
-    <tr>
-      <th>公司名称</th>
-      <td><%= text_field :firm, :firm_name_like %></td>
-      <th>外资</th>
-      <td><%= select :firm, :foreign_type_id_eq, Firm::FOREIGN_TYPES, {:include_blank => true} %></td>
-    </tr>
-    <tr>
-      <th>地址</th>
-      <td><%= text_field :firm, :address %></td>
-      <th rowspan="2">公司类型</th>
-      <td rowspan="2"><%= select :firm, :firm_type_id_in, [['所有', '']]+@firm_types, {},
-                                 :multitype => true, :size => 5 %></td>
-    </tr>
-    <tr>
-      <th>联系电话</th>
-      <td><%= text_field :firm, :phone_like %></td>
-    </tr>
-    <tr>
-      <th>传真</th>
-      <td><%= text_field :firm, :fax_like %></td>
-      <th>行业类型</th>
-      <td><%= select :firm, :category_ids, FirmCategory.all.map { |c| [c.name, c.id] }, { :include_blank => true } -%> </td>
-    </tr>
-    <tr>
-      <th>省份</th>
-      <td id="prov_box"><%= select :firm, :province_id_eq, @provinces, {:include_blank => true} %>
-        <span id="city_td">城市： <%= select :firm, :city_id_eq, [['请先选择省份...', '']], {}, :style => "color:gray" %></span>
-      </td>
-      <th>公司备注</th>
-      <td><%= text_field :firm, :notes_like %></td>
-    </tr>
-    <tr>
-      <th>Email</th>
-      <td><%= text_field :firm, :email_like %></td>
-      <th>网址</th>
-      <td><%= text_field :firm, :website_like %></td>
-    </tr>
+    <%= hidden_field_tag :add_now, params[:add_now] %>
+    <table class="blue_tb">
+      <tr class="splitor">
+        <td colspan="2"><b>公司信息：</b></td>
+        <td colspan="2">
+          <%= submit_tag "搜索", :class => "btn btn-primary" %> &nbsp;
+          <%= button_to_function "重置", "reset()", :class => "btn" %>
+        </td>
+      </tr>
+      <tr>
+        <th>公司名称</th>
+        <td><%= text_field :firm, :firm_name_like %></td>
+        <th>外资</th>
+        <td><%= select :firm, :foreign_type_id_eq, Firm::FOREIGN_TYPES, {:include_blank => true} %></td>
+      </tr>
+      <tr>
+        <th>地址</th>
+        <td><%= text_field :firm, :address %></td>
+        <th rowspan="2">公司类型</th>
+        <td rowspan="2"><%= select :firm, :firm_type_id_in, [['所有', '']]+@firm_types, {},
+                                   :multitype => true, :size => 5 %></td>
+      </tr>
+      <tr>
+        <th>联系电话</th>
+        <td><%= text_field :firm, :phone_like %></td>
+      </tr>
+      <tr>
+        <th>传真</th>
+        <td><%= text_field :firm, :fax_like %></td>
+        <th>行业类型</th>
+        <td><%= select :firm, :category_ids, FirmCategory.all.map { |c| [c.name, c.id] }, {:include_blank => true} -%> </td>
+      </tr>
+      <tr>
+        <th>省份</th>
+        <td id="prov_box"><%= select :firm, :province_id_eq, @provinces, {:include_blank => true} %>
+          <span id="city_td">城市： <%= select :firm, :city_id_eq, [['请先选择省份...', '']], {}, :style => "color:gray" %></span>
+        </td>
+        <th>公司备注</th>
+        <td><%= text_field :firm, :notes_like %></td>
+      </tr>
+      <tr>
+        <th>Email</th>
+        <td><%= text_field :firm, :email_like %></td>
+        <th>网址</th>
+        <td><%= text_field :firm, :website_like %></td>
+      </tr>
 
-    <tr>
-      <td colspan="4" class="splitor"><b>联系人信息：</b></td>
-    </tr>
-    <tr>
-      <th>姓名</th>
-      <td><%= text_field :contact, :full_name %></td>
-      <th rowspan="3">期望年薪</th>
-      <td rowspan="3"><%= select :contact, :expect_salary_in,
-                                 [['所有', '']]+Contact::SALARY_TYPES, {}, :multitype => true, :size => 5 %></td>
-    </tr>
-    <tr>
-      <th>职位</th>
-      <td><%= text_field :contact, :position_like %></td>
-    </tr>
-    <tr>
-      <th>备注</th>
-      <td><%= text_field :contact, :notes_like %></td>
-    </tr>
-    <tr>
-      <th>性别</th>
-      <td><%= select :contact, :sex_eq, [['男', 1], ['女', 2]], {:include_blank => true} %></td>
-      <th>期望年薪备注</th>
-      <td><%= text_field :contact, :expect_salary_notes_like %></td>
-    </tr>
-    <tr>
-      <th>年龄</th>
-      <td><%= text_field :contact, :age, :style => "width:30px;" %> 至
-        <%= text_field :contact, :age1, :style => "width:30px;" %></td>
-      <th>已离职？</th>
-      <td><%= select :contact, :resigned_eq, [['是', 1], ['否', 0]], {:include_blank => true} %></td>
-    </tr>
-    <tr>
-      <!--
+      <tr>
+        <td colspan="4" class="splitor"><b>联系人信息：</b></td>
+      </tr>
+      <tr>
+        <th>姓名</th>
+        <td><%= text_field :contact, :full_name %></td>
+        <th rowspan="3">期望年薪</th>
+        <td rowspan="3"><%= select :contact, :expect_salary_in,
+                                   [['所有', '']]+Contact::SALARY_TYPES, {}, :multitype => true, :size => 5 %></td>
+      </tr>
+      <tr>
+        <th>职位</th>
+        <td><%= text_field :contact, :position_like %></td>
+      </tr>
+      <tr>
+        <th>备注</th>
+        <td><%= text_field :contact, :notes_like %></td>
+      </tr>
+      <tr>
+        <th>性别</th>
+        <td><%= select :contact, :sex_eq, [['男', 1], ['女', 2]], {:include_blank => true} %></td>
+        <th>期望年薪备注</th>
+        <td><%= text_field :contact, :expect_salary_notes_like %></td>
+      </tr>
+      <tr>
+        <th>年龄</th>
+        <td><%= text_field :contact, :age, :style => "width:30px;" %> 至
+          <%= text_field :contact, :age1, :style => "width:30px;" %></td>
+        <th>已离职？</th>
+        <td><%= select :contact, :resigned_eq, [['是', 1], ['否', 0]], {:include_blank => true} %></td>
+      </tr>
+      <tr>
+        <!--
       <th>开始工作时间</th>
       <td><%= text_field :contact, :start_work_date_gte, :class => 'datepicker' %> 至
         <%= text_field :contact, :start_work_date_lte, :class => 'datepicker' %></td>  -->
-      <th>工作年限</th>
-      <td>
-        <%= text_field :contact, :work_age, :style => "width:30px;" %> 年 至
-        <%= text_field :contact, :work_age1, :style => "width:30px;" %> 年
-      </td>
-      <th>近期考虑工作变动？</th>
-      <td><%= select :contact, :want_new_job_eq, [['是', 1], ['否', 0]], {:include_blank => true} %></td>
-    </tr>
-    <tr>
-      <th>当前职业类型</th>
-      <td><%= select :contact, :firm_type_id_eq, @firm_types, {:include_blank => true} %></td>
-      <th>期望职业类型</th>
-      <td><%= select :contact, :expect_firm_type_id_eq, @firm_types, {:include_blank => true} %></td>
-    </tr>
-    <tr>
-      <th>当前职位类型</th>
-      <td id="position_td">
-        <%= text_field :contact, :position_type_like %>
-        <%#= select :contact, :position_type_id_eq, [['请先选择当前职业类型..', '']], {}, :style => "color:gray" %>
-      </td>
-      <th>期望职位类型</th>
-      <td id="exp_position_td"><%= select :contact, :expect_position_type_id_eq, [['请先选择期望职业类型..', '']], {}, :style => "color:gray" %></td>
-    </tr>
-    <tr>
-      <th>期望工作地点</th>
-      <td><%= text_field :contact, :expect_work_place_like %></td>
-      <td rowspan="2" colspan="2"><%= submit_tag "搜索", :class => "btn btn-primary" %> &nbsp;
-        <%= button_to_function "重置", "reset()", :class => "btn" %></td>
-    </tr>
-    <tr>
-      <th>负责的顾问</th>
-      <td><%= select :contact, :res_id, @res, {:include_blank => true} %></td>
-    </tr>
-    <% if res_sys? -%>
-    <tr>
-      <td colspan="4" class="splitor"><b>招聘需求：</b></td>
-    </tr>
-    <tr>
-      <th>负责的销售</th>
-      <td><%= select :demand, :sales_id, @sales, {:include_blank => true} %></td>
-      <th rowspan="3">年薪范围</th>
-      <td rowspan="3"><%= select :demand, :salary_type_id_in,
-                                 [['所有', '']]+Contact::SALARY_TYPES, {}, :multitype => true, :size => 7 %></td>
-    </tr>
-    <tr>
-      <th>职业类型</th>
-      <td><%= select :demand, :firm_type_id_eq, @firm_types, {:include_blank => true} %></td>
-    </tr>
-    <tr>
-      <th>职位类型</th>
-      <td id="demand_position_td"><%= select :demand, :position_type_id_eq, [['请先选择职业类型..', '']], {}, :style => "color:gray" %></td>
-    </tr>
-    <tr>
-      <th>年薪备注</th>
-      <td><%= text_field :demand, :salary_notes_like %></td>
-      <th>需求备注</th>
-      <td><%= text_field :demand, :demand_notes_like %></td>
-    </tr>
-    <tr>
-      <th>工作地点</th>
-      <td><%= text_field :demand, :work_place_like %></td>
-      <th>状态</th>
-      <td><%= select :demand, :status_id_eq, ContactDemand::STATUS, {:include_blank => true} %></td>
-    </tr>
-    <% end -%>
-  </table>
+        <th>工作年限</th>
+        <td>
+          <%= text_field :contact, :work_age, :style => "width:30px;" %> 年 至
+          <%= text_field :contact, :work_age1, :style => "width:30px;" %> 年
+        </td>
+        <th>近期考虑工作变动？</th>
+        <td><%= select :contact, :want_new_job_eq, [['是', 1], ['否', 0]], {:include_blank => true} %></td>
+      </tr>
+      <tr>
+        <th>当前职业类型</th>
+        <td><%= select :contact, :firm_type_id_eq, @firm_types, {:include_blank => true} %></td>
+        <th>期望职业类型</th>
+        <td><%= select :contact, :expect_firm_type_id_eq, @firm_types, {:include_blank => true} %></td>
+      </tr>
+      <tr>
+        <th>当前职位类型</th>
+        <td id="position_td">
+          <%= text_field :contact, :position_type_like %>
+          <%#= select :contact, :position_type_id_eq, [['请先选择当前职业类型..', '']], {}, :style => "color:gray" %>
+        </td>
+        <th>期望职位类型</th>
+        <td id="exp_position_td"><%= select :contact, :expect_position_type_id_eq, [['请先选择期望职业类型..', '']], {}, :style => "color:gray" %></td>
+      </tr>
+      <tr>
+        <th>期望工作地点</th>
+        <td><%= text_field :contact, :expect_work_place_like %></td>
+        <td rowspan="2" colspan="2"><%= submit_tag "搜索", :class => "btn btn-primary" %> &nbsp;
+          <%= button_to_function "重置", "reset()", :class => "btn" %></td>
+      </tr>
+      <tr>
+        <th>负责的顾问</th>
+        <td><%= select :contact, :res_id, @res, {:include_blank => true} %></td>
+      </tr>
+      <% if res_sys? -%>
+          <tr>
+            <td colspan="4" class="splitor"><b>招聘需求：</b></td>
+          </tr>
+          <tr>
+            <th>负责的销售</th>
+            <td><%= select :demand, :sales_id, @sales, {:include_blank => true} %></td>
+            <th rowspan="3">年薪范围</th>
+            <td rowspan="3"><%= select :demand, :salary_type_id_in,
+                                       [['所有', '']]+Contact::SALARY_TYPES, {}, :multitype => true, :size => 7 %></td>
+          </tr>
+          <tr>
+            <th>职业类型</th>
+            <td><%= select :demand, :firm_type_id_eq, @firm_types, {:include_blank => true} %></td>
+          </tr>
+          <tr>
+            <th>职位类型</th>
+            <td id="demand_position_td"><%= select :demand, :position_type_id_eq, [['请先选择职业类型..', '']], {}, :style => "color:gray" %></td>
+          </tr>
+          <tr>
+            <th>年薪备注</th>
+            <td><%= text_field :demand, :salary_notes_like %></td>
+            <th>需求备注</th>
+            <td><%= text_field :demand, :demand_notes_like %></td>
+          </tr>
+          <tr>
+            <th>工作地点</th>
+            <td><%= text_field :demand, :work_place_like %></td>
+            <th>状态</th>
+            <td><%= select :demand, :status_id_eq, ContactDemand::STATUS, {:include_blank => true} %></td>
+          </tr>
+      <% end -%>
+    </table>
 <% end %>
 <script>
-  $(function () {
+    $(function () {
 //    $('#contact_firm_type_id_eq').change(function () {
 //      var tid = $(this).val(), position_td = $('#position_td')
 //      if ($.trim(tid) == '') return
@@ -169,31 +170,31 @@
 //      position_td.load("/sales/get_positions", {id:tid, object:'contact', field:'position_type_id_eq'})
 //    })
 
-    $('#contact_expect_firm_type_id_eq').change(function () {
-      var tid = $(this).val(), position_td = $('#exp_position_td')
-      if ($.trim(tid) == '') return
-      position_td.html($('<span>').text('Loading...').css('color', 'red'))
-      position_td.load("/sales/get_positions", {id:tid, object:'contact', field:'expect_position_type_id_eq'})
+        $('#contact_expect_firm_type_id_eq').change(function () {
+            var tid = $(this).val(), position_td = $('#exp_position_td')
+            if ($.trim(tid) == '') return
+            position_td.html($('<span>').text('Loading...').css('color', 'red'))
+            position_td.load("/sales/get_positions", {id:tid, object:'contact', field:'expect_position_type_id_eq'})
+        })
+
+        $('#demand_firm_type_id_eq').change(function () {
+            var tid = $(this).val(), position_td = $('#demand_position_td')
+            if ($.trim(tid) == '') return
+            position_td.html($('<span>').text('Loading...').css('color', 'red'))
+            position_td.load("/sales/get_positions", {id:tid, object:'demand', field:'position_type_id_eq'})
+        })
+
+        $('#firm_province_id_eq').change(function () {
+            var pid = $(this).val(), city_td = $('#city_td')
+            if ($.trim(pid) == '') return
+            city_td.html($('<span>').text('Loading...').css('color', 'red'))
+            city_td.load("/sales/get_cities", {id:pid, object:'firm', field:'city_id_eq'})
+        })
+
+        function reset() {
+            $('.blue_tb').find('input[type=textfield] select').val('')
+        }
+
     })
-
-    $('#demand_firm_type_id_eq').change(function () {
-      var tid = $(this).val(), position_td = $('#demand_position_td')
-      if ($.trim(tid) == '') return
-      position_td.html($('<span>').text('Loading...').css('color', 'red'))
-      position_td.load("/sales/get_positions", {id:tid, object:'demand', field:'position_type_id_eq'})
-    })
-
-    $('#firm_province_id_eq').change(function () {
-      var pid = $(this).val(), city_td = $('#city_td')
-      if ($.trim(pid) == '') return
-      city_td.html($('<span>').text('Loading...').css('color', 'red'))
-      city_td.load("/sales/get_cities", {id:pid, object:'firm', field:'city_id_eq'})
-    })
-
-    function reset() {
-      $('.blue_tb').find('input[type=textfield] select').val('')
-    }
-
-  })
 
 </script>

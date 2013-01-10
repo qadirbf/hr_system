@@ -463,6 +463,19 @@ class SalesController < ApplicationController
                                   :page => params[:page], :order => "rating desc, id desc", :per_page => 30)
   end
 
+  def auto_position
+    key = params[:q] if params[:q]
+    sql = []
+    sql << "name like '%#{key}%'"
+    if params[:t].to_i != 0
+      sql << "firm_type_id = #{params[:t].to_i}"
+    end
+    @results = ContactPosition.where(sql.join(" AND "))
+    respond_to do |format|
+      format.js
+    end
+  end
+
   def demand_edit
     unless params[:id].blank?
       @title = "修改招聘需求"

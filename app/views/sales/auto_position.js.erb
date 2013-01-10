@@ -1,0 +1,11 @@
+<% if @results -%>
+    <% i=0 %>[
+    <% @results.each do |result| %>
+        <% if i==0 %>
+            {name:"<%= result.name %>(<%= result.firm_type.name -%>)",show:"<%= result.name + " " %>" + "<%= result.name.nil? ? " " : result.name + " " %>"}
+        <% else %>
+            ,{name:"<%= result.name %>(<%= result.firm_type.name -%>)",show:"<%= result.name + " " %>" + "<%= result.name.nil? ? " " : result.name + " " %>"}
+        <% end %>
+        <% i+=1 -%>
+    <% end -%>]
+<% end -%>
