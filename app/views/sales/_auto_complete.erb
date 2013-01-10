@@ -2,7 +2,7 @@
 <link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css" />
 <script>
     $(document).ready(function () {
-        $("#contact_position_like").autocomplete("/sales/auto_position", {
+        $("#contact_position_cn_like").autocomplete("/sales/auto_position", {
             delay:10,
             minChar:1,
             multiple:true,
@@ -19,7 +19,7 @@
                 return item.name;
             }
         }).result(function (e, item) {
-                    $("#contact_position_like").val(item.name);
+                    $("#contact_position_cn_like").val(item.name);
                 });
     });
 </script>
