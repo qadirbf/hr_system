@@ -526,8 +526,8 @@ class SalesController < ApplicationController
     user = current_user
     @demand = ContactDemand.find(params[:id])
     @firm = @demand.firm
-    @can_edit = @firm.sales_followed_by?(user)
-    @can_recommend = [2, 3, 4].include?(@demand.status_id)&&user.is_res?
+    @can_edit = @firm.sales_followed_by?(user) or user.is_admin?
+    @can_recommend = [2, 3, 4].include?(@demand.status_id)&&(user.is_res? or user.is_admin?)
     render :template => "/sales/demand_view"
   end
 
@@ -626,7 +626,7 @@ class SalesController < ApplicationController
     @demand = @recommend.contact_demand
     @req_firm = @demand.firm
 
-    @can_edit = @recommend.recommend?&&@req_firm.res_followed_by?(user)
+    @can_edit = ((@recommend.recommend?&&@req_firm.res_followed_by?(user)) or current_user.is_admin?)
     @can_follow = @req_firm.sales_followed_by?(user)
     render :template => "/sales/recommend_view"
   end
