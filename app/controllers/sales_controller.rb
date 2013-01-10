@@ -40,7 +40,7 @@ class SalesController < ApplicationController
     user = current_user
     @firm = Firm.find(params[:id])
     @title = @firm.firm_name
-    @can_edit = @firm.is_followed_by?(user)
+    @can_edit = (@firm.is_followed_by?(user) or user.is_admin?)
     @can_grab = @firm.can_grab_by?(user)
     @is_special_firm = (@firm.id == 4)
     preload_recall
@@ -181,7 +181,7 @@ class SalesController < ApplicationController
     @contact = Contact.find(params[:id])
     @title = "联系人 - #{@contact.full_name(true)}"
     @firm = @contact.firm
-    @can_edit = @firm.is_followed_by?(current_user)
+    @can_edit = (@firm.is_followed_by?(current_user) or current_user.is_admin?)
     preload_recall
     render :template => "/sales/contact_view"
   end
@@ -329,7 +329,12 @@ class SalesController < ApplicationController
   def my_recall
     @title = (params[:from] == "no_compt" ? "所有未完成的call" : "我的跟进任务")
     user = current_user
-    @emps = Employee.active_emps.dep_emps(user.department_id).select('id,username').order("username").map { |e| [e.username, e.id] }
+    if res_sys?
+      @emps = Employee.active_emps.res.select('id,username').order("username").map { |e| [e.username, e.id] }
+    else
+      @emps = Employee.active_emps.sales.select('id,username').order("username").map { |e| [e.username, e.id] }
+    end
+
     unless params[:complete].blank?
       params[:complete]=='1' ? params[:completed_at_not_null]=true : params[:completed_at_null] = true
     end
@@ -466,7 +471,7 @@ class SalesController < ApplicationController
   def auto_position
     key = params[:q] if params[:q]
     sql = []
-    sql << "name like '%#{key}%'"
+    sql << (key.blank? ? "name is not null" : "name like '%#{key}%'")
     if params[:t].to_i != 0
       sql << "firm_type_id = #{params[:t].to_i}"
     end

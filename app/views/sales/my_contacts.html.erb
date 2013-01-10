@@ -20,22 +20,57 @@
   </tr>
   <% @firms.each do |f| -%>
       <% contacts = f.contacts.grabbed(params[:user_id]) -%>
-      <tr>
-        <td rowspan="<%= contacts.size %>" valign="top">
-          <%= check_box_tag "ids", f.id, nil, {:class => "chk"} -%>
-          <%= open_firm_page f.firm_name, f.id -%></td>
-        <td rowspan="<%= contacts.size %>" valign="top"><%= f.firm_leads[0].emp -%></td>
-        <td rowspan="<%= contacts.size %>" valign="top"><%= f.firm_leads[0].grab_date.format_date(:date) -%></td>
-        <% contacts.each do |c| -%>
-        <td> <%= candidate_label c -%>
-          <%= open_contact_page c.full_name(true), c.id -%> </td>
-        <td> <%= c.position_cn -%> </td>
-        <td> <%= c.phone1 -%> <%= c.mobile %></td>
-        <td> <%= c.expect_salary_type -%> <%= simple_format c.salary_notes -%> </td>
-        <td> <%= c.notes -%> </td>
-        <td> <%= link_to "上传简历", {:controller => "res", :action => "contact_edit", :id=>c.id}, {:target=>"_blank"} -%> </td>
-        <% end -%>
-      </tr>
+      <% c = contacts.first -%>
+      <% if contacts.size > 1 -%>
+          <tr>
+            <td rowspan="<%= contacts.size %>" valign="top">
+              <%= check_box_tag "ids", f.id, nil, {:class => "chk"} -%>
+              <%= open_firm_page f.firm_name, f.id -%></td>
+            <td rowspan="<%= contacts.size %>" valign="top"><%= f.firm_leads[0].emp -%></td>
+            <td rowspan="<%= contacts.size %>" valign="top"><%= f.firm_leads[0].grab_date.format_date(:date) -%></td>
+            <%# contacts.each do |c| -%>
+            <td> <%= candidate_label c -%>
+              <%= open_contact_page c.full_name(true), c.id -%> </td>
+            <td> <%= c.position_cn -%> </td>
+            <td> <%= c.phone1 -%> <%= c.mobile %></td>
+            <td> <%= c.expect_salary_type -%> <%= simple_format c.salary_notes -%> </td>
+            <td> <%= c.notes -%> </td>
+            <td> <%= link_to "上传简历", {:controller => "res", :action => "contact_edit", :id => c.id}, {:target => "_blank"} -%> </td>
+            <%# end -%>
+          </tr>
+          <% contacts.delete_if { |con| con.id == c.id } -%>
+          <% contacts.each do |co| -%>
+              <tr>
+                <td> <%= candidate_label co -%>
+                  <%= open_contact_page co.full_name(true), co.id -%> </td>
+                <td> <%= co.position_cn -%> </td>
+                <td> <%= co.phone1 -%> <%= co.mobile %></td>
+                <td> <%= co.expect_salary_type -%> <%= simple_format co.salary_notes -%> </td>
+                <td> <%= co.notes -%> </td>
+                <td> <%= link_to "上传简历", {:controller => "res", :action => "contact_edit", :id => co.id}, {:target => "_blank"} -%> </td>
+              </tr>
+          <% end -%>
+      <% else -%>
+          <tr>
+            <td valign="top">
+              <%= check_box_tag "ids", f.id, nil, {:class => "chk"} -%>
+              <%= open_firm_page f.firm_name, f.id -%></td>
+            <td valign="top"><%= f.firm_leads[0].emp -%></td>
+            <td valign="top"><%= f.firm_leads[0].grab_date.format_date(:date) -%></td>
+            <% if c.blank? -%>
+                <td></td><td></td><td></td>
+                <td></td><td></td><td></td>
+            <% else -%>
+                <td> <%= candidate_label c -%>
+                  <%= open_contact_page c.full_name(true), c.id -%> </td>
+                <td> <%= c.position_cn -%> </td>
+                <td> <%= c.phone1 -%> <%= c.mobile %></td>
+                <td> <%= c.expect_salary_type -%> <%= simple_format c.salary_notes -%> </td>
+                <td> <%= c.notes -%> </td>
+                <td> <%= link_to "上传简历", {:controller => "res", :action => "contact_edit", :id => c.id}, {:target => "_blank"} -%> </td>
+            <% end -%>
+          </tr>
+      <% end -%>
   <% end -%>
 </table>
 <%= page_links @firms %>

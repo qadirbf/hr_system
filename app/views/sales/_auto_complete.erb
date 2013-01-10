@@ -4,8 +4,8 @@
     $(document).ready(function () {
         $("#contact_position_cn_like").autocomplete("/sales/auto_position", {
             delay:10,
-            minChar:1,
-            multiple:true,
+            minChars:0,
+            multiple:false,
             parse:function (data) {
                 return $.map(eval(data), function (item) {
                     return {

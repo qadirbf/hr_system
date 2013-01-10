@@ -17,6 +17,7 @@ class Employee < ActiveRecord::Base
 
   %w{sales res hr}.each_with_index do |name,idx|
     define_method("is_#{name}?") do
+      return true if self.is_admin?
       self.department_id==idx+1
     end
   end
