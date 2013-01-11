@@ -355,19 +355,21 @@ class SalesController < ApplicationController
     params[:user_id]||=current_user.id
 
     if current_user.is_admin?
+      user_id = params[:user_id].to_i
+      where_sql = (user_id == 0 ? ["firm_leads.employee_id > 0"] : ["firm_leads.employee_id = :user_id", {user_id: user_id}])
+
+      @firms = Firm.includes(:firm_leads).where(where_sql).order("firm_leads.grab_date").paginate(:page => params[:page], :per_page => 30)
+
       if res_sys?
-        where_sql = ["firm_leads.employee_id is not null and contacts.employee_id is not null"]
-        @firms = Firm.includes(:firm_leads, :contacts).where(where_sql).order("firm_leads.grab_date").paginate(
-            :page => params[:page], :per_page => 30)
+        @employees = Employee.active_emps.res.select('id,username').order("username").map { |e| [e.username, e.id] }
         render :template => "/sales/my_contacts"
       else
-        @firms = Firm.includes(:firm_leads).where("firm_leads.employee_id is not null").order("firm_leads.grab_date").paginate(
-            :page => params[:page], :per_page => 30)
+        @employees = Employee.active_emps.sales.select('id,username').order("username").map { |e| [e.username, e.id] }
       end
     else
       if res_sys?
-        where_sql = ["firm_leads.employee_id = :user_id and contacts.employee_id = :user_id", {user_id: params[:user_id]}]
-        @firms = Firm.includes(:firm_leads, :contacts).where(where_sql).order("firm_leads.grab_date").paginate(
+        where_sql = ["firm_leads.employee_id = :user_id", {user_id: params[:user_id]}]
+        @firms = Firm.includes(:firm_leads).where(where_sql).order("firm_leads.grab_date").paginate(
             :page => params[:page], :per_page => 30)
         render :template => "/sales/my_contacts"
       else

@@ -5,6 +5,17 @@
     <%= button_to_function "释放公司", "batch_ungrab()", :class => "btn" -%>
   </div>
 </h1>
+<% if current_user.is_admin? -%>
+    <%= form_tag "/#{params[:db_type]}/my_firms" do %>
+        <table style="width:20%" class="common_tb">
+          <tr>
+            <td>员工：<%= select_tag :user_id, options_for_select([['所有', 0]]+@employees, params[:user_id].to_i) %></td>
+            <td>&nbsp;&nbsp;<%= submit_tag "搜索", :class => "btn btn-primary" %></td>
+          </tr>
+        </table>
+    <% end -%>
+<% end -%>
+
 <%= page_links @firms %>
 <table class="list_tb">
   <tr class="title">
