@@ -7,6 +7,31 @@
 }
 </style>
 <%= include_datepicker %>
+<script type="text/javascript" src="/jquery/jquery.autocomplete.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css" />
+<script>
+    $(document).ready(function () {
+        $("#tag_name").autocomplete("/sales/auto_tag", {
+            delay:10,
+            minChars:0,
+            multiple:false,
+            parse:function (data) {
+                return $.map(eval(data), function (item) {
+                    return {
+                        data:item,
+                        value:item.name,
+                        result:item.name
+                    }
+                });
+            },
+            formatItem:function (item) {
+                return item.name;
+            }
+        }).result(function (e, item) {
+                    $("#tag_name").val(item.name);
+                });
+    });
+</script>
 <h1 class="title"><%= @title %></h1>
 <%= form_tag "/sales/contact_list" do %>
     <table class="common_tb" style="width:95%">
@@ -47,7 +72,9 @@
       </tr>
       <tr class="notes">
         <td>公司</td>
-        <td> <%= text_field_tag :firm_name, params[:firm_name] %></td>
+        <td> <%= text_field_tag :firm_name, params[:firm_name] %>
+        标签：<%= text_field_tag :tag_name, params[:tag_name] %>
+        </td>
         <td>备注</td>
         <td> <%= text_field_tag :notes_like, params[:notes_like] %></td>
         <td>期望工作地点</td>

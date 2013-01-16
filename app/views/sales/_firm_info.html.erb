@@ -28,6 +28,16 @@
             </tr>
         <% end -%>
         <tr>
+          <td colspan="2" id="tag_td">
+            标签：
+            <% if firm.firm_tags then firm.firm_tags.each do |firm_tag| -%>
+                <%= firm_tag.tag.name -%>
+            <% end -%>
+            <% end -%>
+            <%= link_to_function "添加标签", "open_url('/#{params[:db_type]}/edit_firm_tag.php?firm_id=#{firm.id}')" -%>
+          </td>
+        </tr>
+        <tr>
           <td colspan="2">
             评级： <%= firm.rating_type -%> &nbsp;&nbsp;&nbsp;&nbsp;
             备注： <%= h firm.notes %></td>
