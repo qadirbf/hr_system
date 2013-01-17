@@ -9,10 +9,12 @@
   </div>
 <% end %>
 
-<% if false -%>
+<% if user.is_admin? -%>
     <h1 class="title">通用</h1>
-    <%= link_to "上班打卡", {:controller => "attendance", :action => "add_record", :flag => 1, :r => rand} %>
-    <%= link_to "下班打卡", {:controller => "attendance", :action => "add_record", :flag => 2, :r => rand} %>  <br/>
+    <%= link_to "上班打卡", {:controller => "attendance", :action => "add_record", :flag => 1, :r => rand} %>&nbsp;&nbsp;
+    <%= link_to "下班打卡", {:controller => "attendance", :action => "add_record", :flag => 2, :r => rand} %>&nbsp;&nbsp;
+    <%= link_to "查看打卡信息", {:controller => "attendance", :action => "show_record", :r => rand} %>
+    <br/>
 <% end -%>
 
 <% if user.is_sales? or user.is_admin? -%>

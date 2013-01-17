@@ -1,0 +1,42 @@
+<%# javascript_include_tag "/javascripts/jquery/jquery-1.3.2.min.js" %>
+<style>
+    #mask{position: absolute;left:0;top:0;width:100%;height:100%;background: #000;opacity:0.6;filter:alpha(opacity=60);}
+    #img{position: absolute;visibility: hidden;background:#fff;z-index: 10;width: 300px;}
+</style>
+<div id="img">
+  <%= image_tag "/images/record_#{params[:rtype]}.gif", :style => "margin-left:100px;" %>
+
+  <div style="margin-top:5px;font-size: 12px;background: #a0a0a0;position: relative;font-family: 微软雅黑;">
+    <%if params[:rtype]=='notice'%>
+        <%= link_to "进入首页",{:controller=>"main",:action=>"index"},:confirm=>"你还没有上班打卡，确定直接进入内网吗？" %> &nbsp;
+        <%= link_to "上班打卡",{:controller=>"attendance",:action=>"add_record",:flag=>1,:r=>rand},:style=>"position:absolute;right:0px;" %>
+    <%else%>
+        <%= link_to "返回首页",{:controller=>"main",:action=>"index"} %> &nbsp;
+        <%= link_to "查看打卡信息",{:action=>"show_record"},:style=>"position:absolute;right:0px;" %>
+    <%end%>
+  </div>
+</div>
+<div id="mask" ></div>
+
+<script>
+    var $ = function(id){return document.getElementById(id)}
+    function resize_img(){
+        var img = $('img'),w_width = document.body.clientWidth,w_height = document.body.clientHeight,
+                scroll_box = $('scroll_box')
+        var i_width = img.clientWidth,i_height = img.clientHeight
+        img.style.left = (w_width - i_width)/2 + 'px'
+        img.style.top = (w_height - i_height)/2 + 'px'
+        img.style.visibility = 'visible'
+        if(scroll_box){
+            scroll_box.style.left = (w_width - scroll_box.clientWidth)/2 + 'px'
+        }
+    }
+
+    if(window.addEventListener){
+        window.addEventListener('resize',resize_img,false)
+    }else{
+        window.attachEvent('onresize',resize_img)
+    }
+
+    window.onload = function(){ resize_img() }
+</script>

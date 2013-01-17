@@ -1,0 +1,107 @@
+<%= include_datepicker %>
+<script language="javascript">
+    function change_display() {
+        if (document.getElementById("other_attend").style.display == "none") {
+            document.getElementById("other_attend").style.display = "inline";
+            document.getElementById("change").value = "隐藏打卡信息"
+        }
+        else {
+            document.getElementById("other_attend").style.display = "none";
+            document.getElementById("change").value = "显示打卡信息"
+        }
+    }
+</script>
+
+<table class="crm-table" width="100%" cellSpacing=0 cellPadding=5 border=0>
+  <tr>
+    <td width="20%">
+      <table width="100%" style="border-collapse:collapse;border-color:#ececec;" border="1">
+        <tr>
+          <td style="padding:10px;" align="center">
+            <table cellpadding="5px">
+              <tr>
+                <td width="40%" align="center" style="border:1px dotted #000000">
+                  <img src="/images/employee.jpg" ><br>
+                  <font color="fuchsia"> <%= current_user.username %></font>
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2">
+
+                  <% if @last_attend and @last_attend.absence_reason == 1 %>
+                      <marquee direction="left" behavior="scroll" scrolldelay="200">
+                        <font size="-1" color="red">*注意：您上次的考勤记录为:“旷工”；如与实际不符，请与文员联系修改！~</font>
+                      </marquee>
+                  <% else %>
+                      <marquee direction="left" behavior="scroll" scrolldelay="200">
+                        <font size="-1" color="green">*请每日关注您的考勤信息，如发现与实际不符，请及时与文员联系修改！~</font>
+                      </marquee>
+                  <% end %>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <%= form_tag :action => "show_record" do -%>
+            <tr>
+              <td class="infoTable nowrap">
+                选择日期:<%= text_field_tag :record_time, format_date(Time.parse(params[:record_time]), :date), :class => "datepicker" %>
+              </td>
+            </tr>
+            <tr>
+              <td class="infoTable nowrap">
+                <%= link_to "前一天", :action => 'show_record', :record_time => @pre_time %>
+                <%= link_to "后一天", :action => 'show_record', :record_time => @nex_time %>
+                <%= link_to "今天", :action => 'show_record', :record_time => @ths_time %>
+              </td>
+            </tr>
+            <tr>
+              <td class="infoTable nowrap">
+                <%= submit_tag "搜索", :class => "btn" %>
+              </td>
+            </tr>
+        <% end -%>
+      </table>
+    </td>
+    <td>&nbsp;</td>
+
+    <td valign="top">
+      <strong>打卡信息(<%= @var_time %> <%= @weekday %>)： </strong>
+      <input type="button" id="change"
+             <% if @attends.size>0 or @holiday %> value="显示打卡信息"
+             <% else %> value="隐藏打卡信息"
+             <% end %>  onclick="change_display()" class="btn">
+  <span id="other_attend"
+        <% if @attends.size>0 or @holiday %> style="display:none;" <% end %>>
+    <table style="border-collapse:collapse;border-color:#ececec;" border="1" class="crm-table" width="100%" cellSpacing=0 cellPadding=5 border=0>
+      <tr>
+        <th width="33%">用户名</th>
+        <th width="33%">上班打卡时间</th>
+        <th width="33%">下班打卡时间</th>
+      </tr>
+      <% @employees.each do |employee|
+        record_in = @in_records[employee.id]
+        record_out = @out_records[employee.id]
+        if record_in||record_out %>
+              <tr>
+                <td width="33%"><%= employee.name_cn %>(<%= employee.username %>)</td>
+                <td width="33%">
+                  <% if record_in %><%= record_in.record_time.to_s[11, 8] %>
+                      <br><span style="font-size:8pt"><%= record_in.ip %>
+                  <%= link_to '?', url_for("http://ip138.com/ips138.asp?ip=#{record_in.ip}"), :target => "_blank" %></span>
+                  <% end %></td>
+                <td width="33%">
+                  <% if record_out %><%= record_out.record_time.to_s[11, 8] %>
+                      <br><span style="font-size:8pt"><%= record_out.ip %>
+                  <%= link_to '?', url_for("http://ip138.com/ips138.asp?ip=#{record_out.ip}"), :target => "_blank" %></span>
+                  <% end %></td>
+              </tr>
+          <% end %>
+      <% end %>
+    </table>
+  </span>
+
+    </td>
+  </tr>
+</table>

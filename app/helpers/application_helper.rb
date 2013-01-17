@@ -62,6 +62,11 @@ module ApplicationHelper
     render :partial=>"/common/nav_box_js"
   end
 
+  def clearup_time_string(date)
+    return date if date.blank? or date.size<10
+    return date[0, 10]
+  end
+
   def url_with_session(link)
     return link if !link
     l = link.split("/")-[""]
