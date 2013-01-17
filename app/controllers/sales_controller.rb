@@ -136,6 +136,26 @@ class SalesController < ApplicationController
     end
   end
 
+  def edit_firm_tag
+    @title = "修改公司标签"
+    @firm = Firm.find(params[:firm_id])
+    if request.post?
+      Tag.transaction do
+        tag = Tag.where(["name = ?", params[:name]]).first
+        if tag
+          unless FirmTag.exists?(["firm_id = #{@firm.id} and tag_id = #{tag.id}"])
+            FirmTag.create({:firm_id => @firm.id, :tag_id => tag.id})
+          end
+        else
+          tag = Tag.create({:name => params[:name], :created_by => current_user.id})
+          FirmTag.create({:firm_id => @firm.id, :tag_id => tag.id})
+        end
+      end
+      flash[:notice] = "成功保存！"
+      redirect_to :action => "firm_show", :controller => params[:db_type], :id => @firm.id, :format => 'php'
+    end
+  end
+
   def contact_edit
     unless params[:id].blank?
       @title = "修改联系人"
@@ -278,6 +298,11 @@ class SalesController < ApplicationController
       p_hash.merge!(:age1 => params[:age1])
     end
 
+    unless params[:tag_name].blank?
+      joins += " left join firm_tags on firm_tags.firm_id = firms.id left join tags on tags.id = firm_tags.tag_id"
+      sql << " and tags.name = :tag_name"
+      p_hash.merge!(:tag_name => params[:tag_name])
+    end
     @contacts = Contact.paginate :select => "contacts.*,firms.firm_name,employees.username", :joins => joins,
                                  :conditions => [sql, p_hash], :order => "candidates.created_at desc", :per_page => 30, :page => params[:page]
   end
@@ -480,6 +505,27 @@ class SalesController < ApplicationController
     @results = ContactPosition.where(sql.join(" AND "))
     respond_to do |format|
       format.js
+    end
+  end
+
+  def auto_tag
+    key = params[:q] if params[:q]
+    @results = Tag.where("name like '%#{key}%'")
+    #respond_to do |format|
+    #  format.js
+    #end
+    render :template => "sales/auto_position"
+  end
+
+  def delete_tag
+    tag = Tag.where("id = ?", params[:id].to_i).first
+    if tag
+      FirmTag.transaction do
+        FirmTag.delete_all(["tag_id = ?", tag.id])
+        tag.destroy
+        flash[:notice] = "删除成功"
+      end
+      redirect_to :action => "edit_firm_tag.php", :firm_id => params[:firm_id]
     end
   end
 

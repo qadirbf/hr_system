@@ -1,0 +1,47 @@
+<script type="text/javascript" src="/jquery/jquery.autocomplete.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css"/>
+<script>
+    $(document).ready(function () {
+        $("#name").autocomplete("/sales/auto_tag", {
+            delay:10,
+            minChars:0,
+            multiple:false,
+            parse:function (data) {
+                return $.map(eval(data), function (item) {
+                    return {
+                        data:item,
+                        value:item.name,
+                        result:item.name
+                    }
+                });
+            },
+            formatItem:function (item) {
+                return item.name;
+            }
+        }).result(function (e, item) {
+                    $("#name").val(item.name);
+                });
+    });
+</script>
+<h1 class="title"><%= @firm.firm_name -%></h1>
+<% unless @firm.firm_tags.blank? -%>
+    <ul style="width: 600px;">
+      <% @firm.firm_tags.each do |firm_tag| -%>
+          <li style="width: 200px;padding-right: 20px;">
+            <%= firm_tag.tag.name -%>
+            <span style="float: right;">
+              <a href="javascript:if(confirm('删除操作会导致使用了该标签的公司会丢失该标签。确实要删除吗?'))location='delete_tag.php?id=<%= firm_tag.tag.id -%>&&firm_id=<%= @firm.id -%>'">删除</a>
+            </span>
+          </li>
+      <% end -%>
+    </ul>
+<% else -%>
+    暂无标签
+<% end -%>
+<%= form_tag "/#{params[:db_type]}/edit_firm_tag.php" do %>
+    <%= hidden_field_tag "firm_id", @firm.id -%>
+    <div>
+      标签名：<%= text_field_tag "name" -%>
+      <%= submit_tag "提交保存", {:class => "btn btn-primary"} -%>
+    </div>
+<% end -%>
