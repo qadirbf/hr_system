@@ -66,7 +66,13 @@ class EmployeesController < ApplicationController
         flash[:notice] = "成功登录！"
         flash[:last_url] = flash[:last_url] if flash[:last_url]
         LoginHistory.add_history user.username,nil,user.id,nil,request.remote_ip,0
-        redirect_to :controller=>"main"
+
+        # 打卡
+        record_in = AttendRecord.get_clock_in_record(user.id, Time.now.format_date(:date))
+        not_need_record = (!record_in.blank? || user.is_admin?)
+        record_url = url_for(:controller => "attendance", :action => "attend_notice", :rtype => "notice")
+
+        redirect_to(not_need_record ? url_for(:controller => "main") : record_url)
         return false
       else
         raise AppError, "用户名或密码错误！"

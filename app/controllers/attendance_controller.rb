@@ -54,10 +54,6 @@ class AttendanceController < ApplicationController
         inject({}) { |h, r| h[r.employee_id]=r; h }
     @out_records = AttendRecord.where("employee_id in (?) and attend_type = 2 and record_time like ?", @employees.map(&:id), "#{@var_time}%").
         inject({}) { |h, r| h[r.employee_id]=r; h }
-    puts @in_records
-    puts '---------'
-    puts @out_records
-    puts '========='
 
     @attends = Attendance.all(:conditions=>"employee_id > 0 and this_date=('#{@var_time} 00:00:00')")
     @holiday = false #假期设置
@@ -82,6 +78,50 @@ class AttendanceController < ApplicationController
     end
   rescue
     check_date(nil, when_blank)
+  end
+
+  def record_detail
+    @employees = Employee.where("active=1 or leave_date>sysdate()-60").order("username")
+
+    params[:employee_id] ||= current_user.id
+    @this_employee = Employee.where("id = ?", params[:employee_id]).first
+
+    @def_employees = Employee.where("active=1 or leave_date>sysdate()-60").order("username")
+
+    params[:start_time] = check_date(params[:start_time],'beginning')
+    params[:end_time] = check_date(params[:end_time],'end')
+    @attends = Attendance.where("employee_id=? and (this_date>=str_to_date('#{params[:start_time]} 00:00:00','%Y-%m-%d %H:%i:%s') and this_date<=str_to_date('#{params[:end_time]} 23:59:59','%Y-%m-%d %H:%i:%s'))", params[:employee_id]).order("this_date desc")
+    #@leaves=AttendLeave.find(:all,:conditions=>["employee_id=? and (start_date>=str_to_date('#{params[:start_time]} 00:00:00','%Y-%m-%d %H:%i:%s') and end_date<=str_to_date('#{params[:end_time]} 23:59:59','%Y-%m-%d %H:%i:%s'))",params[:employee_id]],:order=>"id desc")
+  end
+
+  protected
+  def init_menu
+    @sub_title="考勤系统"
+    preload_permission
+    @sys_nav_menus = [["/attendance/show_record", "考勤记录"],["/attendance/record_detail", "打卡记录及考勤信息"]]
+                         #["/attendance/show_leave", "年假/病假"],["/attendance/serious_late", "严重迟到记录"],
+                         #["/attendance/oral_application_list","口头申请"],["/attendance/apply_leave_list","正式申请"],
+                         #["/attendance/forget_record_list", "忘记/未打卡申请列表"]]
+    #@sys_nav_menus << ["/attendance/set_leave", "已批准的申请"] if @can_edit or @can_view
+    #@sys_nav_menus << ["/attendance/show_attend", "员工考勤列表"] if @can_edit or @can_view
+    #@sys_nav_menus << ["/attendance/set_holiday", "设置放假"] if @can_edit or @can_view
+    #if @can_edit
+    #  @sys_nav_menus << ["/attendance/summary", "统计考勤信息"]
+    #  @sys_nav_menus << ["/attendance/input_record", "生成考勤信息"]
+    #  @sys_nav_menus << ["/attendance/attend_operate", "考勤操作"]
+    #end
+
+  end
+
+  def preload_permission
+    @can_edit = current_user.is_admin?
+    @can_view = current_user.is_admin?
+
+    @can_edit_others_archive = current_user.is_admin?
+    @can_view_others_archive = current_user.is_admin?
+    @can_edit_archive = current_user.is_admin?
+    @can_view_archive = current_user.is_admin?
+    @can_view_group = current_user.is_admin?
   end
 
 

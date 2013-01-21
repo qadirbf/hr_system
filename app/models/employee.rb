@@ -6,6 +6,7 @@ class Employee < ActiveRecord::Base
   validates_presence_of :active,:message=>"请选择是否允许登录！"
   validates_uniqueness_of :username,:message=>"用户名已经存在！"
   belongs_to :department
+  has_many :attend_records
 
   include HrLib::Security
 

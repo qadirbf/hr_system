@@ -5,10 +5,13 @@
 </style>
 <div id="img">
   <%= image_tag "/images/record_#{params[:rtype]}.gif", :style => "margin-left:100px;" %>
+  <% if params[:rtype]=='notice' -%>
+      <span style="font-size: 16px;font-weight: bold;display: block;text-align: center;">上班之前先打个卡吧~</span>
+  <% end -%>
 
   <div style="margin-top:5px;font-size: 12px;background: #a0a0a0;position: relative;font-family: 微软雅黑;">
     <%if params[:rtype]=='notice'%>
-        <%= link_to "进入首页",{:controller=>"main",:action=>"index"},:confirm=>"你还没有上班打卡，确定直接进入内网吗？" %> &nbsp;
+        <a href="javascript:void(0)" onclick="if(confirm('你还没有上班打卡，确定直接进入内网吗？')){window.location.href='/main/index'}">进入首页</a>
         <%= link_to "上班打卡",{:controller=>"attendance",:action=>"add_record",:flag=>1,:r=>rand},:style=>"position:absolute;right:0px;" %>
     <%else%>
         <%= link_to "返回首页",{:controller=>"main",:action=>"index"} %> &nbsp;

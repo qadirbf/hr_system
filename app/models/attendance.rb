@@ -7,4 +7,10 @@ class Attendance < ActiveRecord::Base
   S_TIME = '09:00:00'
   E_TIME = '18:00:00'
 
+  def all_absence_labels
+    labels = self.attend_applies.map{|apply| "<a href='/attendance/apply_leave_show?id=#{apply.apply_leave_id}' target='_blank' style='margin-bottom:3px;display:block'>#{apply.reason_label}(#{apply.absence_label})</a>"}.join
+    labels << (self.apply_leave_id ? "<a href='/attendance/apply_leave_show?id=#{self.apply_leave_id}' target='_blank'>#{self.reason}(#{self.absence_day})</a>" : "#{self.reason}(#{self.absence_day})") if self.absence_reason.to_i > 0
+    return labels
+  end
+
 end

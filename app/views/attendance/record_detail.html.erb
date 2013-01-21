@@ -1,0 +1,152 @@
+<%= include_datepicker -%>
+<style>
+  .nowrap{
+     padding-top: 5px;
+  }
+</style>
+
+<table class="crm-table" width="100%" cellSpacing=0 cellPadding=5 border=0>
+  <tr>
+    <td width="20%">
+      <%= form_tag "/attendance/record_detail" do -%>
+          <table width="100%" style="border-collapse:collapse;border-color:#ececec;" border="1">
+            <tr>
+              <td class="nowrap">
+                从: <%= text_field_tag :start_time, format_date(Time.parse(params[:start_time]), :date), :class => "datepicker" %>
+              </td>
+            </tr>
+            <tr>
+              <td class="nowrap">
+                到:<%= text_field_tag :end_time, format_date(Time.parse(params[:end_time]), :date), :class => "datepicker" %>
+              </td>
+            </tr>
+            <tr>
+              <td class="nowrap">
+                按用户名：
+                <select name="employee_id">
+                  <% @def_employees.each do |employee| %>
+                      <option value="<%= employee.id %>"
+                              <% if params[:employee_id].to_i==employee.id.to_i %>selected="selected"
+                              <% end %>><%= employee.username %>(<%= employee.name_cn %>)
+                      </option>
+                  <% end %>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="nowrap" align="center">
+                <%= submit_tag "搜索", :class => "btn" %>
+              </td>
+            </tr>
+          </table>
+      <% end -%>
+    </td>
+    <td>&nbsp;</td>
+    <td style="vertical-align: top;">
+      <strong>【<%= @this_employee.username %>】考勤统计：</strong>
+      <table style="border-collapse:collapse;border-color:#ececec;" border="1" class="crm-table" width="100%" cellSpacing=0 cellPadding=5 border=0>
+        <tr>
+          <th>迟到次数(严重次数)</th>
+          <th>早退次数(严重次数)</th>
+          <th>缺席天数</th>
+        </tr>
+        <tr>
+          <td>
+            <%# count=late_count(params[:employee_id], params[:start_time], params[:end_time]) %>
+            <%#= count[0] %>(<%#= count[1] %>)<!--迟到总数和严重迟到数-->
+          </td>
+          <td>
+            <% count=early_count(params[:employee_id], params[:start_time], params[:end_time]) %>
+            <%= count[0] %>(<%= count[1] %>)
+          </td>
+          <td><%#=absence_count(params[:employee_id],params[:start_time],params[:end_time])%></td>
+        </tr>
+      </table>
+
+      <div>
+        <strong>打卡信息：</strong>
+        <input type="button" id="attend_btn" value="隐藏" onclick="change_attendance()" class="btn">
+      <span id="attendance" style="display:block;">
+      <table style="border-collapse:collapse;border-color:#ececec;" border="1" class="crm-table" width="100%" cellSpacing=0 cellPadding=5 border=0>
+        <tr>
+          <th>日期</th>
+          <th>上班打卡时间</th>
+          <th>下班打卡时间</th>
+          <th>迟到</th>
+          <th>早退</th>
+          <th>缺席</th>
+          <th>备注</th>
+        </tr>
+        <% @attends.each do |attend| %>
+            <tr>
+              <td><%= attend.this_date.strftime("%Y-%m-%d") %></td>
+              <td><%= attend.start_time %></td>
+              <td><%= attend.end_time %></td>
+              <td>
+                <% if attend.late > 0 then %>迟到
+                <% end %></td>
+              <td>
+                <% if attend.early > 0 then %>早退
+                <% end %></td>
+              <td><%#=attend.all_absence_labels%></td>
+              <td><%= attend.absence_reason %></td>
+            </tr>
+        <% end %>
+      </table>
+      </span>
+      </div>
+</table>
+</span>
+</td>
+</tr>
+</table>
+
+<script language="javascript">
+    var num;
+    num = 0;
+    subcat = new Array();
+    <%count=0%>
+    <%for employee in @employees%>
+    subcat[<%=count%>] = new Array("<%=employee.id%>", "<%=employee.name_cn%>", "<%=employee.username%>")
+    num = num + 1
+    <%count+=1%>
+    <%end%>
+
+    function change_employee(branch_office_id) {
+        document.mform.employee_id.length = 0;
+        if (branch_office_id == -1) {
+            for (i = 0; i < num; i++) {
+                document.mform.employee_id.options[document.mform.employee_id.length] = new Option(subcat[i][2] + "(" + subcat[i][1] + ")", subcat[i][0])
+            }
+        }
+        else {
+            for (i = 0; i < num; i++) {
+                if (subcat[i][3] == branch_office_id) {
+                    document.mform.employee_id.options[document.mform.employee_id.length] = new Option(subcat[i][2] + "(" + subcat[i][1] + ")", subcat[i][0])
+                }
+            }
+        }
+    }
+
+    function change_attendance() {
+        if (document.getElementById("attendance").style.display == "block") {
+            document.getElementById("attendance").style.display = "none";
+            document.getElementById("attend_btn").value = "显示"
+        }
+        else {
+            document.getElementById("attendance").style.display = "block";
+            document.getElementById("attend_btn").value = "隐藏"
+        }
+    }
+
+    function change_leave() {
+        if (document.getElementById("leave").style.display == "block") {
+            document.getElementById("leave").style.display = "none";
+            document.getElementById("leave_btn").value = "显示"
+        }
+        else {
+            document.getElementById("leave").style.display = "block";
+            document.getElementById("leave_btn").value = "隐藏"
+        }
+    }
+</script>
