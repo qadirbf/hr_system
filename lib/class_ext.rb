@@ -82,6 +82,8 @@ class Time
         self.strftime("%Y-%m-%d %H:%M")
       when :date
         self.strftime("%Y-%m-%d")
+      when :hour
+        self.strftime("%H:%M:%S")
       when :year
         self.strftime("%Y")
       when :quarter
