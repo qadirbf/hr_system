@@ -87,9 +87,13 @@
                 <% end %></td>
               <td>
                 <% if attend.early > 0 then %>早退
-                <% end %></td>
-              <td><%#=attend.all_absence_labels%></td>
-              <td><%= attend.absence_reason %></td>
+                <% end %>
+              </td>
+              <td>
+                <% if attend.absence > 0 then %>缺席
+                <% end %>
+              </td>
+              <td><%= attend.reason %></td>
             </tr>
         <% end %>
       </table>
