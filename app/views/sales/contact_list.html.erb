@@ -37,7 +37,9 @@
     <table class="common_tb" style="width:95%">
       <tr>
         <td>负责顾问</td>
-        <td><%= select_tag :res_id, options_for_select([['', '']]+@emps, params[:res_id].to_i) %></td>
+        <td><%= select_tag :res_id, options_for_select([['', '']]+@emps, params[:res_id].to_i) %>
+          &nbsp;&nbsp;性别<%= select_tag :sex_eq, options_for_select([['所有', ''], ['男', 1], ['女', 2]], params[:sex_eq].to_i) %>
+        </td>
         <td>当前行业</td>
         <td><%= select_tag :firm_type_id_eq, options_for_select([['', '']]+@firm_types, params[:firm_type_id_eq].to_i) %></td>
         <td>期望职业类型</td>
@@ -65,8 +67,8 @@
         <td>开始工作时间</td>
         <td> <%= text_field_tag :start_work_date_gte, params[:start_work_date_gte], :class => 'datepicker' %> 至
           <%= text_field_tag :start_work_date_lte, params[:start_work_date_lte], :class => 'datepicker' %></td>
-        <td>性别</td>
-        <td> <%= select_tag :sex_eq, options_for_select([['所有', ''], ['男', 1], ['女', 2]], params[:sex_eq].to_i) %></td>
+        <td>职位</td>
+        <td> <%= text_field_tag :position_cn_like, params[:position_cn_like], :style => "width:100px;" %></td>
         <td>近期考虑工作变动？</td>
         <td> <%= select_tag :want_new_job_eq, options_for_select([['所有', ''], ['是', '1'], ['否', '0']], params[:want_new_job_eq]) %></td>
       </tr>
