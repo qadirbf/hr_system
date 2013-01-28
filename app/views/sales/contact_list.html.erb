@@ -42,7 +42,7 @@
         </td>
         <td>当前行业</td>
         <td><%= select_tag :firm_type_id_eq, options_for_select([['', '']]+@firm_types, params[:firm_type_id_eq].to_i) %></td>
-        <td>期望职业类型</td>
+        <td>期望行业</td>
         <td><%= select_tag :expect_firm_type_id_eq, options_for_select([['', '']]+@firm_types, params[:expect_firm_type_id_eq].to_i) %></td>
         <td rowspan="3">期望年薪</td>
         <td rowspan="3">
@@ -58,7 +58,7 @@
         <td>
           <span id="position_td"><%= select_tag :position_type_id_eq, options_for_select(@positions, params[:position_type_id_eq].to_i) %></span>
         </td>
-        <td>期望职位类型</td>
+        <td>期望职位</td>
         <td>
           <span id="exp_position_td"><%= select_tag :expect_position_type_id_eq, options_for_select(@exp_positions, params[:expect_position_type_id_eq].to_i) %></span>
         </td>
