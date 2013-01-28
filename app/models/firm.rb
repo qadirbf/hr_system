@@ -60,4 +60,12 @@ class Firm < ActiveRecord::Base
     self.firm_cat_links.map{|c| c.firm_category}
   end
 
+  def firm_tag_names
+    name = []
+    self.firm_tags.each do |firm_tag|
+      name << firm_tag.tag.name
+    end
+    name.join(",")
+  end
+
 end

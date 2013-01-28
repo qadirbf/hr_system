@@ -141,14 +141,17 @@ class SalesController < ApplicationController
     @firm = Firm.find(params[:firm_id])
     if request.post?
       Tag.transaction do
-        tag = Tag.where(["name = ?", params[:name]]).first
-        if tag
-          unless FirmTag.exists?(["firm_id = #{@firm.id} and tag_id = #{tag.id}"])
+        names = params[:name].split(" ")
+        names.each do |name|
+          tag = Tag.where(["name = ?", name]).first
+          if tag
+            unless FirmTag.exists?(["firm_id = #{@firm.id} and tag_id = #{tag.id}"])
+              FirmTag.create({:firm_id => @firm.id, :tag_id => tag.id})
+            end
+          else
+            tag = Tag.create({:name => name, :created_by => current_user.id})
             FirmTag.create({:firm_id => @firm.id, :tag_id => tag.id})
           end
-        else
-          tag = Tag.create({:name => params[:name], :created_by => current_user.id})
-          FirmTag.create({:firm_id => @firm.id, :tag_id => tag.id})
         end
       end
       flash[:notice] = "成功保存！"

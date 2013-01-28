@@ -8,9 +8,17 @@ class FirmTypesController < ApplicationController
 
   def update
     type, id = params[:id].split('_')
-    if FirmType.exists?(id)
-      FirmType.update(id, :name => params[:name])
+    if type == "f"
+      if FirmType.exists?(id)
+        FirmType.update(id, :name => params[:name])
+      end
     end
+    if type == "c"
+      if ContactPosition.exists?(id)
+        ContactPosition.update(id, :name => params[:name])
+      end
+    end
+
     render :text => ""
   end
 

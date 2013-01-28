@@ -38,7 +38,7 @@
       <tr>
         <td>负责顾问</td>
         <td><%= select_tag :res_id, options_for_select([['', '']]+@emps, params[:res_id].to_i) %></td>
-        <td>当前职业类型</td>
+        <td>当前行业</td>
         <td><%= select_tag :firm_type_id_eq, options_for_select([['', '']]+@firm_types, params[:firm_type_id_eq].to_i) %></td>
         <td>期望职业类型</td>
         <td><%= select_tag :expect_firm_type_id_eq, options_for_select([['', '']]+@firm_types, params[:expect_firm_type_id_eq].to_i) %></td>
@@ -52,7 +52,7 @@
         <td> <%= text_field_tag :full_name, params[:full_name], :style => "width:100px;" %>
           年龄: <%= text_field_tag :age, params[:age], :style => "width:30px;" %> 至
           <%= text_field_tag :age1, params[:age1], :style => "width:30px;" %></td>
-        <td>当前职位类型</td>
+        <td>当前职位</td>
         <td>
           <span id="position_td"><%= select_tag :position_type_id_eq, options_for_select(@positions, params[:position_type_id_eq].to_i) %></span>
         </td>
@@ -73,7 +73,7 @@
       <tr class="notes">
         <td>公司</td>
         <td> <%= text_field_tag :firm_name, params[:firm_name] %>
-        标签：<%= text_field_tag :tag_name, params[:tag_name] %>
+        产品关键字：<%= text_field_tag :tag_name, params[:tag_name] %>
         </td>
         <td>备注</td>
         <td> <%= text_field_tag :notes_like, params[:notes_like] %></td>
@@ -89,10 +89,9 @@
   <tr class="title">
     <td>姓名/ID</td>
     <td>公司</td>
-    <td>产品备注</td>
+    <td>产品关键字</td>
     <td>当前职位</td>
     <td>期望职位</td>
-    <td>职位类型</td>
     <td>期望工作地点</td>
     <td>期望年薪</td>
     <td>推荐顾问</td>
@@ -109,10 +108,9 @@
           <% end -%>
         </td>
         <td><%= open_link c.firm_name, "/#{params[:db_type]}/firm_show/#{c.firm_id}" %></td>
-        <td><%= h c.firm.firm_categories.map { |c| c.name }.join("/") %></td>
+        <td><%= h c.firm.firm_tag_names %></td>
         <td><%= c.position_cn %></td>
         <td><%= c.expect_position_type %></td>
-        <td><%= c.position %></td>
         <td><%= c.expect_work_place %></td>
         <td><%= c.expect_salary_type %></td>
         <td><%= c.username %></td>
