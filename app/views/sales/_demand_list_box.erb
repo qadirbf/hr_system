@@ -1,18 +1,44 @@
 <table class="list_tb">
-  <tr class="title"><td>ID</td><td>公司</td><td>招聘时间</td><td>职业类型</td><td>职位类型</td>
-    <td>年薪</td><td>状态</td><td>工作地点</td><td>负责人</td><td>最后更新</td><td>操作</td></tr>
+  <tr class="title">
+    <td>ID</td>
+    <td>公司</td>
+    <td>招聘时间</td>
+    <td>职业类型</td>
+    <td>职位类型</td>
+    <td>年薪</td>
+    <td>状态</td>
+    <td>工作地点</td>
+    <td>负责人</td>
+    <td>最后更新</td>
+    <td>操作</td>
+  </tr>
   <% demands.each do |d| %>
-    <tr><td><%= open_demand_page d.id, d.id %></td>
-      <td><%= open_firm_page d.firm.firm_name, d.firm_id %></td>
-      <td><%= format_date d.created_at, :date %></td><td><%= d.firm_type %></td>
-      <td><%= d.position_type_text %></td><td><%= d.salary %></td><td><%= d.status %></td>
-      <td><%= d.work_city %></td><td><%= d.firm.lead_by_id(1).employee %></td>
-      <td><%= d.updated_user %> <div class="gray_info">at <%= format_date(d.updated_at, :min) %></div> </td>
-      <td>
-        <%= link_to "查看", {:action => "demand_view", :id => d.id}, :target => "_blank", :title => "查看详细需求" -%>&nbsp;&nbsp;
-        <%= link_to "修改", {:controller => "sales", :action => "demand_edit", :id => d.id}, :target => "_blank" -%>&nbsp;&nbsp;
-        <%= link_to "删除", {:controller => "sales", :action => "demand_delete", :id => d.id}, :confirm => "Are you sure?" -%>
-      </td>
-    </tr>
+      <tr>
+        <td><%= open_demand_page d.id, d.id %></td>
+        <td><%= open_firm_page d.firm.firm_name, d.firm_id %></td>
+        <td><%= format_date d.created_at, :date %></td>
+        <td><%= d.firm_type %></td>
+        <td><%= d.position_type_text %></td>
+        <td><%= d.salary %></td>
+        <td>
+          <% if d.status_id == 6 -%>
+              <%= d.status.gray.html_safe() %>
+          <% elsif d.status_id ==7 -%>
+              <%= d.status.red.html_safe() %>
+          <% else -%>
+              <%= d.status %>
+          <% end -%>
+        </td>
+        <td><%= d.work_city %></td>
+        <td><%= d.firm.lead_by_id(1).employee %></td>
+        <td><%= d.updated_user %>
+          <div class="gray_info">at <%= format_date(d.updated_at, :min) %></div>
+        </td>
+        <td>
+          <%= link_to "查看", {:action => "demand_view", :id => d.id}, :target => "_blank", :title => "查看详细需求" -%>&nbsp;&nbsp;
+          <%= link_to "修改", {:controller => "sales", :action => "demand_edit", :id => d.id}, :target => "_blank" -%>&nbsp;&nbsp;
+          <%= link_to "删除", {:controller => "sales", :action => "demand_delete", :id => d.id}, :confirm => "Are you sure?" -%>
+        </td>
+      </tr>
   <% end %>
 </table>

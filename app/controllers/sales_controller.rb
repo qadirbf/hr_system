@@ -738,6 +738,7 @@ class SalesController < ApplicationController
 
   def preload_demand_edit
     @firm = @demand.firm
+    @status = ContactDemand::STATUS
     load_firm_types @demand.firm_type_id
     preload_regions @demand.province_id
   end
