@@ -98,6 +98,7 @@
     <td>期望年薪</td>
     <td>推荐顾问</td>
     <td>最后更新</td>
+    <td>简历</td>
     <td>操作</td>
   </tr>
   <% @contacts.each do |c| %>
@@ -119,7 +120,15 @@
         <td><%= c.candidate.submit_res %>
           <div class="gray_info">at <%= format_date c.updated_at, :min %></div>
         </td>
-        <td><%= link_to "下载简历", {:action => "download_resume", :id => c.id} %>
+        <td>
+          <% unless c.contact_resumes.blank? -%>
+              <% c.contact_resumes.each do |resume| -%>
+                  <%= link_to resume.load_path.split("/").last, {:action => "download_resume", :id => resume.id} %>
+                  <br/>
+              <% end -%>
+          <% end -%>
+        </td>
+        <td>
           <%= link_to_function "推荐", "recommend_contact(#{c.id})", :class => "btn" -%>
         </td>
       </tr>
