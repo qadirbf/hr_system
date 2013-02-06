@@ -8,7 +8,7 @@ class RecommendHistory < ActiveRecord::Base
   after_create :change_record
 
   validates_presence_of :notes, :message => "请填写推荐备注！"
-  validates_presence_of :feedback_date, :message => "请填写反馈时间！"
+  #validates_presence_of :feedback_date, :message => "请填写反馈时间！"
   attr_accessor :ret_id
 
   STATUS = [['推荐', 1], ['销售已接受', 2], ['已面试', 3], ['已拒绝', 4], ['已成功', 5]]
