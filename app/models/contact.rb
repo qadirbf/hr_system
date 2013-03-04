@@ -72,7 +72,7 @@ class Contact < ActiveRecord::Base
 
   # 曾就职公司
   def work_company
-    firms = Firm.find(:all, :conditions => ["contacts.mobile <> ? and contacts.id <> ?", self.mobile, self.id], :joins => ("left join contacts on contacts.firm_id = firms.id"))
+    firms = Firm.find(:all, :conditions => ["contacts.mobile = ? and contacts.id <> ?", self.mobile, self.id], :joins => ("left join contacts on contacts.firm_id = firms.id"))
     return "" if firms.blank?
     firms.collect(&:firm_name).join(',')
   end
