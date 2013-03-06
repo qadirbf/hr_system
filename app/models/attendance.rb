@@ -23,6 +23,19 @@ class Attendance < ActiveRecord::Base
     return labels
   end
 
+  def self.create_attends
+    from = Date.parse("2012-12-20")
+    to = Date.today
+    (from...to).each do |day|
+      Attendance.add_attendance(day.to_s, "09:05:00", "18:00:00", false)
+    end
+  end
+
+  def self.create_yesterday_attendance
+    yesterday = Date.today - 1.day
+    Attendance.add_attendance(yesterday.to_s, "09:05:00", "18:00:00", false)
+  end
+
   def self.add_attendance(this_date, real_start_time, real_end_time, flag, user_name=nil)
     setted_records = Attendance.where("employee_id = -1 and this_date = str_to_date('#{this_date} 00:00:00', '%Y-%m-%d %H:%i:%s')")
     setted_records.uniq!
