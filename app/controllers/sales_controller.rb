@@ -486,6 +486,11 @@ class SalesController < ApplicationController
       p_hash.merge!(:sales_id => d_hash[:sales_id])
     end
 
+    unless f_hash[:phone].blank?
+      f_sqls << "firms.phone like :firm_phone"
+      p_hash.merge!(:firm_phone => "#{f_hash[:phone]}%")
+    end
+
     [f_sqls, c_sqls, d_sqls].each { |a| a.reject! { |f| f.blank? } }
     tab_arr = []
     tab_arr << "select firms.id as firm_id from firms #{f_joins} where #{f_sqls.join(' and ')}" if f_sqls.size>0
