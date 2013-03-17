@@ -12,6 +12,10 @@ class String
     with_color("red")
   end
 
+  def gray
+    with_color("gray")
+  end
+
   def bold
     ["<span style='font-weight:bold;'>", self, "</span>"].join
   end

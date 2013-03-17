@@ -51,14 +51,17 @@
     </tr>
     <tr>
       <th>协议期限</th>
-      <td colspan="2">
+      <td colspan="1">
         &ge; <%= f.text_field :contract_start,  :class => "datepicker" %>
         &le; <%= f.text_field :contract_end,  :class => "datepicker" %>
       </td>
       <th>到账金额</th>
-      <td colspan="2">
-        <%= f.text_field :order_income, :style=>"width:60px;" -%>
+      <td><%= f.text_field :order_income, :style=>"width:60px;" -%>
         已到账？ <%= f.select :is_pay, [["Yes", 1], ["No", 0]], {:include_blank => true}, :style=>"width:100px;" -%>
+      </td>
+      <th>状态</th>
+      <td colspan="1">
+        <%= f.select :status_id, @status, {}  %>
       </td>
     </tr>
     <tr>

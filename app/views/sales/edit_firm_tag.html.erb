@@ -36,12 +36,22 @@
       <% end -%>
     </ul>
 <% else -%>
-    暂无标签
+    暂无关键字
 <% end -%>
-<%= form_tag "/#{params[:db_type]}/edit_firm_tag.php" do %>
+<%= form_tag "/#{params[:db_type]}/edit_firm_tag.php", :onsubmit => "return check_form()" do %>
     <%= hidden_field_tag "firm_id", @firm.id -%>
     <div>
-      标签名：<%= text_field_tag "name" -%>
+      关键字：<%= text_field_tag "name" -%>
       <%= submit_tag "提交保存", {:class => "btn btn-primary"} -%>
     </div>
 <% end -%>
+<script>
+    function check_form() {
+        if ($("#name").val() == "") {
+            alert("关键字不能为空，多个关键字请以空格隔开");
+            return false
+        } else {
+            return true
+        }
+    }
+</script>

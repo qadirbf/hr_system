@@ -70,6 +70,16 @@ class Contact < ActiveRecord::Base
     self.address_same_as_firm==1 ? self.firm.address21 : self.address21
   end
 
+  # 曾就职公司
+  def work_company
+    firms = Firm.find(:all,
+                      :conditions => ["contacts.mobile is not null and contacts.mobile <> '' and contacts.mobile = ? and firms.id <> ? and contacts.last_name = ?", self.mobile, self.firm_id, self.last_name],
+                      :joins => ("left join contacts on contacts.firm_id = firms.id"),
+                      :select => "distinct firms.*")
+    return "" if firms.blank?
+    firms.collect(&:firm_name).join(',')
+  end
+
   def check_sex
     if self.salutation_changed?&&!self.salutation.blank?
       self.sex = (self.salutation=='先生' ? 1 : 2)
