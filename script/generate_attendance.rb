@@ -13,7 +13,7 @@ begin
   write_logs "Started at #{Time.now.strftime("%Y-%m-%d %H:%M:%S")}"
 
   ActiveRecord::Base.transaction do
-    Attendance.add_attendance(Time.now.strftime("%Y-%m-%d"), "09:05:00", "18:00:00", false)
+    Attendance.add_attendance(Time.now.strftime("%Y-%m-%d"), "09:05:00", "18:15:00", false)
   end
 
   write_logs "Ended at #{Time.now.strftime("%Y-%m-%d %H:%M:%S")}"

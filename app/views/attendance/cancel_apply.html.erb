@@ -1,0 +1,10 @@
+<h1 class="title"><%= @sub_content_title %></h1>
+<div style="width:50%">
+  <%= form_tag "/attendance/#{params[:action]}", :method => 'post' do %>
+      <%= hidden_field_tag :id, @apply.id %> <%= hidden_field_tag :by, params[:by] %>
+      <div>
+        <div style="float:left">取消原因：</div><%= text_area_tag :cancel_reason, nil, :rows => 5, :cols => 50, :style => "margin-left:10px;" %>
+      </div>
+      <div style="clear:both"><%= submit_tag "提交", :class => "btn" %></div>
+  <% end %>
+</div>

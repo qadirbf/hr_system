@@ -43,6 +43,7 @@ class SalesController < ApplicationController
     @can_edit = (@firm.is_followed_by?(user) or user.is_admin?)
     @can_grab = @firm.can_grab_by?(user)
     @is_special_firm = (@firm.id == 4)
+    @can_submit_order = (user.is_admin? or res_sys?)
     preload_recall
     render :template => "/sales/firm_view"
   end
@@ -705,6 +706,37 @@ class SalesController < ApplicationController
     render :template => "/common/get_positions", :layout => false
   end
 
+  def submit_order
+    @title = "提交订单"
+    if params[:firm_id].blank? and @order.blank?
+      render :text => "参数错误，请从公司详细页面点击“提交订单按钮。”", :layout => false
+    end
+    @order = Order.new(:firm_id => params[:firm_id]) if @order.blank?
+    if request.post?
+      @order.attributes = params[:order]
+      @order.employee_id = current_user.id
+      if @order.valid?
+        @order.save
+        redirect_to :action => "firm_show", :id => params[:firm_id], :format => "php"
+      else
+        render :action => :submit_order
+      end
+    end
+  end
+
+  def my_orders
+    @title = "我提交的订单"
+    if current_user.is_admin?
+      @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
+    end
+    order_hash = params[:order]||{}
+    order_ary = Order.get_sql_by_hash(order_hash)
+
+    join = params[:firm_name].blank? ? "" : "left join firms on firms.id = orders.firm_id"
+    @orders = Order.paginate :select => "orders.*", :conditions => order_ary,
+                             :joins => join, :order => "created_at desc", :per_page => 30, :page => params[:page]
+  end
+
   protected
 
   def init_menu
@@ -718,7 +750,7 @@ class SalesController < ApplicationController
                         ['/crm/demand_list', '招聘需求列表']]
     else
       @sys_nav_menus = [['/res/search', '资源搜索'], ['/res/my_firms/', '我的资源'], ['/res/firm_edit/', '添加公司'], ['/res/my_recall', '我的跟进任务'],
-                        ['/res/demand_list', '招聘需求列表']]
+                        ['/res/demand_list', '招聘需求列表'], ['/res/my_orders/', '我提交的订单']]
     end
     @sys_nav_menus << ['/res/contact_list', '候选人列表'] if user.is_res?
 

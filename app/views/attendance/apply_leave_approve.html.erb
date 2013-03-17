@@ -1,0 +1,23 @@
+<h1 class="title"><%= @title %></h1>
+<%= @notice.red.html_safe if @notice %>
+<%= form_tag "", :method => 'post', :onsubmit => "return check()" do %>
+    <%= hidden_field_tag :id, params[:id] %>
+    审批主管：<%= select_tag :apply_to, options_for_select([["", ""]] + @managers.map{|m| [m.username, m.id]}) %>
+
+    <%= submit_tag "提交", :class => "btn" %>
+<% end %>
+<div id="info" style="font-size:8pt;color:red;margin:5px">
+  注：如以上审批人有误，请联系admin
+</div>
+<script type="text/javascript">
+    <%if @info%>
+    alert("<%=@info%>");
+    <%end%>
+    function check() {
+        if ($("#apply_to").value == '') {
+            alert('请选择审批主管！');
+            return false;
+        }
+        return true;
+    }
+</script>

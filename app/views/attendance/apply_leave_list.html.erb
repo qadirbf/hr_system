@@ -1,0 +1,68 @@
+<%= include_datepicker -%>
+<style>a.action{font-size:8pt;margin-left:5px;font-weight:normal;text-decoration:underline;color:#333;}</style>
+<h1 class="title"><%= @sub_title %>&nbsp;&nbsp;<%= link_to "添加申请", {:action => "apply_leave_edit"}, :popup => true, :class => "action" %>
+  <%= link_to "替别人添加申请", {:action => "apply_leave_edit", :apply_for_others => 'yes'}, :popup => true, :class => "action" if @can_edit_others %>
+</h1>
+<%= form_tag "/attendance/apply_leave_list", :method => 'post' do %>
+    <% if @def_employees.size > 0 %>
+        申请人：<%= select_tag :employee_id, options_for_select([['所有', '']]+@def_employees.map { |e| ["#{e.username}(#{e.name_cn})", e.id] }, params[:employee_id].to_i) %>
+    <% end %>
+    申请原因：<%= select_tag :absence_reason, options_for_select([['所有', '']]+Attendance::ABSENCE_REASON.map { |r| [r[0], r[1].to_s] }, params[:absence_reason]) %>
+    审批主管：<%= select_tag :apply_to, options_for_select([['所有', '']]+@employees.map { |e| ["#{e.username}(#{e.name_cn})", e.id] }, params[:apply_to].to_i) %>
+    状态：<%= select_tag :status, options_for_select([['所有', '']]+ApplyLeave::STATUS.map { |s| [s[0], s[1].to_s] }, params[:status]) %>
+    <div style="margin:5px 0px;">
+      申请日期&gt;=
+      <%= text_field_tag :start_date, params[:start_date] ,:class=>"datepicker" %>
+      &lt;=<%= text_field_tag "end_date", params[:end_date], :class=>"datepicker" %>
+      排序：<%= select_tag :order, options_for_select([["开始时间", 'start_date'], ["最后修改时间", "updated_at"]], params[:order]) %>
+      <%= submit_tag "搜索", :class => "btn" %>
+      <%= link_to "我的尚未被审批的申请", {:action => "apply_leave_list", :employee_id => current_user.id, :not_approved => 'on'}, :class => "action" %>
+      <%= link_to "所有需要我审批的申请", {:action => "apply_leave_list", :need_approved => 'on'}, :class => "action" %>
+    </div>
+<% end %>
+<%= page_links @applies %>
+<table class="list_tb">
+  <tr class="title">
+    <td>申请人</td>
+    <td>申请原因</td>
+    <td>开始时间</td>
+    <td>结束时间</td>
+    <td>状态</td>
+    <td>审批主管</td>
+    <td>操作</td>
+  </tr>
+  <% @applies.each do |apply| %>
+      <tr>
+        <td><%= link_to [apply.username, "(#{apply.name_cn})"].join, {:action => "apply_leave_show", :id => apply.id}, :popup => true %>
+          <%= image_tag "problem.gif", :title => "该申请由#{apply.created_user.username}替#{apply.employee.username}提交" if apply.submit_by_others? %></td>
+        <td><%= apply.absence_label %></td>
+        <td><%= apply.start_date_label %></td>
+        <td><%= apply.not_record_attendance? ? '' : format_date(apply.end_date, :min) %></td>
+        <td><%= apply.status_label %></td>
+        <td><%= apply.apply_manager.username if apply.apply_manager %></td>
+        <td>
+          <% if !apply.was_approved?&&!apply.was_canceled?&&apply.created_by==current_user.id %>
+              <%= link_to "修改", {:action => "apply_leave_edit", :id => apply.id}, :popup => true if apply.is_draft? %>
+              <%= link_to "删除", "#", :onclick => "if(confirm('确定删除？')){go_url('/attendance/apply_leave_destroy?id=#{apply.id}')};return false;" if apply.is_draft? %>
+              <%= link_to "提交申请", {:action => "apply_leave_approve", :id => apply.id}, :popup => true if apply.is_draft?||apply.hr_check_stage? %>
+              <%= link_to "取消申请", {:action => "cancel_apply", :id => apply.id, :by => 'self'} if !apply.is_draft? %>
+          <% end %>
+          <%= link_to "申请取消", {:action => "apply_cancel_to_manager", :id => apply.id} if apply.can_apply_cancel? %>
+          <%= link_to "申请退回", {:action => "apply_back", :id => apply.id} if apply.can_apply_back? %>
+          &nbsp;</td>
+      </tr>
+  <% end %>
+</table>
+<%= page_links @applies %>
+<script type="text/javascript">
+    var employees = [<%=@employees.map{|e| "['#{e.username}(#{e.name_cn})',#{e.id}"}.join(',')%>]
+    function change_employee(id) {
+        var emp = $('employee_id')
+        emp.innerHTML = ''
+        emp.options[0] = new Option('所有', '')
+        for (var i = 0; i < employees.length; i++) {
+            var e = employees[i]
+            if (e[2] == id || id == '') emp.options[emp.options.length] = new Option(e[0], e[1])
+        }
+    }
+</script>

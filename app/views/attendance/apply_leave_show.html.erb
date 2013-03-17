@@ -1,0 +1,123 @@
+<h1 class="title"><%= @sub_title %>
+  <% if !@apply.was_approved?&&!@apply.was_canceled?&&@apply.created_by== current_user.id %>
+      <%= button_to_function "修改","go_url('/attendance/apply_leave_edit?id=#{@apply.id}')" ,:style=>"margin:0px 5px;", :class => "btn" if @apply.is_draft?%>
+      <%= button_to_function "删除","if(confirm('确定删除？')){go_url('/attendance/apply_leave_destroy?id=#{@apply.id}')}",:class => "btn",:style=>"margin-right:5px;" if @apply.is_draft?%>
+      <%= button_to_function "提交申请","go_url('/attendance/apply_leave_approve?id=#{@apply.id}')",:style=>"margin-right:5px;", :class => "btn" if @apply.is_draft?||@apply.hr_has_checked?%>
+      <%= button_to_function "取消申请","go_url('/attendance/cancel_apply?id=#{@apply.id}&by=self')", :class => "btn" if !@apply.is_draft? %>
+  <% end %>
+  <%= button_to_function "申请取消","go_url('/attendance/apply_cancel_to_manager?id=#{@apply.id}')", :class => "btn" if @apply.can_apply_cancel?%>
+  <%= button_to_function "申请退回","go_url('/attendance/apply_back?id=#{@apply.id}')", :class => "btn" if @apply.can_apply_back?%>
+  <%= button_to_function "人事审批","$('hr_form').style.display='block'", :class => "btn" if @can_hr_check%>
+  <%= button_to_function "主管审批","$('manager_form').style.display='block'", :class => "btn" if @can_manager_check%>
+  <%= button_to_function "批准取消申请","go_url('/attendance/cancel_apply?id=#{@apply.id}&by=manager')", :class => "btn"  if @apply.need_manager_cancel?%>
+  <%= button_to_function "退回草稿阶段","$('back_form').style.display='block'", :class => "btn" if !@apply.is_draft?&&([@apply.apply_to,@apply.apply_to_hr].include?(current_user.id))&&@apply.employee_id!=current_user.id %>
+
+</h1>
+
+<% employee = @apply.employee %>
+<% if @can_hr_check%>
+    <div id="hr_form" style="margin-bottom:10px;">
+      <% form_tag "/attendance/manager_notes_update",:method=>"post",:onsubmit=>"return check();" do %>
+          <%= hidden_field_tag :id,@apply.id %>
+          <table class="the-table-small" width="50%" cellSpacing=0 cellPadding=5 border=0>
+            <tr><th width="20%">批准？</th><td><%= select :apply,:status,[['同意',2],['拒绝',5]],:include_blank=>true %></td></tr>
+            <tr><th>主管备注</th><td><%= text_area :apply,:hr_notes,:rows=>5,:cols=>30 %></td></tr>
+            <tr><td colspan="2"><%= submit_tag "提交" %>&nbsp;&nbsp;<%= button_to_function "取消","$('hr_form').style.display='none'" %></td> </tr>
+          </table>
+      <%end%>
+    </div>
+<%elsif @can_manager_check&&!@apply.was_approved?%>
+    <div id="manager_form" style="margin-bottom:10px;">
+      <% form_tag "/attendance/manager_notes_update",:method=>"post",:onsubmit=>"return check();" do %>
+          <%= hidden_field_tag :id,@apply.id %>
+          <table class="the-table-small" width="50%" cellSpacing=0 cellPadding=5 border=0>
+            <tr><th width="20%">批准？</th><td><%= select :apply,:status,[['同意',4],['拒绝',5]],:include_blank=>true %></td></tr>
+            <tr><th>主管备注</th><td><%= text_area :apply,:manager_notes,:rows=>5,:cols=>30 %></td></tr>
+            <tr><td colspan="2"><%= submit_tag "提交" %>&nbsp;&nbsp;<%= button_to_function "取消","$('manager_form').style.display='none'" %></td> </tr>
+          </table>
+      <%end%>
+    </div>
+<% end %>
+
+<div id="back_form" style="display:none;margin-bottom:10px;">
+  <% form_tag "/attendance/back_to_draft",:method=>"post",:onsubmit=>"return check_back();" do %>
+      <%= hidden_field_tag :id,@apply.id %>
+      <table class="the-table-small" width="50%" cellSpacing=0 cellPadding=5 border=0>
+        <tr><th width="20%">退回原因</th><td><%= text_area :apply,:back_reason,:rows=>5,:cols=>30 %></td></tr>
+        <tr><td colspan="2"><%= submit_tag "提交" %>&nbsp;&nbsp;<%= button_to_function "取消","$('back_form').style.display='none'" %></td> </tr>
+      </table>
+  <%end%>
+</div>
+<table class="the-table-small" width="50%" cellSpacing=0 cellPadding=5 border=0>
+  <tr><th width="20%">申请人</th><td><%= [employee.username,"(#{employee.name_cn})"].join %></td></tr>
+  <tr><th>申请原因</th><td><%= @apply.absence_label %><%= "（集体网络中断、停电、公司门被锁无法进入等）" if [12,16].include?(@apply.absence_reason)%></td></tr>
+  <% if @apply.need_feed?%>
+      <tr><th>类型</th><td><%=@apply.feed_type_label %></td></tr>
+  <% end %>
+  <tr><th><%= @apply.not_record_attendance? ? "日期" : "开始时间" %></th><td><%=@apply.start_date_label%></td></tr>
+  <% unless @apply.not_record_attendance? %>
+      <tr><th>结束时间</th><td><%=format_date @apply.end_date,(@apply.need_feed? ? :date : :min) %></td></tr>
+      <tr><th>申请时间</th><td><%=@apply.leave_days %>(天)</td></tr>
+  <%else%>
+      <tr><th>证明人</th><td><%= @apply.deponent_text %></td></tr>
+  <%end %>
+  <tr><th>申请备注</th><td><%=simple_format h(@notes) %></td></tr>
+  <tr><th>状态</th><td><%=@apply.status_label %></td></tr>
+  <% if @apply.cancel_reason %>
+      <tr><th>取消原因</th><td><%=simple_format h(@apply.cancel_reason) %></td></tr>
+  <%end%>
+  <% if @apply.back_reason %>
+      <tr><th>退回原因</th><td><%=simple_format h(@apply.back_reason) %></td></tr>
+  <%end%>
+  <tr><th>审批主管</th><td><%=@apply.apply_manager.username if @apply.apply_manager%></td></tr>
+  <tr><th>主管备注</th><td><%=simple_format h(@apply.manager_notes) %></td></tr>
+
+  <tr><th>附件</th><td><%=@apply.attachment %>&nbsp;
+    <%= button_to_function "查看附件","open_url('/attendance/show_leave_file?id=#{@apply.id}')" if @apply.attachment&&@can_view_attachment%></td></tr>
+  <tr><th>提交</th><td><%=[@apply.created_user.username,'at',format_date(@apply.created_at,:min)].join("&nbsp;").html_safe %></td></tr>
+  <tr><th>最后更新</th><td><%=[@apply.updated_user.username,'at',format_date(@apply.updated_at,:min)].join("&nbsp;").html_safe %></td></tr>
+</table>
+<div id="info" style="font-size:8pt;color:red;margin:5px">
+  注：此申请被审批通过后，将会发消息通知：<%= @send_msg_to %>;<br>
+  如以上接收人有误，请联系admin
+</div>
+<script type="text/javascript">
+    function check(){
+        if($('apply_status').value==''){
+            alert('请选择是否批准申请！')
+            return false
+        }
+        return true
+    }
+    function check_back(){
+        if($('apply_back_reason').value==''){
+            alert('请输入退回原因！');
+            return false;
+        }
+        return true;
+    }
+
+    function check_change_manager(){
+        if($('manager_id').value==''){alert('请选择主管！');return false}
+        if($('notes').value==''){alert('请填写原因！');return false}
+        return true
+    }
+
+    function check_leads(){
+        if($('apply_leads_status').value==''){
+            alert('请选择是否批准保护leads！')
+            return false
+        }
+        return true
+    }
+
+    function set_oral(has_oral){
+        var oral_info = $('oral_info')
+        if(!confirm('确定？')){return false}
+        new Ajax.Request("/attendance/set_oral",{
+            parameters:{id:'<%=@apply.id%>',has_oral:has_oral},
+            onLoading:function(){oral_info.show()},
+            onSuccess:function(r){alert(r.responseText);oral_info.hide();location.reload();}
+        })
+    }
+</script>

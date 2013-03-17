@@ -1,0 +1,306 @@
+<%= include_datepicker -%>
+<style>.c_table {
+    width: 100%;
+    margin: 5px 3px
+}
+
+.c_table td {
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+}
+</style>
+<h1 class="title"><%= @sub_title %></h1>
+<% action = params[:action].include?("apply_leave") ? "apply_leave_update" : "oral_application_update" %>
+<%= errors_for @apply %>
+<%= form_tag "/attendance/#{action}", :method => 'post', :multipart => true, :onsubmit => "return check()" do %>
+    <%= hidden_field_tag :id, params[:id] %>
+    <table class="the-table-small" width="80%" cellSpacing=0 cellPadding=5 border=0>
+      <% if (action=="apply_leave_update"&&(params[:apply_for_others]||@can_submit_apply_for_others))||action=="oral_application_update" %>
+          <tr>
+            <th>申请员工<span style="color:red;font-size:8pt">*</span></th>
+            <td><%= select :apply, :employee_id, @members, :include_blank => true %></td>
+          </tr>
+      <% end %>
+      <tr>
+        <th width="15%" nowrap>申请原因<span style="color:red;font-size:8pt">*</span></th>
+        <td><%= select :apply, :absence_reason, @absence_reasons, {} %></td>
+      </tr>
+      <tr>
+        <th>
+          <span id="sd_label"><%= @apply.not_record_attendance? ? "日期" : "开始时间" %></span><span style="color:red;font-size:8pt">*</span>
+        </th>
+        <td><%= tag "input", {:type => "text", :name => "apply[start_date]", :id => "apply_start_date", :class => "dtimepicker", :maxlength => 16,
+                              :value => format_date(@apply.start_date, (@apply.not_record_attendance?||@apply.need_feed? ? :date : :min)).gsub(/\s+/, " ")} %></td>
+      </tr>
+      <tr id="ed_row" style="display:<%= @apply.not_record_attendance? ? 'none' : '' %>">
+        <th>结束时间<span style="color:red;font-size:8pt">*</span></th>
+        <td><%= tag "input", {:type => "text", :name => "apply[end_date]", :id => "apply_end_date", :class => "dtimepicker", :maxlength => 16,
+                              :value => format_date(@apply.end_date, (@apply.not_record_attendance?||@apply.need_feed? ? :date : :min)).gsub(/\s+/, " ")} %></td>
+      </tr>
+      <tr id="feed" style="display:<%= @apply.need_feed? ? '' : 'none' %>">
+        <th>类型<span style="color:red;font-size:8pt">*</span></th>
+        <td><%= select :apply, :feed_type, ApplyLeave::FEED_TYPES, {:include_blank => true} %></td>
+      </tr>
+
+      <tr id="deponent" style="display:<%= @apply.not_record_attendance? ? '' : 'none' %>">
+        <th>证明人</th>
+        <td><%= text_area :apply, :deponent_text, :cols => 30, :rows => 4 %>
+          <div style="color:gray;margin:3px;">输入用户名，并用逗号（,）隔开；例如：w.deng,shaowen.peng</div>
+        </td>
+      </tr>
+      <tr>
+        <th>申请备注</th>
+        <td>
+          <div id="out" style="display:none">
+            外出类型：<%= select :out, :out_type, ApplyLeave::OUT_TYPES, {:include_blank => true}, :onchange => "change_box(this.value)" %>
+            <div id="f_0" style="width:90%">
+              <table class="c_table" cellpadding="5" cellspacing="0">
+                <tr>
+                  <td width="20%" nowrap>拜访客户的名称</td>
+                  <td><%= text_field :out, :org_name %></td>
+                </tr>
+                <tr>
+                  <td>地点</td>
+                  <td><%= text_area :out, :address, :rows => 5, :cols => 30 %></td>
+                </tr>
+                <tr>
+                  <td>预计时间</td>
+                  <td><%= text_field :out, :expect_time %></td>
+                </tr>
+                <tr>
+                  <td>联系人姓名</td>
+                  <td><%= text_field :out, :contact_name %></td>
+                </tr>
+                <tr>
+                  <td>联系方式</td>
+                  <td><%= text_field :out, :contact_method %></td>
+                </tr>
+              </table>
+            </div>
+            <div id="f_1">
+              <table class="c_table" cellpadding="5" cellspacing="0">
+                <tr>
+                  <td width="20%" nowrap>设计院名称</td>
+                  <td><%= text_field :out, :org_name %></td>
+                </tr>
+                <tr>
+                  <td>地点或联系方式</td>
+                  <td><%= text_area :out, :address, :rows => 5, :cols => 30 %></td>
+                </tr>
+                <tr>
+                  <td>预计时间</td>
+                  <td><%= text_field :out, :expect_time %></td>
+                </tr>
+              </table>
+            </div>
+            <div id="f_2">
+              <table class="c_table" cellpadding="5" cellspacing="0">
+                <tr>
+                  <td width="20%" nowrap>供应商名称</td>
+                  <td><%= text_field :out, :org_name %></td>
+                </tr>
+                <tr>
+                  <td>地点或联系方式</td>
+                  <td><%= text_area :out, :address, :rows => 5, :cols => 30 %></td>
+                </tr>
+                <tr>
+                  <td>预计时间</td>
+                  <td><%= text_field :out, :expect_time %></td>
+                </tr>
+              </table>
+            </div>
+            <div id="f_3">
+              <table class="c_table" cellpadding="5" cellspacing="0">
+                <tr>
+                  <td>事由</td>
+                  <td><%= text_field :out, :out_reason %></td>
+                </tr>
+                <tr>
+                  <td width="20%" nowrap>事务办理机构名称</td>
+                  <td><%= text_field :out, :org_name %></td>
+                </tr>
+                <tr>
+                  <td>地点</td>
+                  <td><%= text_area :out, :address, :rows => 5, :cols => 30 %></td>
+                </tr>
+                <tr>
+                  <td>预计时间</td>
+                  <td><%= text_field :out, :expect_time %></td>
+                </tr>
+              </table>
+            </div>
+            <div id="f_4"></div>
+          </div>
+          <div id="normal_notes"> <%= text_area_tag :leave_notes, @apply.leave_notes, :rows => 5, :cols => 30, :id => 'f_100' %></div>
+        </td>
+      </tr>
+      <% if action=="apply_leave_update" %>
+          <tr>
+            <th>附件</th>
+            <td><%= file_field_tag :attachment %></td>
+          </tr>
+      <% end %>
+      <tr>
+        <td colspan="2"><%= submit_tag "提交", :class => "btn" %>&nbsp;&nbsp;<%= button_to_function "取消", "window.close()", :class => "btn" %>
+          <div style="margin-top:3px;color:red">
+            <!--*备注：如果请病假，系统会自动优先使用剩余的福利病假。-->
+          </div>
+        </td>
+      </tr>
+    </table>
+<% end %>
+<pre style="color:red">
+【说明】1、很多员工在提交申请后，由于不了解考勤规则，没有上班打卡或下班打卡，导致旷工
+其实只要记住以下两句话，就可以避免这种情况了：
+从外到内：点击上班打卡
+从内往外：点击下班打卡
+其中：
+从外到内指：从公司外面到公司内；比如：早上上班、见客户回来、假期休满回公司等。
+从内往外指：从公司内到公司外；比如：下午下班、出去见客户、开始休假等。
+&nbsp;
+2、“忘记打卡”和“因不可抗力未打卡”的区别
+忘记打卡：指由于申请人本身的原因导致没有打卡；比如：申请人到公司后，没有打卡便开始做其他事情。
+因不可抗力未打卡：指由于外界原因导致申请人没有打卡；比如：网络故障，公司搬迁等。
+</pre>
+<script type="text/javascript">
+
+    function change_box(type) {
+        hide_all_box()
+        if (type == '') return
+        $A($('f_' + type).getElementsByTagName('td')).each(function (o) {
+            $A(o.childNodes).each(function (o1) {
+                if (o1.nodeType == 1) {
+                    o1.disabled = false
+                }
+            })
+        })
+        $('f_' + type).style.display = 'block'
+    }
+
+    function hide_all_box() {
+        for (var i = 0; i < 5; i++) {
+            $A($('f_' + i).getElementsByTagName('td')).each(function (o) {
+                $A(o.childNodes).each(function (o1) {
+                    if (o1.nodeType == 1) {
+                        o1.disabled = true
+                    }
+                })
+            })
+            $('f_' + i).style.display = 'none'
+        }
+    }
+
+    function check() {
+        var time_reg = /^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}$/
+        var date_reg = /^\d{4}-\d{2}-\d{2}$/
+        var start_date = $('apply_start_date').value.strip(), end_date = $('apply_end_date').value.strip()
+        if ($('apply_employee_id') && $('apply_employee_id').value == '') {
+            alert('请选择申请员工');
+            return false;
+        }
+        if ([12, 16, 14, 17].include($('apply_absence_reason').value)) {
+            if (start_date == '') {
+                alert('请输入日期！');
+                return false;
+            }
+            if (!date_reg.test(start_date)) {
+                alert('日期格式不正确，必须为：yyyy-mm-dd格式！');
+                return false;
+            }
+            if ([14, 17].include($('apply_absence_reason').value) && $('apply_deponent_text').value == '') {
+                alert('请输入证明人！');
+                return false;
+            }
+            return true
+        }
+
+        if (start_date == '') {
+            alert('请输入开始时间！');
+            return false;
+        }
+        if (end_date == '') {
+            alert('请输入结束时间！');
+            return false;
+        }
+        var s_date = str2date(start_date), e_date = str2date(end_date)
+
+        if ($('apply_absence_reason').value == 15) {
+            if (!date_reg.test(start_date)) {
+                alert('哺乳假开始时间格式不正确，必须为：yyyy-mm-dd格式！');
+                return false;
+            }
+            if (!date_reg.test(end_date)) {
+                alert('哺乳假结束时间格式不正确，必须为：yyyy-mm-dd格式！');
+                return false;
+            }
+            if (s_date > e_date) {
+                alert('结束时间必须大于等于开始时间！');
+                return false;
+            }
+            if ($('apply_feed_type').value == '') {
+                alert('请选择哺乳假类型！');
+                return false;
+            }
+            return true
+        }
+
+        if (!time_reg.test(start_date)) {
+            alert('开始时间格式不正确，必须为：yyyy-mm-dd HH:MM格式！');
+            return false;
+        }
+        if (!time_reg.test(end_date)) {
+            alert('结束时间格式不正确，必须为：yyyy-mm-dd HH:MM格式！');
+            return false;
+        }
+        var std_start_date = new Date(s_date.getFullYear(), s_date.getMonth(), s_date.getDate(), 9)
+        var std_end_date = new Date(e_date.getFullYear(), e_date.getMonth(), e_date.getDate(), 18)
+        if (s_date >= e_date) {
+            alert('结束时间必须大于开始时间！');
+            return false;
+        }
+        if ((s_date < std_start_date || e_date > std_end_date) && $('apply_absence_reason').value != '13') {
+            alert('申请时间必须在9点到18点之间(加班除外)！');
+            return false
+        }
+        if ($('apply_absence_reason').value == '13' && (s_date.getDate() != e_date.getDate())) {
+            alert('加班的开始时间和结束时间必须为同一天\r\n若不在同一天需分次提交！');
+            return false
+        }
+        if ($('apply_absence_reason').value == '13' && (e_date >= new Date())) {
+            alert('必须先加班，后提交加班申请！');
+            return false
+        }
+        if ($('apply_absence_reason').value == '11' && $('out_out_type').value == '') {
+            alert('请选择外出类型！');
+            return false;
+        }
+        if (!$('out_out_type').disabled) {
+            var field_arr = []
+            $A($('f_' + $('out_out_type').value).getElementsByTagName('td')).each(function (o) {
+                $A(o.childNodes).each(function (o1) {
+                    if (o1.nodeType == 1) {
+                        if (o1.value == '') {
+                            var t_obj = o.previousSibling
+                            if (t_obj) field_arr.push(t_obj.innerHTML)
+                        }
+                    }
+                })
+            })
+            if (field_arr.length > 0) {
+                field_arr.unshift('请在申请备注中输入以下内容：')
+                alert(field_arr.join("\r\n"))
+                return false;
+            }
+        }
+        return true;
+    }
+    function str2date(date_str) {
+        var dateTime = date_str.split(/\s+/), hour = null, min = null
+        var date = dateTime[0].split('-'), time = dateTime[1] ? dateTime[1].split(':') : null
+        var year = date[0], month = +date[1] - 1, day = date[2]
+        if (time) {
+            hour = time[0], min = time[1]
+        }
+        return new Date(year, month, day, hour, min)
+    }
+</script>

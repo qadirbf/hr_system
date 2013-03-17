@@ -1,0 +1,39 @@
+<h1 class="title"><%= @title %></h1>
+<%= form_for @order, :url => "/#{params[:db_type]}/submit_order", :html => {:onsubmit => "return before_submit();"} do |f| %>
+    <%= errors_for @order %>
+    <%= hidden_field_tag :firm_id, params[:firm_id] %>
+    <table class="blue_tb">
+      <tr>
+        <th style="height: 38px;">公司名称</th>
+        <td style="font-weight: bold; font-size:16px;margin: 5px;"><%= @order.firm.firm_name %></td>
+      </tr>
+
+      <tr>
+        <th>金额</th>
+        <td><%= f.text_field :total_amount, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);" -%></td>
+      </tr>
+      <tr>
+        <th>备注</th>
+        <td><%= f.text_area :notes, :size => "50x5", :style => "width:400px;" %></td>
+      </tr>
+      <tr>
+        <td colspan="2"><%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
+          <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
+      </tr>
+    </table>
+<% end %>
+<script type="text/javascript">
+    function clearNonum(obj) {
+        obj.value = obj.value.replace(/^0|\D/g, '');
+    }
+
+    function before_submit() {
+        if(window.confirm('确认无误了要提交么？')){
+            //alert("确定");
+            return true;
+        }else{
+            //alert("取消");
+            return false;
+        }
+    }
+</script>

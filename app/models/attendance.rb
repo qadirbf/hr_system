@@ -88,4 +88,47 @@ class Attendance < ActiveRecord::Base
     end
   end
 
+  def self.special_attend_sets(start_date, end_date, emp_id=nil)
+    attends = Attendance.all(:conditions => ["employee_id=-1 and this_date between ? and ?",
+                                             start_date.beginning_of_day, end_date.end_of_day], :order => "this_date")
+    rets = []
+    attends.each do |attend|
+      if r = rets.find { |ret| ret.this_date==attend.this_date }
+        rets.delete(r)
+      end
+      rets << attend
+    end
+    rets
+  end
+
+  def self.rebuild_attendances(employee_id, start_time, end_time)
+    if start_time > end_time
+      raise "结束时间必须大于开始时间！"
+    elsif start_time.format_date(:date) == end_time.format_date(:date)
+      rebuild_employee_attendance(employee_id, start_time)
+    else
+      rebuild_employee_attendance(employee_id, start_time)
+      temp_time = start_time+1.day
+      while temp_time < (end_time-1.day).end_of_day
+        rebuild_employee_attendance(employee_id, temp_time)
+        temp_time += 1.day
+      end
+      rebuild_employee_attendance(employee_id, end_time)
+    end
+  end
+
+  def self.rebuild_employee_attendance(emp_id, this_date)
+    this_date_str = format_date(this_date.beginning_of_day, :full)
+    employee = Employee.first(:conditions=>["id = ?", emp_id])
+    attend = self.first(:conditions=>["this_date = ? and employee_id = ?", this_date_str, emp_id])
+    attend.destroy if attend
+    setted_record = Attendance.where("employee_id = -1 and this_date = '#{this_date_str}'")
+    if setted_record
+      create_employee_attendance(nil, this_date.format_date(:date), setted_record.real_start_time, setted_record.real_end_time, true, Hr.user.username, emp_id)
+    else
+      create_employee_attendance(nil, this_date.format_date(:date), S_TIME, E_TIME, true, Hr.user.username, emp_id) unless [0,6].include?(this_date.wday)
+    end
+  end
+
+
 end

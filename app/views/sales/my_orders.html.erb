@@ -1,0 +1,45 @@
+<style>
+    table select, table input[type=text] {
+        width: 120px;
+    }
+</style>
+<h1 class="title"><%= @title %></h1>
+<%= form_tag "/#{params[:db_type]}/my_orders" do %>
+    <table style="width:90%" class="common_tb">
+      <tr>
+        <% if current_user.is_admin? -%>
+            <td>提交人： <%= select :order, :employee_id_eq, options_for_select([['所有', '']]+@emps, params[:order_employee_id_eq].to_i) %></td>
+        <% end -%>
+        <td>公司名称：<%= text_field_tag :firm_name, params[:firm_name] -%> </td>
+        <td>备注：<%= text_field_tag :order_notes_like, params[:order_notes_like] %></td>
+        <td colspan="2">状态： <%= select_tag :order_status_id_eq, options_for_select([['所有', '']]+ Order::STATUS, params[:order_status_id_eq].to_i) %>
+          &nbsp;&nbsp;<%= submit_tag "搜索", :class => "btn btn-primary" %></td>
+      </tr>
+    </table>
+<% end %>
+
+<%= page_links @orders %>
+<table class="list_tb">
+  <tr class="title">
+    <td>公司</td>
+    <td>提交时间</td>
+    <td>提交人</td>
+    <td>状态</td>
+    <td>操作</td>
+  </tr>
+  <% @orders.each do |o| %>
+      <tr>
+        <td><%= o.firm.firm_name -%></td>
+        <td><%= format_date(o.created_at, :full) -%></td>
+        <td><%= o.employee.username -%></td>
+        <td>
+          <%= o.status_label -%>
+        </td>
+        <td>
+          <%= link_to "分单", :action => "share_order", :id => o.id -%>
+          <%= link_to "删除", :action => "delete_order", :id => o.id -%>
+        </td>
+      </tr>
+  <% end %>
+</table>
+<%= page_links @orders %>

@@ -14,6 +14,9 @@
       <% if @can_grab %>
           <%= button_to_function "获取公司", "confirm_url('确定获取？', '/#{params[:db_type]}/grab_firm.php?id=#{@firm.id}')", :class => "btn" %>
       <% end %>
+      <% if @can_submit_order -%>
+          <%= button_to_function "提交订单", "open_url('/#{params[:db_type]}/submit_order.php?firm_id=#{@firm.id}')", :class => "btn" %>
+          <% end -%>
   <% end -%>
 </h1>
 <%= render :partial => "firm_info", :locals => {:firm => @firm} %>

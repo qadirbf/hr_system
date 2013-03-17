@@ -1,0 +1,30 @@
+<%= include_datepicker %>
+<%= form_tag :action => "add_attendance" do %>
+<input type="hidden" name="flag" value="true">
+<table class="crm-table" cellPadding=5 borderColorLight=green  width="30%" >
+  <tr>
+    <td class="header"><font color="red" size="-1" >*</font>选择日期：</td>
+    <td valign="top">
+      <%= text_field_tag :this_date, format_date(Time.parse(params[:this_date]), :date), :class => "datepicker"%>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="header"><font color="red" size="-1" >*</font>上班时间：</td>
+    <td valign="top">
+      <input type="text" name="real_start_time" value="<%=Attendance::S_TIME%>" size="20">
+    </td>
+  </tr>
+  <tr>
+    <td class="header"><font color="red" size="-1" >*</font>下班时间：</td>
+    <td valign="top">
+      <input type="text" name="real_end_time" value="<%=Attendance::E_TIME%>" size="20">
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center" >
+      <%=submit_tag "记录", :class => "btn" %>
+    </td>
+  </tr>
+</table>
+<% end %>
