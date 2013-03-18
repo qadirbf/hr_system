@@ -10,7 +10,41 @@
 
       <tr>
         <th>金额</th>
-        <td><%= f.text_field :total_amount, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);" -%></td>
+        <td><%= f.text_field :total_amount, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();" -%>
+          元
+        </td>
+      </tr>
+      <tr>
+        <th>提成(员工，提成比例，金额)</th>
+        <td>
+          <ul style="list-style: none;margin-left: 0;" id="per">
+            <li id="li1" class="show">
+              <%= select :share, :employee_id_1, options_for_select([['', '']]+@emps, current_user.id) %>
+              <%= text_field :share, :percentage_1, :maxlength => 2, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              <span id="money_1"></span>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="add_one()">添加</a>
+            </li>
+            <li id="li2">
+              <%= select :share, :employee_id_2, options_for_select([['', '']]+@emps) %>
+              <%= text_field :share, :percentage_2, :maxlength => 2, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              <span id="money_2"></span>
+            </li>
+            <li id="li3">
+              <%= select :share, :employee_id_3, options_for_select([['', '']]+@emps) %>
+              <%= text_field :share, :percentage_3, :maxlength => 2, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              <span id="money_3"></span>
+            </li>
+            <li id="li4">
+              <%= select :share, :employee_id_4, options_for_select([['', '']]+@emps) %>
+              <%= text_field :share, :percentage_4, :maxlength => 2, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              <span id="money_4"></span>
+            </li>
+            <li id="li5">
+              <%= select :share, :employee_id_5, options_for_select([['', '']]+@emps) %>
+              <%= text_field :share, :percentage_5, :maxlength => 2, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              <span id="money_5"></span>
+            </li>
+          </ul>
+        </td>
       </tr>
       <tr>
         <th>备注</th>
@@ -22,18 +56,45 @@
       </tr>
     </table>
 <% end %>
+
 <script type="text/javascript">
     function clearNonum(obj) {
         obj.value = obj.value.replace(/^0|\D/g, '');
     }
 
     function before_submit() {
-        if(window.confirm('确认无误了要提交么？')){
-            //alert("确定");
+        if (window.confirm('确认无误了要提交么？')) {
             return true;
-        }else{
-            //alert("取消");
+        } else {
             return false;
         }
     }
+
+    function cal_money() {
+        var money = parseFloat($("#order_total_amount").val());
+        var lis = $("#per li").length;
+        for (var i = 1; i <= lis; i++) {
+            var per = (!!isNaN(parseInt($("#share_percentage_1").val())) ? 0 : parseInt($("#share_percentage_" + i).val()))
+            var tmp = money * per / 100
+            if ($("#share_employee_id_" + i).val() != "") {
+
+                $("#money_" + i).html(tmp)
+            }
+        }
+    }
+
+    function add_one() {
+        var i = $("#per li.show").length;
+        $("#li" + (i + 1)).attr("class", "show")
+    }
 </script>
+<style>
+    #per li {
+        display: none;
+    }
+
+    #per li.show {
+        display: block;
+    }
+
+</style>

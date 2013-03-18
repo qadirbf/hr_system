@@ -717,6 +717,7 @@ class SalesController < ApplicationController
 
   def submit_order
     @title = "提交订单"
+    @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
     if params[:firm_id].blank? and @order.blank?
       render :text => "参数错误，请从公司详细页面点击“提交订单按钮。”", :layout => false
     end
@@ -726,7 +727,18 @@ class SalesController < ApplicationController
       @order.employee_id = current_user.id
       if @order.valid?
         @order.save
-        redirect_to :action => "firm_show", :id => params[:firm_id], :format => "php"
+        share = params[:share]
+        ary = []
+        (1..5).each do |i|
+          if !share["employee_id_#{i}"].blank? and !share["percentage_#{i}"].blank?
+            ary << i
+          end
+        end
+        ary.each do |i|
+          ShareOrder.create!({:order_id => @order.id, :employee_id => share["employee_id_#{i}"], :created_by => current_user.id,
+                              :percentage => share["percentage_#{i}"], :money => (@order.total_amount * share["percentage_#{i}"].to_i / 100)})
+        end
+        redirect_to :action => "my_orders", :format => "php"
       else
         render :action => :submit_order
       end
@@ -734,16 +746,33 @@ class SalesController < ApplicationController
   end
 
   def my_orders
-    @title = "我提交的订单"
-    if current_user.is_admin?
-      @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
-    end
+    @title = "我的订单"
+    @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
     order_hash = params[:order]||{}
-    order_ary = Order.get_sql_by_hash(order_hash)
+    _sql, p_hash = Order.get_sql_by_hash(order_hash)
+    sql = [_sql]
 
-    join = params[:firm_name].blank? ? "" : "left join firms on firms.id = orders.firm_id"
-    @orders = Order.paginate :select => "orders.*", :conditions => order_ary,
-                             :joins => join, :order => "created_at desc", :per_page => 30, :page => params[:page]
+    joins = params[:firm_name].blank? ? "" : "left join firms on firms.id = orders.firm_id"
+    unless params[:firm_name].blank?
+      sql << "firms.firm_name like :firm_name"
+      p_hash.merge!({:firm_name => "%#{params[:firm_name]}%"})
+    end
+
+    unless params[:share_order_employee].blank?
+      sql << " share_orders.employee_id = :share_emp "
+      p_hash.merge!({:share_emp => params[:share_order_employee]})
+      joins += " left join share_orders on share_orders.order_id = orders.id "
+    end
+
+    sql.delete_if{|s| s.blank?}
+
+    @orders = Order.paginate :select => "orders.*", :conditions => [sql.join(" AND "), p_hash],
+                             :joins => joins, :order => "created_at desc", :per_page => 30, :page => params[:page]
+  end
+
+  def show_order
+    @title = "订单详细"
+    @order = Order.where("id = ?", params[:id]).first
   end
 
   protected
@@ -759,7 +788,7 @@ class SalesController < ApplicationController
                         ['/crm/demand_list', '招聘需求列表']]
     else
       @sys_nav_menus = [['/res/search', '资源搜索'], ['/res/my_firms/', '我的资源'], ['/res/firm_edit/', '添加公司'], ['/res/my_recall', '我的跟进任务'],
-                        ['/res/demand_list', '招聘需求列表'], ['/res/my_orders/', '我提交的订单']]
+                        ['/res/demand_list', '招聘需求列表'], ['/res/my_orders/', '我的订单']]
     end
     @sys_nav_menus << ['/res/contact_list', '候选人列表'] if user.is_res?
 

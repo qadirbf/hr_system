@@ -8,6 +8,7 @@ class Employee < ActiveRecord::Base
   belongs_to :department
   has_many :attend_records
   has_many :orders
+  has_many :share_orders
 
   include HrLib::Security
 

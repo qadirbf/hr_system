@@ -7,12 +7,13 @@
 <%= form_tag "/#{params[:db_type]}/my_orders" do %>
     <table style="width:90%" class="common_tb">
       <tr>
-        <% if current_user.is_admin? -%>
-            <td>提交人： <%= select :order, :employee_id_eq, options_for_select([['所有', '']]+@emps, params[:order_employee_id_eq].to_i) %></td>
-        <% end -%>
+        <% #if current_user.is_admin? -%>
+            <td>提交人： <%= select :order, :employee_id_eq, options_for_select([['所有', '']]+@emps, (params[:order][:employee_id_eq] rescue '')) %></td>
+        <% #end -%>
+        <td>相关人： <%= select_tag :share_order_employee, options_for_select([['所有', '']]+@emps, (params[:share_order_employee] rescue '')) %></td>
         <td>公司名称：<%= text_field_tag :firm_name, params[:firm_name] -%> </td>
-        <td>备注：<%= text_field_tag :order_notes_like, params[:order_notes_like] %></td>
-        <td colspan="2">状态： <%= select_tag :order_status_id_eq, options_for_select([['所有', '']]+ Order::STATUS, params[:order_status_id_eq].to_i) %>
+        <td>备注：<%= text_field_tag "order[notes_like]", (params[:order][:notes_like] rescue '') %></td>
+        <td colspan="2">状态： <%= select :order, :status_id_eq, options_for_select([['所有', '']]+ Order::STATUS, (params[:order][:status_id_eq].to_i rescue '')) %>
           &nbsp;&nbsp;<%= submit_tag "搜索", :class => "btn btn-primary" %></td>
       </tr>
     </table>
@@ -36,7 +37,7 @@
           <%= o.status_label -%>
         </td>
         <td>
-          <%= link_to "分单", :action => "share_order", :id => o.id -%>
+          <%= link_to "详细", :action => "show_order", :id => o.id -%>
           <%= link_to "删除", :action => "delete_order", :id => o.id -%>
         </td>
       </tr>
