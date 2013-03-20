@@ -20,28 +20,28 @@
           <ul style="list-style: none;margin-left: 0;" id="per">
             <li id="li1" class="show">
               <%= select :share, :employee_id_1, options_for_select([['', '']]+@emps, current_user.id) %>
-              <%= text_field :share, :percentage_1, :maxlength => 2, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
-              <span id="money_1"></span>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="add_one()">添加</a>
+              <%= text_field :share, :percentage_1, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>%
+              金额：<span id="money_1"></span>&nbsp;元&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="add_one()">添加</a>
             </li>
             <li id="li2">
               <%= select :share, :employee_id_2, options_for_select([['', '']]+@emps) %>
-              <%= text_field :share, :percentage_2, :maxlength => 2, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
-              <span id="money_2"></span>
+              <%= text_field :share, :percentage_2, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>%
+              金额：<span id="money_2"></span>&nbsp;元
             </li>
             <li id="li3">
               <%= select :share, :employee_id_3, options_for_select([['', '']]+@emps) %>
-              <%= text_field :share, :percentage_3, :maxlength => 2, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
-              <span id="money_3"></span>
+              <%= text_field :share, :percentage_3, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>%
+              金额：<span id="money_3"></span>&nbsp;元
             </li>
             <li id="li4">
               <%= select :share, :employee_id_4, options_for_select([['', '']]+@emps) %>
-              <%= text_field :share, :percentage_4, :maxlength => 2, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
-              <span id="money_4"></span>
+              <%= text_field :share, :percentage_4, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>%
+              金额：<span id="money_4"></span>&nbsp;元
             </li>
             <li id="li5">
               <%= select :share, :employee_id_5, options_for_select([['', '']]+@emps) %>
-              <%= text_field :share, :percentage_5, :maxlength => 2, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
-              <span id="money_5"></span>
+              <%= text_field :share, :percentage_5, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>%
+              金额：<span id="money_5"></span>&nbsp;元
             </li>
           </ul>
         </td>
