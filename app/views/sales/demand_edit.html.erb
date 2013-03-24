@@ -1,5 +1,22 @@
 <h1 class="title"><%= @title %></h1>
 <%= include_datepicker %>
+<script type="text/javascript" src="/jquery/jquery-levelSelect-ajax.js"></script>
+<script>
+    $(function(){
+        $("#test").click(function(){
+            $.openLayer({
+                maxItems : 99,
+                pid : "0",
+                oneLevel: false,
+                returnText : "contact_demand_work_place",
+                returnValue : "resvals",
+                span_width : {d1:120,d2:150,d3:150},
+                cacheEnable: true,
+                index : 1
+            });
+        });
+    });
+</script>
 <%= form_for @demand, :url => "/#{params[:db_type]}/demand_update", :html => {:multipart => true} do |f| %>
   <%= errors_for @demand %>
   <%= f.hidden_field :firm_id %><%= hidden_field_tag :id, params[:id] %>
@@ -25,10 +42,11 @@
     <tr>
       <th>招聘人数</th>
       <td><%= f.text_field :contact_num %></td>
-      <th>工作省份</th>
-      <td><%= f.select :province_id, @provinces, {:include_blank => true} %></td>
-      <th>工作城市</th>
-      <td id="city_td"><%= f.select :city_id, @cities, {}, :style => "color:gray" %></td>
+      <th>工作地点</th>
+      <td colspan="3">
+        <input name="test"  id="test" value="选择城市" type="button" class="btn"/>
+        <%= f.text_field :work_place -%>
+      </td>
     </tr>
     <tr>
       <!--

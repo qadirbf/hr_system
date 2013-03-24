@@ -39,7 +39,7 @@ class ContactDemand < ActiveRecord::Base
   end
 
   def work_city
-    [self.province.to_s, self.city.to_s].join(" ")
+    self.work_place.blank? ? [self.province.to_s, self.city.to_s].join(" ") : self.work_place
   end
 
   def salary

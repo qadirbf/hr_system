@@ -7,8 +7,8 @@
           招聘人数： <%= demand.contact_num %></td>
           <td>年薪范围： <%= demand.salary_type %> <br/>年薪备注： <%= demand.salary_notes %><br/>
             备注： <%= demand.demand_notes %></td>
-          <td>工作省份： <%= demand.province %> <br/> 工作城市： <%= demand.city %> <br/>
-            <!-- 工作地点： <%= demand.work_place %> -->
+          <td>
+             工作地点： <%= demand.work_place %>      <br/>
             职位描述：<%= link_to "下载", {:action => "download_position_description", :id => demand.id} if demand.position_description -%>
           </td>
         </tr>
