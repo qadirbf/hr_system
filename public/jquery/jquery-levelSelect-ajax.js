@@ -99,7 +99,7 @@
                     ss = dat[i].split(param.splitChar.charAt(1));		//第二次分隔，获得每个数据项中的数据值和显示字符串
                     html.push("<span title='"+dat[i]+"' name='"+pid+"' style='width:"+span_width+"px;white-space:nowrap;float:left;'>");
                     html.push("<input type='checkbox' value='" + ss[0] + "'>");
-                    html.push("<span name='"+targetid.attr("id")+"' style='margin-left:"+inspan_width+"px;'>" + ss[1] + "</span>");
+                    html.push("<span name='"+targetid.attr("id")+"' style='margin-left:"+inspan_width+"px;cursor:pointer;'>" + ss[1] + "</span>");
                     html.push("</span>");
                 }
                 targetid.empty().show().append($(html.join("")));		//格式化的html代码放入目标容器
