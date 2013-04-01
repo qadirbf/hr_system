@@ -12,9 +12,9 @@ class AttendRecord < ActiveRecord::Base
 
   def self.get_record(employee_id, day, flag)
     if flag==1
-      record = AttendRecord.where("employee_id=? and attend_type=1 and record_time like '%#{day}%'", employee_id).order("record_time desc")
+      record = AttendRecord.where("employee_id=? and attend_type=1 and record_time like '%#{day}%'", employee_id).order("record_time desc").first
     else
-      record = AttendRecord.where("employee_id=? and attend_type=2 and record_time like '%#{day}%'", employee_id).order("record_time desc")
+      record = AttendRecord.where("employee_id=? and attend_type=2 and record_time like '%#{day}%'", employee_id).order("record_time desc").first
     end
     return record
   end
