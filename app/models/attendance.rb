@@ -37,11 +37,11 @@ class Attendance < ActiveRecord::Base
   end
 
   def self.add_attendance(this_date, real_start_time, real_end_time, flag, user_name=nil)
-    setted_records = Attendance.where("employee_id = -1 and this_date = str_to_date('#{this_date} 00:00:00', '%Y-%m-%d %H:%i:%s')")
+    setted_records = Attendance.where("employee_id = -1 and this_date = str_to_date('#{this_date} 00:00:00', '%Y-%m-%d %H:%i:%s')").all
     setted_records.uniq!
     if setted_records.size > 0
       setted_records.each do |record| #记录已设置上下班时间公司员工的考勤信息
-        self.create_employee_attendance(this_date, record.real_start_time, record.real_end_time, true, user_name)
+        self. (this_date, record.real_start_time, record.real_end_time, true, user_name)
       end
     else
       self.create_employee_attendance(this_date, real_start_time, real_end_time, flag, user_name)
@@ -52,9 +52,9 @@ class Attendance < ActiveRecord::Base
     sql = "active = 1 "
     if emp_id
       sql += (emp_id.is_a?(Array) ? ' and id in (?)' : ' and id = ?')
-      employees = Employee.all(:conditions => [sql, emp_id], :order => "username")
+      employees = Employee.find(:all, :conditions => [sql, emp_id], :order => "username")
     else
-      employees = Employee.all(:conditions => sql, :order => "username")
+      employees = Employee.find(:all, :conditions => sql, :order => "username")
     end
 
     unless (Time.parse(this_date).wday==6 or Time.parse(this_date).wday==0) and flag==false #如果为周末，默认为不处理，若flag为true则照常处理
