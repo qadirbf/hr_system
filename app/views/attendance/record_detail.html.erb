@@ -1,13 +1,17 @@
 <%= include_datepicker -%>
 <style>
-  .nowrap{
-     padding-top: 5px;
-  }
+    .nowrap {
+        padding-top: 5px;
+    }
+
+    .crm-table1 td {
+        text-align: center;
+    }
 </style>
 
 <table class="crm-table" width="100%" cellSpacing=0 cellPadding=5 border=0>
   <tr>
-    <td width="20%">
+    <td width="20%" style="vertical-align: top;">
       <%= form_tag "/attendance/record_detail" do -%>
           <table width="100%" style="border-collapse:collapse;border-color:#ececec;" border="1">
             <tr>
@@ -67,42 +71,38 @@
         <strong>打卡信息：</strong>
         <input type="button" id="attend_btn" value="隐藏" onclick="change_attendance()" class="btn">
       <span id="attendance" style="display:block;">
-      <table style="border-collapse:collapse;border-color:#ececec;" border="1" class="crm-table" width="100%" cellSpacing=0 cellPadding=5 border=0>
-        <tr>
-          <th>日期</th>
-          <th>上班打卡时间</th>
-          <th>下班打卡时间</th>
-          <th>迟到</th>
-          <th>早退</th>
-          <th>缺席</th>
-          <th>备注</th>
-        </tr>
-        <% @attends.each do |attend| %>
+          <table style="border-collapse:collapse;border-color:#ececec;" border="1" class="crm-table1" width="100%" cellSpacing=0 cellPadding=5 border=0>
             <tr>
-              <td><%= attend.this_date.strftime("%Y-%m-%d") %></td>
-              <td><%= attend.start_time %></td>
-              <td><%= attend.end_time %></td>
-              <td>
-                <% if attend.late > 0 then %>迟到
-                <% end %></td>
-              <td>
-                <% if attend.early > 0 then %>早退
-                <% end %>
-              </td>
-              <td>
-                <% if attend.absence > 0 then %>缺席
-                <% end %>
-              </td>
-              <td><%= attend.reason %></td>
+              <th>日期</th>
+              <th>上班打卡时间</th>
+              <th>下班打卡时间</th>
+              <th>迟到</th>
+              <th>早退</th>
+              <th>缺席</th>
+              <th>备注</th>
             </tr>
-        <% end %>
-      </table>
+            <% @attends.each do |attend| %>
+                <tr>
+                  <td><%= attend.this_date.strftime("%Y-%m-%d") %></td>
+                  <td><%= format_date(attend.start_time, :full) %></td>
+                  <td><%= format_date(attend.end_time, :full) %></td>
+                  <td>
+                    <% if attend.late > 0 then %>迟到
+                    <% end %></td>
+                  <td>
+                    <% if attend.early > 0 then %>早退
+                    <% end %>
+                  </td>
+                  <td>
+                    <% if attend.absence > 0 then %>缺席
+                    <% end %>
+                  </td>
+                  <td><%= attend.reason %></td>
+                </tr>
+            <% end %>
+          </table>
       </span>
       </div>
-</table>
-</span>
-</td>
-</tr>
 </table>
 
 <script language="javascript">

@@ -12,8 +12,8 @@ class ContactDemand < ActiveRecord::Base
   validates_presence_of :firm_type_id, :message => "请选择职业类型"
   #validates_presence_of :position_type_id,:message=>"请选择职位类型"
   validates_presence_of :salary_type_id, :message => "请选择年薪范围"
-  validates_presence_of :province_id, :message => "请选择工作所在省份"
-  validates_presence_of :city_id, :message => "请选择工作所在城市"
+  #validates_presence_of :province_id, :message => "请选择工作所在省份"
+  #validates_presence_of :city_id, :message => "请选择工作所在城市"
   validates_presence_of :contact_num, :message => "请填写招聘人数"
 
 
