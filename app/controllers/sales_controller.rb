@@ -725,6 +725,7 @@ class SalesController < ApplicationController
     if request.post?
       @order.attributes = params[:order]
       @order.employee_id = current_user.id
+      @order.order_no = "CRK" + Time.now.strftime("%m%d") + rand(9).to_s + rand(10..99).to_s + rand(9).to_s
       if @order.valid?
         @order.save
         share = params[:share]

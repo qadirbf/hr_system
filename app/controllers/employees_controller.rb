@@ -38,7 +38,7 @@ class EmployeesController < ApplicationController
   def destroy
     e = Employee.find(params[:id])
     if FirmLead.exists?(["employee_id = ?", e.id]) # 离职前把leads设置为空置
-      FirmLead.update_all("employee_id = 0", "employee_id = 8")
+      FirmLead.update_all("employee_id = 0", "employee_id = #{e.id}")
     end
     e.destroy
     flash[:notice] = "成功删除！"

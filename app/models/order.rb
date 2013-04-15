@@ -7,9 +7,10 @@ class Order < ActiveRecord::Base
 
   validates_presence_of :total_amount, :message => "请输入订单金额！"
 
-  STATUS = [["通过", 1], ["未通过", 2]]
+  STATUS = [["通过", 1], ["未通过", 2], ["未到账", 3], ["已到账", 4]]
 
   include HrLib::Functions
+
   def status_label
     get_array_type_text STATUS, self.status_id
   end
