@@ -1,10 +1,13 @@
 <h1 class="title"><%= @title %>
 </h1>
+<%= include_datepicker %>
 <%= form_tag "/financial/order_list" do %>
     <table style="width:90%" class="common_tb">
       <tr>
         <td>提交人： <%= select :order, :employee_id_eq, options_for_select([['所有', '']]+@emps, (params[:order][:employee_id_eq] rescue '')) %></td>
         <td>公司名称：<%= text_field_tag :firm_name, params[:firm_name] -%> </td>
+        <td>订单时间：<%= text_field_tag "order[created_at_gte]", (params[:order][:created_at_gte] rescue ''), :class => 'datepicker' %>~
+          <%= text_field_tag "order[created_at_lte]", (params[:order][:created_at_lte] rescue ''), :class => 'datepicker' %></td>
         <td>备注：<%= text_field_tag "order[notes_like]", (params[:order][:notes_like] rescue '') %></td>
         <td colspan="2">状态： <%= select :order, :status_id_eq, options_for_select([['所有', '']]+ Order::STATUS, (params[:order][:status_id_eq].to_i rescue '')) %>
           &nbsp;&nbsp;<%= submit_tag "搜索", :class => "btn btn-primary" %></td>

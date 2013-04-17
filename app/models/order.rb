@@ -15,4 +15,9 @@ class Order < ActiveRecord::Base
     get_array_type_text STATUS, self.status_id
   end
 
+  def share_money(e_id)
+    share_order = self.share_orders.select{|o| o.employee_id == e_id}.first
+    share_order.try(:money).to_i
+  end
+
 end

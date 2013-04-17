@@ -1,0 +1,68 @@
+<%= include_datepicker -%>
+<style>
+    .nowrap {
+        padding-top: 5px;
+    }
+
+    .crm-table td {
+        text-align: center;
+    }
+</style>
+
+<table class="crm-table1" width="100%" cellSpacing=0 cellPadding=5 border=0>
+  <tr>
+    <td width="20%" style="vertical-align: top;">
+      <%= form_tag "/financial/order_count" do -%>
+          <table width="100%" style="border-collapse:collapse;border-color:#ececec;" border="1">
+            <tr>
+              <td class="nowrap">
+                从: <%= text_field_tag "order[created_at_gte]", (params[:order][:created_at_gte] rescue ''), :class => 'datepicker' %>
+              </td>
+            </tr>
+            <tr>
+              <td class="nowrap">
+                到:<%= text_field_tag "order[created_at_lte]", (params[:order][:created_at_lte] rescue ''), :class => 'datepicker' %>
+              </td>
+            </tr>
+            <tr>
+              <td class="nowrap">
+                按用户名：<%= select_tag :employee_id, options_for_select([['所有', '']]+@emps, params[:employee_id]) %>
+              </td>
+            </tr>
+            <tr>
+              <td class="nowrap" align="center">
+                <%= submit_tag "搜索", :class => "btn" %>
+              </td>
+            </tr>
+          </table>
+      <% end -%>
+    </td>
+    <td>&nbsp;</td>
+    <td style="vertical-align: top;">
+      <% @employees.each do |employee| -%>
+          <table style="border-collapse:collapse;border-color:#ececec;margin-bottom: 5px;" border="1" class="crm-table" width="100%" cellSpacing=0 cellPadding=5 border=0>
+            <tr>
+              <th width=210>员工</th>
+              <th width=300>订单号</th>
+              <th width=415>时间</th>
+              <th width=195>金额</th>
+              <th>提成</th>
+            </tr>
+            <% orders = @share_orders.select { |o| o.employee_id == employee.id } -%>
+            <% orders.each do |o| -%>
+                <tr>
+                  <td>
+                    <%= employee.username -%>
+                  </td>
+                  <td>
+                    <%= o.order.order_no -%>
+                  </td>
+                  <td><%= format_date(o.order.created_at, :full) -%></td>
+                  <td><%= number_with_delimiter(o.order.total_amount, :local => :cn) %>元</td>
+                  <td><%= number_with_delimiter(o.money, :local => :cn) %>元</td>
+                </tr>
+            <% end -%>
+          </table>
+      <% end -%>
+    </td>
+</table>
