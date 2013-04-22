@@ -15,6 +15,7 @@
     </table>
 <% end %>
 
+<p style="float: right;margin-right: 60px;font-size: 14px;font-weight: bold;">到账金额：<%= number_with_delimiter(@total_money, :local => :cn) -%>元</p>
 <%= page_links @orders %>
 <table class="list_tb">
   <tr class="title">
@@ -23,8 +24,8 @@
     <td>提交时间</td>
     <td>提交人</td>
     <td>金额</td>
-    <td>状态</td>
     <td>详细</td>
+    <td>备注</td>
     <td>操作</td>
   </tr>
   <% @orders.each do |o| %>
@@ -34,10 +35,8 @@
         <td><%= format_date(o.created_at, :full) -%></td>
         <td><%= o.employee.username -%></td>
         <td><%= number_with_delimiter(o.total_amount, :local => :cn) -%>元</td>
-        <td>
-          <%= o.status_label -%>
-        </td>
-        <td><%= o.share_detail -%></td>
+        <td><%= o.share_detail(current_user) -%></td>
+        <td><%= o.notes -%></td>
         <td>
           <%= link_to "详细", :controller => "sales", :action => "show_order", :id => o.id -%>
           <%= link_to "删除", :action => "delete_order", :id => o.id -%>

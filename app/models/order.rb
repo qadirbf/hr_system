@@ -20,12 +20,18 @@ class Order < ActiveRecord::Base
     share_order.try(:money).to_i
   end
 
-  def share_detail
+  def share_detail(user)
     share_orders = self.share_orders
     unless share_orders.blank?
       ary = []
-      share_orders.each do |o|
-        ary << [o.employee.username, "#{o.percentage}%", "#{o.money}元"].join(", ")
+      if user.is_admin?
+        share_orders.each do |o|
+          ary << [o.employee.username, "#{o.percentage}%", "#{o.money}元"].join(", ")
+        end
+      else
+        share_orders.each do |o|
+          ary << [o.employee.username, "#{o.percentage}%", "#{o.money}元"].join(", ") unless o.employee.is_admin?
+        end
       end
       ary.join("<br/>").html_safe()
     else
