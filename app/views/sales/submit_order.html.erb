@@ -1,4 +1,5 @@
 <h1 class="title"><%= @title %></h1>
+<%= include_datepicker %>
 <%= form_for @order, :url => "/#{params[:db_type]}/submit_order", :html => {:onsubmit => "return before_submit();"} do |f| %>
     <%= errors_for @order %>
     <%= hidden_field_tag :firm_id, params[:firm_id] %>
@@ -12,6 +13,12 @@
         <th>金额</th>
         <td><%= f.text_field :total_amount, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();" -%>
           元
+        </td>
+      </tr>
+      <tr>
+        <th>到账日期</th>
+        <td>
+          <%= f.text_field :credited_date,:value => format_date(@order.credited_date, :date),:class=>"datepicker" %>
         </td>
       </tr>
       <tr>

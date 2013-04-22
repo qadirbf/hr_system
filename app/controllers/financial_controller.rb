@@ -27,9 +27,9 @@ class FinancialController < ApplicationController
     @orders = Order.paginate :select => "orders.*", :conditions => [sql.join(" AND "), p_hash],
                              :joins => joins, :order => "created_at desc", :per_page => 30, :page => params[:page]
 
-    start_time = order_hash[:created_at_gte].blank? ? "#{Time.now.year}-01-01 00:00:00" : order_hash[:created_at_gte]
-    end_time = order_hash[:created_at_lte].blank? ? Time.now.strftime("%Y-%m-%d 23:59:59") : order_hash[:created_at_lte]
-    @total_money = Order.find_by_sql("select sum(total_amount) as money from orders where created_at between '#{start_time}' and '#{end_time}'").first.try(:money)
+    start_time = order_hash[:credited_date_gte].blank? ? "#{Time.now.year}-01-01 00:00:00" : order_hash[:credited_date_gte]
+    end_time = order_hash[:credited_date_lte].blank? ? Time.now.strftime("%Y-%m-%d 23:59:59") : order_hash[:credited_date_lte]
+    @total_money = Order.find_by_sql("select sum(total_amount) as money from orders where credited_date between '#{start_time}' and '#{end_time}'").first.try(:money)
   end
 
   # 订单统计

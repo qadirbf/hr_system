@@ -12,6 +12,10 @@
     </td>
   </tr>
   <tr>
+    <th>到账日期</th>
+    <td><%= @order.credited_date -%></td>
+  </tr>
+  <tr>
     <th>提成(员工，提成比例，金额)</th>
     <td>
       <ul style="list-style: none;margin-left: 0;" id="per">
@@ -19,7 +23,7 @@
         <% unless share_orders.blank? -%>
         <% share_orders.each do |o| -%>
             <li>
-              <%= o.employee.username -%>, <%= o.percentage -%>%, <%= o.money -%>
+              <%= o.employee.username -%>, <%= o.percentage -%>%, <%= o.money -%>元
             </li>
             <% end -%>
         <% end -%>
