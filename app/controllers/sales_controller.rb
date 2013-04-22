@@ -759,13 +759,20 @@ class SalesController < ApplicationController
       p_hash.merge!({:firm_name => "%#{params[:firm_name]}%"})
     end
 
-    unless params[:share_order_employee].blank?
+    if current_user.is_admin?
+      unless params[:share_order_employee].blank?
+        sql << " share_orders.employee_id = :share_emp "
+        p_hash.merge!({:share_emp => params[:share_order_employee]})
+        joins += " left join share_orders on share_orders.order_id = orders.id "
+      end
+    else
       sql << " share_orders.employee_id = :share_emp "
-      p_hash.merge!({:share_emp => params[:share_order_employee]})
+      share_emp = current_user.is_admin? ? params[:share_order_employee] : current_user.id
+      p_hash.merge!({:share_emp => share_emp})
       joins += " left join share_orders on share_orders.order_id = orders.id "
     end
 
-    sql.delete_if{|s| s.blank?}
+    sql.delete_if { |s| s.blank? }
 
     @orders = Order.paginate :select => "orders.*", :conditions => [sql.join(" AND "), p_hash],
                              :joins => joins, :order => "created_at desc", :per_page => 30, :page => params[:page]
@@ -789,10 +796,10 @@ class SalesController < ApplicationController
                         ['/crm/demand_list', '招聘需求列表']]
     else
       @sys_nav_menus = [['/res/search', '资源搜索'], ['/res/my_firms/', '我的资源'], ['/res/firm_edit/', '添加公司'], ['/res/my_recall', '我的跟进任务'],
-                        ['/res/demand_list', '招聘需求列表'], ['/res/my_orders/', '我的订单']]
+                        ['/res/demand_list', '招聘需求列表']]
     end
     @sys_nav_menus << ['/res/contact_list', '候选人列表'] if user.is_res?
-
+    @sys_nav_menus << ['/res/my_orders/', '我的订单']
 
   end
 

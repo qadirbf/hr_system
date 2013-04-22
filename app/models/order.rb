@@ -16,8 +16,21 @@ class Order < ActiveRecord::Base
   end
 
   def share_money(e_id)
-    share_order = self.share_orders.select{|o| o.employee_id == e_id}.first
+    share_order = self.share_orders.select { |o| o.employee_id == e_id }.first
     share_order.try(:money).to_i
+  end
+
+  def share_detail
+    share_orders = self.share_orders
+    unless share_orders.blank?
+      ary = []
+      share_orders.each do |o|
+        ary << [o.employee.username, "#{o.percentage}%", "#{o.money}元"].join(", ")
+      end
+      ary.join("<br/>").html_safe()
+    else
+      ""
+    end
   end
 
 end

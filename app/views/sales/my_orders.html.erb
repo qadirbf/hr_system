@@ -3,15 +3,18 @@
         width: 120px;
     }
 </style>
+<%= include_datepicker %>
 <h1 class="title"><%= @title %></h1>
 <%= form_tag "/#{params[:db_type]}/my_orders" do %>
     <table style="width:90%" class="common_tb">
       <tr>
-        <% #if current_user.is_admin? -%>
+        <% if current_user.is_admin? -%>
             <td>提交人： <%= select :order, :employee_id_eq, options_for_select([['所有', '']]+@emps, (params[:order][:employee_id_eq] rescue '')) %></td>
-        <% #end -%>
-        <td>相关人： <%= select_tag :share_order_employee, options_for_select([['所有', '']]+@emps, (params[:share_order_employee] rescue '')) %></td>
+            <td>相关人： <%= select_tag :share_order_employee, options_for_select([['所有', '']]+@emps, (params[:share_order_employee] rescue '')) %></td>
+        <% end -%>
         <td>公司名称：<%= text_field_tag :firm_name, params[:firm_name] -%> </td>
+        <td>订单时间：<%= text_field_tag "order[created_at_gte]", (params[:order][:created_at_gte] rescue ''), :class => 'datepicker' %>~
+          <%= text_field_tag "order[created_at_lte]", (params[:order][:created_at_lte] rescue ''), :class => 'datepicker' %></td>
         <td>备注：<%= text_field_tag "order[notes_like]", (params[:order][:notes_like] rescue '') %></td>
         <td colspan="2">状态： <%= select :order, :status_id_eq, options_for_select([['所有', '']]+ Order::STATUS, (params[:order][:status_id_eq].to_i rescue '')) %>
           &nbsp;&nbsp;<%= submit_tag "搜索", :class => "btn btn-primary" %></td>
@@ -26,7 +29,9 @@
     <td>公司</td>
     <td>提交时间</td>
     <td>提交人</td>
+    <td>金额</td>
     <td>状态</td>
+    <td>详细</td>
     <td>操作</td>
   </tr>
   <% @orders.each do |o| %>
@@ -35,11 +40,13 @@
         <td><%= o.firm.firm_name -%></td>
         <td><%= format_date(o.created_at, :full) -%></td>
         <td><%= o.employee.username -%></td>
+        <td><%= number_with_delimiter(o.total_amount, :local => :cn) -%>元</td>
         <td>
           <%= o.status_label -%>
         </td>
+        <td><%= o.share_detail -%></td>
         <td>
-          <%= link_to "详细", :action => "show_order", :id => o.id -%>
+          <%= link_to "详细", :controller => "sales", :action => "show_order", :id => o.id -%>
           <%= link_to "删除", :action => "delete_order", :id => o.id -%>
         </td>
       </tr>
