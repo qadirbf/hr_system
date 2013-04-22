@@ -722,6 +722,11 @@ class SalesController < ApplicationController
       render :text => "参数错误，请从公司详细页面点击“提交订单按钮。”", :layout => false
     end
     @order = Order.new(:firm_id => params[:firm_id]) if @order.blank?
+
+    firm = Firm.where("id=#{params[:firm_id]}").first
+    @candidates = firm.all_candidates.map { |c| [c.full_name, c.id] }
+    @demands = firm.contact_demands.map { |c| [c.position_type_text, c.id] }
+
     if request.post?
       @order.attributes = params[:order]
       @order.employee_id = current_user.id
@@ -781,6 +786,22 @@ class SalesController < ApplicationController
   def show_order
     @title = "订单详细"
     @order = Order.where("id = ?", params[:id]).first
+  end
+
+  def delete_order
+    order = Order.where("id = ?", params[:id]).first
+    Order.transaction do
+      begin
+        order.share_orders.each do |s|
+          s.destroy
+        end
+        order.destroy
+        flash[:notice] = "删除成功"
+      rescue => e
+        flash[:notice] = "error. #{e.messages}"
+      end
+    end
+    redirect_to :action => :my_orders
   end
 
   protected

@@ -30,6 +30,7 @@
     <td>提交人</td>
     <td>金额</td>
     <td>详细</td>
+    <td>职位及联系人</td>
     <td>备注</td>
     <td>操作</td>
   </tr>
@@ -41,10 +42,11 @@
         <td><%= o.employee.username -%></td>
         <td><%= number_with_delimiter(o.total_amount, :local => :cn) -%>元</td>
         <td><%= o.share_detail(current_user) -%></td>
+        <td><%= o.position_and_contact -%></td>
         <td><%= o.notes -%></td>
         <td>
           <%= link_to "详细", :controller => "sales", :action => "show_order", :id => o.id -%>
-          <%= link_to "删除", :action => "delete_order", :id => o.id -%>
+          <a href="javascript:void(0)" onclick="confirm_url('确定删除？','/<%= params[:db_type] -%>/delete_order/<%= o.id -%>')">删除</a>
         </td>
       </tr>
   <% end %>
