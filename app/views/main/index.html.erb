@@ -24,6 +24,7 @@
 <%= link_to "我的公司", {:controller => "crm", :action => "my_firms"} %>
 <%= link_to "我的跟进任务", {:controller => "crm", :action => "my_recall"} %>
 <%= link_to "招聘需求列表", {:controller => "crm", :action => "demand_list"} %>
+<%= link_to "我的订单", {:controller => "crm", :action => "my_orders"} %>
 <% end -%>
 
 <% if user.is_res? or user.is_admin? -%>
@@ -34,6 +35,7 @@
 <%= link_to "我的跟进任务", {:controller => "res", :action => "my_recall"} %>
 <%= link_to "招聘需求列表", {:controller => "res", :action => "demand_list"} %>
 <%= link_to "候选人列表", {:controller => "res", :action => "contact_list"} %>
+<%= link_to "我的订单", {:controller => "res", :action => "my_orders"} %>
 <% end -%>
 
 <% if user.is_hr? or user.is_admin? -%>
