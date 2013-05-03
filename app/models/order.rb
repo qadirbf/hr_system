@@ -3,6 +3,8 @@ class Order < ActiveRecord::Base
   # attr_accessible :title, :body
   belongs_to :firm
   belongs_to :employee
+  belongs_to :contact_demand
+  belongs_to :contact
   has_many :share_orders
 
   validates_presence_of :total_amount, :message => "请输入订单金额！"
@@ -37,6 +39,10 @@ class Order < ActiveRecord::Base
     else
       ""
     end
+  end
+
+  def position_and_contact
+    [self.contact_demand.try(:position_type_text).to_s, self.contact.try(:full_name)].join(", ")
   end
 
 end

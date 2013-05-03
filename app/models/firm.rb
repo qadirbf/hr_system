@@ -40,6 +40,11 @@ class Firm < ActiveRecord::Base
     lead.employee_id==0
   end
 
+  def all_candidates     # 获取该公司所有的候选人
+    Contact.find(:all, :conditions => "contacts.firm_id = #{self.id}",
+                 :joins => "left join candidates on candidates.contact_id = contacts.id")
+  end
+
   def grab_by(user)
     user = Employee.find(user) unless user.is_a?(Employee)
     lead = self.lead_by_id(user.leads_type_id)

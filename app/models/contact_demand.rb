@@ -7,6 +7,7 @@ class ContactDemand < ActiveRecord::Base
   belongs_to :province
   belongs_to :city
   has_many :recommend_histories
+  has_many :orders
   belongs_to :updated_user, :class_name => "Employee", :foreign_key => "updated_by"
   validates_presence_of :firm_id, :message => "必须关联公司"
   validates_presence_of :firm_type_id, :message => "请选择职业类型"
