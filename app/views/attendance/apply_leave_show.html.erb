@@ -7,44 +7,44 @@
   <% end %>
   <%= button_to_function "申请取消","go_url('/attendance/apply_cancel_to_manager?id=#{@apply.id}')", :class => "btn" if @apply.can_apply_cancel?%>
   <%= button_to_function "申请退回","go_url('/attendance/apply_back?id=#{@apply.id}')", :class => "btn" if @apply.can_apply_back?%>
-  <%= button_to_function "人事审批","$('hr_form').style.display='block'", :class => "btn" if @can_hr_check%>
-  <%= button_to_function "主管审批","$('manager_form').style.display='block'", :class => "btn" if @can_manager_check%>
+  <%= button_to_function "人事审批","$('#hr_form').show()", :class => "btn" if @can_hr_check%>
+  <%= button_to_function "主管审批","$('#manager_form').show()", :class => "btn" if @can_manager_check%>
   <%= button_to_function "批准取消申请","go_url('/attendance/cancel_apply?id=#{@apply.id}&by=manager')", :class => "btn"  if @apply.need_manager_cancel?%>
-  <%= button_to_function "退回草稿阶段","$('back_form').style.display='block'", :class => "btn" if !@apply.is_draft?&&([@apply.apply_to,@apply.apply_to_hr].include?(current_user.id))&&@apply.employee_id!=current_user.id %>
+  <%= button_to_function "退回草稿阶段","$('#back_form').show()", :class => "btn" if !@apply.is_draft?&&([@apply.apply_to,@apply.apply_to_hr].include?(current_user.id))&&@apply.employee_id!=current_user.id %>
 
 </h1>
 
 <% employee = @apply.employee %>
-<% if @can_hr_check%>
+<% if @can_hr_check %>
     <div id="hr_form" style="margin-bottom:10px;">
-      <% form_tag "/attendance/manager_notes_update",:method=>"post",:onsubmit=>"return check();" do %>
+      <%= form_tag "/attendance/manager_notes_update",:method=>"post",:onsubmit=>"return check();" do %>
           <%= hidden_field_tag :id,@apply.id %>
           <table class="the-table-small" width="50%" cellSpacing=0 cellPadding=5 border=0>
             <tr><th width="20%">批准？</th><td><%= select :apply,:status,[['同意',2],['拒绝',5]],:include_blank=>true %></td></tr>
             <tr><th>主管备注</th><td><%= text_area :apply,:hr_notes,:rows=>5,:cols=>30 %></td></tr>
-            <tr><td colspan="2"><%= submit_tag "提交" %>&nbsp;&nbsp;<%= button_to_function "取消","$('hr_form').style.display='none'" %></td> </tr>
+            <tr><td colspan="2"><%= submit_tag "提交", :class => "btn" %>&nbsp;&nbsp;<%= button_to_function "取消","$('#hr_form').hide()", :class => "btn" %></td> </tr>
           </table>
       <%end%>
     </div>
-<%elsif @can_manager_check&&!@apply.was_approved?%>
+<%elsif @can_manager_check && !@apply.was_approved?%>
     <div id="manager_form" style="margin-bottom:10px;">
-      <% form_tag "/attendance/manager_notes_update",:method=>"post",:onsubmit=>"return check();" do %>
+      <%= form_tag "/attendance/manager_notes_update",:method=>"post",:onsubmit=>"return check();" do %>
           <%= hidden_field_tag :id,@apply.id %>
           <table class="the-table-small" width="50%" cellSpacing=0 cellPadding=5 border=0>
             <tr><th width="20%">批准？</th><td><%= select :apply,:status,[['同意',4],['拒绝',5]],:include_blank=>true %></td></tr>
             <tr><th>主管备注</th><td><%= text_area :apply,:manager_notes,:rows=>5,:cols=>30 %></td></tr>
-            <tr><td colspan="2"><%= submit_tag "提交" %>&nbsp;&nbsp;<%= button_to_function "取消","$('manager_form').style.display='none'" %></td> </tr>
+            <tr><td colspan="2"><%= submit_tag "提交", :class => "btn" %>&nbsp;&nbsp;<%= button_to_function "取消","$('#manager_form').hide()", :class => "btn" %></td> </tr>
           </table>
       <%end%>
     </div>
 <% end %>
 
 <div id="back_form" style="display:none;margin-bottom:10px;">
-  <% form_tag "/attendance/back_to_draft",:method=>"post",:onsubmit=>"return check_back();" do %>
+  <%= form_tag "/attendance/back_to_draft",:method=>"post",:onsubmit=>"return check_back();" do %>
       <%= hidden_field_tag :id,@apply.id %>
       <table class="the-table-small" width="50%" cellSpacing=0 cellPadding=5 border=0>
         <tr><th width="20%">退回原因</th><td><%= text_area :apply,:back_reason,:rows=>5,:cols=>30 %></td></tr>
-        <tr><td colspan="2"><%= submit_tag "提交" %>&nbsp;&nbsp;<%= button_to_function "取消","$('back_form').style.display='none'" %></td> </tr>
+        <tr><td colspan="2"><%= submit_tag "提交", :class => "btn" %>&nbsp;&nbsp;<%= button_to_function "取消","$('#back_form').hide()", :class => "btn" %></td> </tr>
       </table>
   <%end%>
 </div>

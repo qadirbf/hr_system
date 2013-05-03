@@ -88,7 +88,7 @@ class ApplyLeave < ActiveRecord::Base
 
   def send_message_for_apply
     employee = self.employee
-    to_id = (self.hr_check_stage? ? self.apply_to_hr : self.apply_to)
+    to_id = self.hr_check_stage? ? self.apply_to_hr : self.apply_to
     subject = "#{employee.username}(#{employee.name_cn})提交了申请，需要您审批"
     body = %{<a href='/attendance/apply_leave_show?id=#{self.id}'>#{subject}</a><br>
           申请时间：#{Time.now.format_date(:full)}}

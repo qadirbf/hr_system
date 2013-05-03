@@ -2,10 +2,10 @@
   <tr>
     <td style="width:80%">
       <table style="width:80%">
-        <tr><td>ID: <%= open_link demand.id, "/#{params[:db_type]}/demand_view/#{demand.id}" %> <br/>
+        <tr><td width=300>ID: <%= open_link demand.id, "/#{params[:db_type]}/demand_view/#{demand.id}" %> <br/>
           职业类型： <%= demand.position_type_text %> <br>职位类型： <%= demand.position_type %> <br/>
           招聘人数： <%= demand.contact_num %></td>
-          <td>年薪范围： <%= demand.salary_type %> <br/>年薪备注： <%= demand.salary_notes %><br/>
+          <td width=610>年薪范围： <%= demand.salary_type %> <br/>年薪备注： <%= demand.salary_notes %><br/>
             备注： <%= demand.demand_notes %></td>
           <td>
              工作地点： <%= demand.work_place %>      <br/>

@@ -251,8 +251,9 @@ class SalesController < ApplicationController
     if current_user.is_res?
       session[:down_resume_count]||=0
       session[:down_resume_count] += 1
-      if session[:down_resume_count]>10
-        render :text => "<script>alert('你下载的简历数量超出了10个，将不能再下载简历！');history.back()</script>".html_safe
+      _t = current_user.is_admin? ? 30 : 10
+      if session[:down_resume_count] > _t
+        render :text => "<script>alert('你下载的简历数量超出了#{_t}个，将不能再下载简历！');history.back()</script>".html_safe
         return false
       end
     end
