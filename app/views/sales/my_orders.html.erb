@@ -13,6 +13,7 @@
             <td>相关人： <%= select_tag :share_order_employee, options_for_select([['所有', '']]+@emps, (params[:share_order_employee] rescue '')) %></td>
         <% end -%>
         <td>公司名称：<%= text_field_tag :firm_name, params[:firm_name] -%> </td>
+        <td>订单状态：<%= select :order, :status_id_eq, options_for_select([['所有', '']] + Order::STATUS, (params[:order][:status_id_eq] rescue '')) %> </td>
         <td>到账时间：<%= text_field_tag "order[credited_date_gte]", (params[:order][:credited_date_gte] rescue ''), :class => 'datepicker' %>~
           <%= text_field_tag "order[credited_date_lte]", (params[:order][:credited_date_lte] rescue ''), :class => 'datepicker' %></td>
         <td>备注：<%= text_field_tag "order[notes_like]", (params[:order][:notes_like] rescue '') %></td>

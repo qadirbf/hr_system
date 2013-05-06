@@ -725,7 +725,7 @@ class SalesController < ApplicationController
     @order = Order.new(:firm_id => params[:firm_id]) if @order.blank?
 
     firm = Firm.where("id=#{params[:firm_id]}").first
-    @candidates = firm.all_candidates.map { |c| [c.full_name, c.id] }
+    #@candidates = firm.all_candidates.map { |c| [c.full_name, c.id] }
     @demands = firm.contact_demands.map { |c| [c.position_type_text, c.id] }
 
     if request.post?

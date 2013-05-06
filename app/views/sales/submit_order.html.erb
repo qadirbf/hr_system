@@ -5,7 +5,7 @@
     <%= hidden_field_tag :firm_id, params[:firm_id] %>
     <table class="blue_tb">
       <tr>
-        <th style="height: 38px;">公司名称</th>
+        <th style="height: 38px;width:300px;">公司名称</th>
         <td style="font-weight: bold; font-size:16px;margin: 5px;"><%= @order.firm.firm_name %></td>
       </tr>
 
@@ -54,6 +54,12 @@
         </td>
       </tr>
       <tr>
+        <th>订单状态</th>
+        <td>
+          <%= f.select :status_id, Order::STATUS, {:include_blank => true} %>
+        </td>
+      </tr>
+      <tr>
         <th>职位名称</th>
         <td>
           <%= f.select :contact_demand_id, @demands, {:include_blank => true} %>
@@ -62,7 +68,7 @@
       <tr>
         <th>候选人姓名</th>
         <td>
-          <%= f.select :contact_id, @candidates, {:include_blank => true} %>
+          <%= f.text_field :candidate_name %>
         </td>
       </tr>
       <tr>

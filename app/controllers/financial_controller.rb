@@ -54,6 +54,49 @@ class FinancialController < ApplicationController
                                    :joins => joins, :order => "created_at desc"
   end
 
+  # 修改订单
+  def edit_order
+    @title = "修改订单"
+    @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
+    @order = Order.where("id = #{params[:id]}").first
+    if params[:id].blank? and @order.blank?
+      render :text => "参数错误，请从订单列表页面点击“修改”", :layout => false
+    end
+
+    firm = Firm.where("id=#{@order.firm_id}").first
+    #@candidates = firm.all_candidates.map { |c| [c.full_name, c.id] }
+    @demands = firm.contact_demands.map { |c| [c.position_type_text, c.id] }
+    tmp = @order.share_orders.map{|s| [s.employee_id, s.percentage, s.money].join('-')}
+    @share_orders = tmp.join(";")
+  end
+
+  def update_order
+    @order = Order.where("id = #{params[:id]}").first
+    @order.attributes = params[:order]
+    @order.employee_id = current_user.id
+    if @order.valid?
+      @order.credited_date = nil if @order.status_id == 1
+      @order.save
+      share = params[:share]
+      ary = []
+      (1..5).each do |i|
+        if !share["employee_id_#{i}"].blank? and !share["percentage_#{i}"].blank?
+          ary << i
+        end
+      end
+      @order.share_orders.each { |s| s.destroy }
+      ary.each do |i|
+        ShareOrder.create!({:order_id => @order.id, :employee_id => share["employee_id_#{i}"], :created_by => current_user.id,
+                            :percentage => share["percentage_#{i}"], :money => (@order.total_amount * share["percentage_#{i}"].to_i / 100)})
+      end
+      redirect_to :action => "order_list", :format => "php"
+    else
+      @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
+      @demands = firm.contact_demands.map { |c| [c.position_type_text, c.id] }
+      render :action => :edit_order
+    end
+  end
+
   def check_right
     unless current_user.is_admin?
       render :text => "没有权限访问该页面"

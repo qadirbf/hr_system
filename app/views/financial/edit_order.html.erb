@@ -1,0 +1,152 @@
+<h1 class="title"><%= @title %></h1>
+<%= include_datepicker %>
+<%= form_for @order, :url => "/financial/update_order", :html => {:onsubmit => "return before_submit();"} do |f| %>
+    <%= errors_for @order %>
+    <%= hidden_field_tag :firm_id, params[:firm_id] %>
+    <%= hidden_field_tag :id, @order.id %>
+    <table class="blue_tb">
+      <tr>
+        <th style="height: 38px;width:300px;">公司名称</th>
+        <td style="font-weight: bold; font-size:16px;margin: 5px;"><%= @order.firm.firm_name %></td>
+      </tr>
+
+      <tr>
+        <th>金额</th>
+        <td><%= f.text_field :total_amount, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();" -%>
+          元
+        </td>
+      </tr>
+      <tr>
+        <th>到账日期</th>
+        <td>
+          <%= f.text_field :credited_date, :value => format_date(@order.credited_date, :date), :class => "datepicker" %>
+        </td>
+      </tr>
+      <tr>
+        <th>提成(员工，提成比例，金额)</th>
+        <td>
+          <ul style="list-style: none;margin-left: 0;" id="per">
+            <li id="li1" class="show">
+              <%= select :share, :employee_id_1, options_for_select([['', '']]+@emps, current_user.id) %>
+              <%= text_field :share, :percentage_1, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              %
+              金额：<span id="money_1"></span>&nbsp;元&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="add_one()">添加</a>
+            </li>
+            <li id="li2">
+              <%= select :share, :employee_id_2, options_for_select([['', '']]+@emps) %>
+              <%= text_field :share, :percentage_2, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              %
+              金额：<span id="money_2"></span>&nbsp;元
+            </li>
+            <li id="li3">
+              <%= select :share, :employee_id_3, options_for_select([['', '']]+@emps) %>
+              <%= text_field :share, :percentage_3, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              %
+              金额：<span id="money_3"></span>&nbsp;元
+            </li>
+            <li id="li4">
+              <%= select :share, :employee_id_4, options_for_select([['', '']]+@emps) %>
+              <%= text_field :share, :percentage_4, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              %
+              金额：<span id="money_4"></span>&nbsp;元
+            </li>
+            <li id="li5">
+              <%= select :share, :employee_id_5, options_for_select([['', '']]+@emps) %>
+              <%= text_field :share, :percentage_5, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              %
+              金额：<span id="money_5"></span>&nbsp;元
+            </li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th>订单状态</th>
+        <td>
+          <%= f.select :status_id, Order::STATUS, {:include_blank => true} %>
+        </td>
+      </tr>
+      <tr>
+        <th>职位名称</th>
+        <td>
+          <%= f.select :contact_demand_id, @demands, {:include_blank => true} %>
+        </td>
+      </tr>
+      <tr>
+        <th>候选人姓名</th>
+        <td>
+          <%= f.text_field :candidate_name %>
+        </td>
+      </tr>
+      <tr>
+        <th>备注</th>
+        <td><%= f.text_area :notes, :size => "50x5", :style => "width:400px;" %></td>
+      </tr>
+      <tr>
+        <td colspan="2"><%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
+          <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
+      </tr>
+    </table>
+<% end %>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        init_share_order();
+    });
+
+    function init_share_order() {
+        var s = "<%= @share_orders -%>";
+        var ary = s.split(";")
+        var num = ary.length;
+        if (num > 1) {
+            for (var i = 2; i <= num; i++) {
+                $("#li" + i).attr("class", "show")
+            }
+        }
+        $.each(ary, function(key,val){
+            var s_o = val.split("-");
+            $("#share_employee_id_"+parseInt(key+1)+" option[value='"+ s_o[0] +"']").attr('selected','selected');
+            $("#share_percentage_" + parseInt(key+1)).val(s_o[1]);
+            $("#money_" + parseInt(key+1)).html(s_o[2]);
+        });
+    }
+
+    function clearNonum(obj) {
+        obj.value = obj.value.replace(/^0|\D/g, '');
+    }
+
+    function before_submit() {
+        if (window.confirm('确认无误了要提交么？')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function cal_money() {
+        var money = parseFloat($("#order_total_amount").val());
+        var lis = $("#per li").length;
+        for (var i = 1; i <= lis; i++) {
+            var per = (!!isNaN(parseInt($("#share_percentage_1").val())) ? 0 : parseInt($("#share_percentage_" + i).val()))
+            var tmp = money * per / 100
+            if ($("#share_employee_id_" + i).val() != "") {
+
+                $("#money_" + i).html(tmp)
+            }
+        }
+    }
+
+    function add_one() {
+        var i = $("#per li.show").length;
+        $("#li" + (i + 1)).attr("class", "show")
+    }
+</script>
+<style>
+    #per li {
+        display: none;
+    }
+
+    #per li.show {
+        display: block;
+    }
+
+</style>

@@ -9,9 +9,17 @@ class Order < ActiveRecord::Base
 
   validates_presence_of :total_amount, :message => "请输入订单金额！"
 
-  STATUS = [["通过", 1], ["未通过", 2], ["未到账", 3], ["已到账", 4]]
+  STATUS = [["未到账", 1], ["已到账", 2]]
 
   include HrLib::Functions
+
+  before_save :check_status
+
+  def check_status
+    unless self.credited_date.blank?
+      self.status_id = 2
+    end
+  end
 
   def status_label
     get_array_type_text STATUS, self.status_id
@@ -42,7 +50,7 @@ class Order < ActiveRecord::Base
   end
 
   def position_and_contact
-    [self.contact_demand.try(:position_type_text).to_s, self.contact.try(:full_name)].join(", ")
+    [self.contact_demand.try(:position_type_text), self.try(:candidate_name)].delete_if{|a| a.blank?}.join(", ")
   end
 
 end
