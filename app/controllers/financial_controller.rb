@@ -48,7 +48,7 @@ class FinancialController < ApplicationController
     joins = " left join orders on orders.id = share_orders.order_id"
     sql.delete_if { |s| s.blank? }
 
-    @employees = Employee.find_by_sql("select employees.* from employees right join share_orders on share_orders.employee_id = employees.id " + (f.blank? ? '' : "where #{f}"))
+    @employees = Employee.find_by_sql("select distinct employees.* from employees right join share_orders on share_orders.employee_id = employees.id " + (f.blank? ? '' : "where #{f}"))
 
     @share_orders = ShareOrder.all :select => "share_orders.*", :conditions => [sql.join(" AND "), p_hash],
                                    :joins => joins, :order => "created_at desc"
