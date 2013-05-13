@@ -15,7 +15,11 @@
     </table>
 <% end %>
 
-<p style="float: right;margin-right: 60px;font-size: 14px;font-weight: bold;">到账金额：<%= number_with_delimiter(@total_money, :local => :cn) -%>元</p>
+<p style="float: right;margin-right: 60px;font-size: 14px;font-weight: bold;">
+  到账金额：<%= number_with_delimiter(@credited_money, :local => :cn) -%>元&nbsp;&nbsp;
+  未到账金额：<%= number_with_delimiter(@uncredited_money, :local => :cn) -%>元&nbsp;&nbsp;
+  总计：<%= number_with_delimiter((@uncredited_money + @credited_money), :local => :cn) -%>元
+</p>
 <%= page_links @orders %>
 <table class="list_tb">
   <tr class="title">
