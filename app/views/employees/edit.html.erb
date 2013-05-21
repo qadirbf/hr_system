@@ -1,6 +1,7 @@
 <h1 class="title"><%= @title %></h1>
 <%= include_datepicker %>
 <%= form_for @employee, :url => "/employees/update" do |f| %>
+    <%= hidden_field_tag "id", params[:id] -%>
   <%= errors_for @employee %>
 <table class="blue_tb" style="100%">
   <tr><th>用户名</th><td><%= f.text_field :username %></td>
