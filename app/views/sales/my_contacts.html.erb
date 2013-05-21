@@ -41,7 +41,9 @@
             <td rowspan="<%= contacts.size %>" valign="top"><%= f.firm_leads[0].grab_date.format_date(:date) -%></td>
             <%# contacts.each do |c| -%>
             <td> <%= candidate_label c -%>
-              <%= open_contact_page c.full_name(true), c.id -%> </td>
+              <%= open_contact_page c.full_name(true), c.id -%>
+                <%= "(已离职)".red.html_safe if c.resigned > 0 -%>
+            </td>
             <td> <%= c.position_cn -%> </td>
             <td> <%= c.phone1 -%> <%= c.mobile %></td>
             <td> <%= c.expect_salary_type -%> <%= simple_format c.salary_notes -%> </td>
@@ -73,7 +75,9 @@
                 <td></td><td></td><td></td>
             <% else -%>
                 <td> <%= candidate_label c -%>
-                  <%= open_contact_page c.full_name(true), c.id -%> </td>
+                  <%= open_contact_page c.full_name(true), c.id -%>
+                  <%= "(已离职)".red.html_safe if c.resigned > 0 -%>
+                </td>
                 <td> <%= c.position_cn -%> </td>
                 <td> <%= c.phone1 -%> <%= c.mobile %></td>
                 <td> <%= c.expect_salary_type -%> <%= simple_format c.salary_notes -%> </td>

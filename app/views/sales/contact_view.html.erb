@@ -1,6 +1,7 @@
 <h1 class="title">
   <%= candidate_label(@contact) if @contact.is_candidate? -%>
   <%= @title %>
+  <%= "(已离职)".red.html_safe if @contact.resigned > 0 -%>
   <% if @can_edit -%>
       <%= button_to_function "修改联系人", "go_url('/#{params[:db_type]}/contact_edit.php?id=#{@contact.id}')", :class => "btn" %>
       <%= button_to_function "删除联系人", "confirm_url('确定删除？','/#{params[:db_type]}/contact_destroy?id=#{@contact.id}')", :class => "btn" %>
