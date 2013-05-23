@@ -14,7 +14,7 @@
                 <%= candidate_label contact -%>
             <% end -%>
             <%= open_contact_page contact.full_name(true, true), contact.id %>
-            <%= "(已离职)".red.html_safe if @contact.resigned > 0 -%>
+            <%= "(已离职)".red.html_safe if contact.resigned > 0 -%>
             <% if contact.want_new_job.to_i > 0 -%>
                 <font style="color:red;">（联系人考虑进行工作变动）</font><br/>
             <% end -%>
