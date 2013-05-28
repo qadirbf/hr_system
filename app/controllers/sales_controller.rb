@@ -95,6 +95,26 @@ class SalesController < ApplicationController
     end
   end
 
+  def batch_grab_leads
+    unless params[:ids].blank?
+      user = current_user
+      notice = []
+      if user.is_admin?
+        params[:ids].split(",").each do |id|
+          firm = Firm.find(id)
+          leads_type = crm_sys? ? 1 : 2
+          firm.lead_by_id(leads_type).grab_by(params[:to_sales].to_i)
+          notice << "操作成功！"
+        end
+      else
+        notice << "没有权限进行该操作！"
+      end
+      render :text => notice.join("<br/>")
+    else
+      render :text => ""
+    end
+  end
+
   def grab_firm
     user = current_user
     firm = Firm.find(params[:id])
@@ -382,12 +402,12 @@ class SalesController < ApplicationController
 
   def my_firms
     @title = (res_sys? ? "我的资源" : "我的公司")
-    params[:user_id]||=current_user.id
+    #params[:sales_id]||=current_user.id
 
     if current_user.is_admin?
-      user_id = params[:user_id].to_i
-      where_sql = (user_id == 0 ? ["firm_leads.employee_id > 0"] : ["firm_leads.employee_id = :user_id", {user_id: user_id}])
-
+      user_id = params[:sales_id].to_i
+      type_id = res_sys? ? 2 : 1
+      where_sql = (user_id == 0 ? ["firm_leads.employee_id > 0 and firm_leads.leads_type_id = :type_id", {type_id: type_id}] : ["firm_leads.employee_id = :user_id and firm_leads.leads_type_id = :type_id", {user_id: user_id, type_id: type_id}])
       @firms = Firm.includes(:firm_leads).where(where_sql).order("firm_leads.grab_date").paginate(:page => params[:page], :per_page => 30)
 
       if res_sys?

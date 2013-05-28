@@ -7,10 +7,17 @@
 </h1>
 <% if current_user.is_admin? -%>
     <%= form_tag "/#{params[:db_type]}/my_firms" do %>
-        <table style="width:20%" class="common_tb">
+        <table style="" class="common_tb">
           <tr>
             <td>员工：<%= select_tag :user_id, options_for_select([['所有', 0]]+@employees, params[:user_id].to_i) %></td>
             <td>&nbsp;&nbsp;<%= submit_tag "搜索", :class => "btn btn-primary" %></td>
+            <% if current_user.is_admin? -%>
+                <td>分配给：</td>
+                <td>
+                  <%= select_tag :to_sales_id, options_for_select([['', 0]]+@employees, params[:to_sales_id].to_i) %>
+                </td>
+                <td><%= button_to_function "确定", "batch_grab_leads()", :class => "btn" -%></td>
+            <% end -%>
           </tr>
         </table>
     <% end -%>
@@ -30,15 +37,16 @@
     <td>操作</td>
   </tr>
   <% @firms.each do |f| -%>
-      <% contacts = f.contacts.grabbed(params[:user_id]) -%>
+      <% firm_lead = f.firm_leads[0] -%>
+      <% contacts = f.contacts.grabbed(firm_lead.emp.id) -%>
       <% c = contacts.first -%>
       <% if contacts.size > 1 -%>
           <tr>
             <td rowspan="<%= contacts.size %>" valign="top">
               <%= check_box_tag "ids", f.id, nil, {:class => "chk"} -%>
               <%= open_firm_page f.firm_name, f.id -%></td>
-            <td rowspan="<%= contacts.size %>" valign="top"><%= f.firm_leads[0].emp -%></td>
-            <td rowspan="<%= contacts.size %>" valign="top"><%= f.firm_leads[0].grab_date.format_date(:date) -%></td>
+            <td rowspan="<%= contacts.size %>" valign="top"><%= firm_lead.emp -%></td>
+            <td rowspan="<%= contacts.size %>" valign="top"><%= firm_lead.grab_date.format_date(:date) -%></td>
             <%# contacts.each do |c| -%>
             <td> <%= candidate_label c -%>
               <%= open_contact_page c.full_name(true), c.id -%>
@@ -68,8 +76,8 @@
             <td valign="top">
               <%= check_box_tag "ids", f.id, nil, {:class => "chk"} -%>
               <%= open_firm_page f.firm_name, f.id -%></td>
-            <td valign="top"><%= f.firm_leads[0].emp -%></td>
-            <td valign="top"><%= f.firm_leads[0].grab_date.format_date(:date) -%></td>
+            <td valign="top"><%= firm_lead.emp -%></td>
+            <td valign="top"><%= firm_lead.grab_date.format_date(:date) -%></td>
             <% if c.blank? -%>
                 <td></td><td></td><td></td>
                 <td></td><td></td><td></td>
@@ -107,5 +115,28 @@
             }
         }
 
+    }
+
+    function batch_grab_leads() {
+        var ids = _.compact(_.map($(".chk"), function (c) {
+            return (c.checked ? c.value : null);
+        })).join(",");
+        var emp_id = $("#to_sales_id").val();
+        if (emp_id == 0){
+            alert("请选择员工！");
+            return
+        }
+        if (ids.length == 0) {
+            alert("请选择公司！");
+        }
+        else {
+            if (confirm("确定要分配吗?")) {
+                $.post("<%= url_for(:action=>"batch_grab_leads", :controller => params[:db_type]) -%>", { ids:ids, to_sales:emp_id },
+                        function (data) {
+                            alert("操作成功！");
+                            window.location.reload();
+                        });
+            }
+        }
     }
 </script>

@@ -5,7 +5,7 @@ class FirmLead < ActiveRecord::Base
 
   def grab_by(emp_id)
     user = Hr.user
-    if user.id==self.employee_id||self.employee_id==0
+    if user.id==self.employee_id||self.employee_id==0||user.is_admin?
       old_emp_id = self.employee_id
       transaction do
         hash = {:employee_id => emp_id, :grab_date => Time.now, :updated_by => user.id}

@@ -17,6 +17,9 @@ class EmployeesController < ApplicationController
     unless params[:id].blank?
       @employee = Employee.find(params[:id])
       @employee.update_attributes(params[:employee].merge(:updated_by=>user.id))
+      if !@employee.leave_date.blank? && @employee.active != 1
+        FirmLead.update_all("employee_id = 0", "employee_id = #{@employee.id}")
+      end
     else
       @employee = Employee.create(params[:employee].merge(:updated_by=>user.id,:created_by=>user.id))
     end
