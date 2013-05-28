@@ -405,7 +405,7 @@ class SalesController < ApplicationController
     #params[:sales_id]||=current_user.id
 
     if current_user.is_admin?
-      user_id = params[:sales_id].to_i
+      user_id = params[:user_id].to_i
       type_id = res_sys? ? 2 : 1
       where_sql = (user_id == 0 ? ["firm_leads.employee_id > 0 and firm_leads.leads_type_id = :type_id", {type_id: type_id}] : ["firm_leads.employee_id = :user_id and firm_leads.leads_type_id = :type_id", {user_id: user_id, type_id: type_id}])
       @firms = Firm.includes(:firm_leads).where(where_sql).order("firm_leads.grab_date").paginate(:page => params[:page], :per_page => 30)
