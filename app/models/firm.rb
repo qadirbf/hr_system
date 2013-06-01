@@ -1,6 +1,6 @@
 #encoding:utf-8
 class Firm < ActiveRecord::Base
-  has_many :contacts, :dependent => :destroy
+  has_many :contacts, :dependent => :destroy, :conditions => "delete_at is null"
   has_many :recalls, :dependent => :destroy
   belongs_to :province
   belongs_to :city

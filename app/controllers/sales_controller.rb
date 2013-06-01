@@ -222,19 +222,25 @@ class SalesController < ApplicationController
   end
 
   def contact_view
-    @contact = Contact.find(params[:id])
-    @title = "联系人 - #{@contact.full_name(true)}"
-    @firm = @contact.firm
-    @can_edit = (@firm.is_followed_by?(current_user) or current_user.is_admin?)
-    preload_recall
-    render :template => "/sales/contact_view"
+    @contact = Contact.where("id = ?", params[:id]).first
+    if @contact.delete_at.blank?
+      @title = "联系人 - #{@contact.full_name(true)}"
+      @firm = @contact.firm
+      @can_edit = (@firm.is_followed_by?(current_user) or current_user.is_admin?)
+      preload_recall
+      render :template => "/sales/contact_view"
+    else
+      render :text => "该联系人已从系统中删除"
+    end
   end
 
   alias contact_show contact_view
 
   def contact_destroy
-    c = Contact.find(params[:id])
-    c.destroy
+    c = Contact.active.find(params[:id])
+    #c.destroy
+    c.delete_at = Time.now
+    c.save
     flash[:notice] = '成功删除！'
     redirect_to :action => "firm_show", :controller => params[:db_type], :id => c.firm_id, :format => 'php'
   end

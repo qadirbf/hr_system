@@ -21,6 +21,7 @@ class Contact < ActiveRecord::Base
   SALARY_TYPES = [['10万以内',1],['10-20万',2],['20-40万',3],['40-60万',4],['60-100万',5],['100万以上',6],['其他',7]]
 
   scope :grabbed, ->(res_id) { where(:employee_id => res_id).order("last_name, first_name") }
+  scope :active, where("delete_at is null")
 
   include HrLib::Functions
   before_save :check_sex
