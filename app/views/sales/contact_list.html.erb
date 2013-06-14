@@ -109,6 +109,10 @@
             <%= content_tag "span", "雇佣成功", :class => "label label-info"  -%>
               起始时间: <%= c.employed_start_date.format_date(:date) -%>
           <% end -%>
+          <% s = c.has_same_one -%>
+          <% unless s.blank? -%>
+              <a href="<%= "/#{params[:db_type]}/contact_show/#{s.id}" -%>" style="color: #ff0000;" target="_b"><%= "#{s.full_name(true)}/#{s.id}" -%></a>
+          <% end -%>
         </td>
         <td><%= open_link c.firm_name, "/#{params[:db_type]}/firm_show/#{c.firm_id}" %></td>
         <td><%= h c.firm.firm_tag_names %></td>

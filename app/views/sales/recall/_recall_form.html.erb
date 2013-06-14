@@ -1,10 +1,41 @@
 <%= include_datepicker %>
+<script type="text/javascript" src="/jquery/jquery.autocomplete.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css"/>
+<script>
+    $(document).ready(function () {
+        $("#contact_name").autocomplete("/sales/auto_contact", {
+            delay:10,
+            minChars:0,
+            extraParams: {firm_id:function(){return $('#recall_firm_id').val();}},
+            multiple:false,
+            parse:function (data) {
+                return $.map(eval(data), function (item) {
+                    return {
+                        data:item,
+                        value:item.name,
+                        result:item.name
+                    }
+                });
+            },
+            formatItem:function (item) {
+                return item.name;
+            }
+        }).result(function (e, item) {
+                    $("#contact_name").val(item.name);
+                    $("#recall_contact_id").val(item.id);
+                });
+    });
+</script>
 <%= form_tag "/#{params[:db_type]}/recall_update", :target => "_blank" do %>
   <%= hidden_field :recall, :firm_id %> <%= hidden_field_tag :id, @recall.id %>
 <table class="list_tb">
   <tr class="title"><td>安排时间</td><td>联系人</td><td>联系方式</td><td>阶段</td><td>跟进员工</td><td>备注</td></tr>
   <tr><td><%= text_field :recall, :appt_date,:class=>"dtimepicker",:value=>format_date(@recall.appt_date,:min) %></td>
-    <td><%= select :recall, :contact_id, @contacts, {:include_blank => true} %></td>
+    <td>
+      <%= text_field_tag :contact_name -%>
+      <%= hidden_field :recall, :contact_id %>
+      <%#= select :recall, :contact_id, @contacts, {:include_blank => true} %>
+    </td>
     <td><%= select :recall, :contact_by_id, Recall::CONTACT_BY, {:include_blank => true} %></td>
     <td><%= select :recall, :stage_id, Recall::STAGES, {:include_blank => true} %></td>
     <td><%= select :recall, :employee_id, @emps,{:include_blank=>true}%></td>

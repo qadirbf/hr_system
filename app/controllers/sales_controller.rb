@@ -334,7 +334,7 @@ class SalesController < ApplicationController
       sql << " and tags.name = :tag_name"
       p_hash.merge!(:tag_name => params[:tag_name])
     end
-    @contacts = Contact.paginate :select => "contacts.*,firms.firm_name,employees.username", :joins => joins,
+    @contacts = Contact.active.paginate :select => "contacts.*,firms.firm_name,employees.username", :joins => joins,
                                  :conditions => [sql, p_hash], :order => "candidates.created_at desc", :per_page => 30, :page => params[:page]
   end
 
@@ -423,6 +423,7 @@ class SalesController < ApplicationController
         @employees = Employee.active_emps.sales.select('id,username').order("username").map { |e| [e.username, e.id] }
       end
     else
+      params[:user_id] ||= current_user.id
       if res_sys?
         where_sql = ["firm_leads.employee_id = :user_id", {user_id: params[:user_id]}]
         @firms = Firm.includes(:firm_leads).where(where_sql).order("firm_leads.grab_date").paginate(
@@ -552,6 +553,14 @@ class SalesController < ApplicationController
     #  format.js
     #end
     render :template => "sales/auto_position"
+  end
+
+  def auto_contact
+    key = params[:q] if params[:q]
+    @results = Contact.active.where(["firm_id = ? and last_name like '%#{key}%'", params[:firm_id]])
+    respond_to do |format|
+      format.js
+    end
   end
 
   def delete_tag

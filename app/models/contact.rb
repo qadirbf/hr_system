@@ -97,6 +97,14 @@ class Contact < ActiveRecord::Base
     self.candidate
   end
 
+  def has_same_one
+    Contact.active.where(["id != ? and ((mobile is not null and mobile != '' and mobile = ?) or (first_name = ? and last_name = ?))", self.id, self.mobile, self.first_name, self.last_name]).first
+  end
+
+  def now_at_place
+    [self.province.try(:name_cn), self.city.try(:name_cn)].delete_if{|a| a.blank? }.join(',')
+  end
+
   def is_protected?(firm_id)
     history = RecommendHistory.where("contact_id = ? and firm_id = ?", self.id, firm_id).successed.first
     return false if history.try(:contract_end_date).blank?
