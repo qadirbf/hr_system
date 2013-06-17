@@ -21,6 +21,10 @@
             <% if current_user.is_res? -%>
                 <%= protect_label(contact, contact.firm.id) -%>
             <% end -%>
+            <% s = contact.has_same_one -%>
+            <% unless s.blank? -%>
+                <a href="<%= "/#{params[:db_type]}/contact_show/#{s.id}" -%>" style="color: #ff0000;" target="_b"><%= "#{s.full_name(true)}/#{s.id}" -%></a>
+            <% end -%>
             职业类型： <span class="blue_span"><%= contact.firm_type %></span> <br/>
             当前所在地： <span class="blue_span"><%= contact.now_at_place %></span> <br/>
             当前职位： <span class="blue_span"><%= contact.position_cn %></span>

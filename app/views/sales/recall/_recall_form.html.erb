@@ -6,6 +6,7 @@
         $("#contact_name").autocomplete("/sales/auto_contact", {
             delay:10,
             minChars:0,
+            max:100,
             extraParams: {firm_id:function(){return $('#recall_firm_id').val();}},
             multiple:false,
             parse:function (data) {
