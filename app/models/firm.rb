@@ -24,7 +24,7 @@ class Firm < ActiveRecord::Base
   end
 
   def is_followed_by?(user)
-    !!FirmLead.first(:select=>"id",:conditions=>["firm_id=? and employee_id=?",self.id,user.id])
+    !!FirmLead.first(:select=>"id",:conditions=>["firm_id=? and employee_id=?",self.id,user.id]) or user.is_admin?
   end
 
   def sales_followed_by?(user)

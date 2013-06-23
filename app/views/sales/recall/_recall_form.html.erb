@@ -52,7 +52,9 @@
   </td> </tr>
   <tr class="item_title"><td colspan="6">最近5条未完成的任务：</td></tr>
   <%= render :partial=>"/sales/recall/recall_list",:locals=>{:recalls=>@pending_calls} %>
+  <tr><td colspan="6" style="text-align: right;"><%= link_to "所有未完成任务", :action => "all_recall", :firm_id => @firm.id, :complete => 0 -%></td></tr>
   <tr class="item_title"><td colspan="6">最近5条已完成的任务：</td></tr>
   <%= render :partial=>"/sales/recall/recall_list",:locals=>{:recalls=>@com_calls} %>
+  <tr><td colspan="6" style="text-align: right;"><%= link_to "所有已完成任务", :action => "all_recall", :firm_id => @firm.id, :complete => 1 -%></td></tr>
 </table>
 <% end %>

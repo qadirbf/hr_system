@@ -30,6 +30,27 @@
         }).result(function (e, item) {
                     $("#tag_name").val(item.name);
                 });
+
+        $("#full_name").autocomplete("/sales/auto_full_name", {
+            delay:10,
+            minChars:0,
+            multiple:false,
+            parse:function (data) {
+                return $.map(eval(data), function (item) {
+                    return {
+                        data:item,
+                        value:item.name,
+                        result:item.name
+                    }
+                });
+            },
+            formatItem:function (item) {
+                return item.name;
+            }
+        }).result(function (e, item) {
+                    $("#full_name").val(item.name);
+                    $("#auto_contact_id").val(item.id);
+                });
     });
 </script>
 <h1 class="title"><%= @title %></h1>
@@ -52,6 +73,7 @@
       <tr>
         <td>姓名</td>
         <td> <%= text_field_tag :full_name, params[:full_name], :style => "width:100px;" %>
+          <%= hidden_field_tag "auto_contact_id", params[:auto_contact_id] -%>
           年龄: <%= text_field_tag :age, params[:age], :style => "width:30px;" %> 至
           <%= text_field_tag :age1, params[:age1], :style => "width:30px;" %></td>
         <td>当前职位</td>

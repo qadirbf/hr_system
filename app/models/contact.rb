@@ -98,7 +98,7 @@ class Contact < ActiveRecord::Base
   end
 
   def has_same_one
-    Contact.active.where(["id != ? and ((mobile is not null and mobile != '' and mobile = ?) or (first_name = ? and last_name = ?))", self.id, self.mobile, self.first_name, self.last_name]).first
+    Contact.active.where(["id != ? and firm_id = ? and ((mobile is not null and mobile != '' and mobile = ?) or (first_name = ? and last_name = ?))", self.id, self.firm_id, self.mobile, self.first_name, self.last_name]).first
   end
 
   def now_at_place

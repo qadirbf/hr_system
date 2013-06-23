@@ -44,6 +44,7 @@ class SalesController < ApplicationController
     @can_grab = @firm.can_grab_by?(user)
     @is_special_firm = (@firm.id == 4)
     @can_submit_order = (user.is_admin? or res_sys?)
+    @show_firm_in_recall_list = true if current_user.is_admin?
     preload_recall
     render :template => "/sales/firm_view"
   end
@@ -213,6 +214,16 @@ class SalesController < ApplicationController
           flash[:notice] = e.to_s
         end
       end
+      # 如果选择了新就职公司
+      if @contact.resigned > 0 && !params[:new_firm_id].blank?
+        c = Contact.new
+        attr = @contact.attributes
+        attr.delete('id')
+        c.attributes = attr
+        c.firm_id = params[:new_firm_id]
+        c.resigned = 0
+        c.save
+      end
       redirect_to :action => "contact_show", :controller => params[:db_type], :id => @contact.id, :format => "php"
     else
       @title = params[:id].blank? ? "添加联系人" : "修改联系人"
@@ -308,10 +319,17 @@ class SalesController < ApplicationController
     joins = %{inner join candidates on candidates.contact_id = contacts.id
       inner join firms on firms.id=contacts.firm_id left join firm_leads on firm_leads.firm_id=firms.id
       and firm_leads.leads_type_id=2 left join employees on employees.id=firm_leads.employee_id}
-    unless params[:full_name].blank?
-      sql << " and concat(last_name,first_name) like :full_name"
-      p_hash.merge!(:full_name => "%#{params[:full_name]}%")
+
+    unless params[:auto_contact_id].blank?
+      sql << " and contacts.id = :auto_contact_id"
+      p_hash.merge!(:auto_contact_id => params[:auto_contact_id])
+    else
+      unless params[:full_name].blank?
+        sql << " and concat(last_name,first_name) like :full_name"
+        p_hash.merge!(:full_name => "%#{params[:full_name]}%")
+      end
     end
+
     unless params[:firm_name].blank?
       sql << " and firms.firm_name like :firm_name"
       p_hash.merge!(:firm_name => "%#{params[:firm_name]}%")
@@ -401,6 +419,26 @@ class SalesController < ApplicationController
     unless user.is_admin?
       params[:employee_id_eq] = user.id
     end
+
+    @recalls = Recall.dep_recalls(user.department_id).paginate :conditions => Recall.get_sql_by_hash(params),
+                                                               :order => "appt_date desc", :per_page => 30, :page => params[:page]
+  end
+
+  def all_recall
+    @firm = Firm.find params[:firm_id]
+    @title = "跟进任务列表 - #{@firm.firm_name}"
+    user = current_user
+    if res_sys?
+      @emps = Employee.active_emps.res.select('id,username').order("username").map { |e| [e.username, e.id] }
+    else
+      @emps = Employee.active_emps.sales.select('id,username').order("username").map { |e| [e.username, e.id] }
+    end
+
+    unless params[:complete].blank?
+      params[:complete]=='1' ? params[:completed_at_not_null]=true : params[:completed_at_null] = true
+    end
+
+    params[:firm_id_eq] = params[:firm_id]
 
     @recalls = Recall.dep_recalls(user.department_id).paginate :conditions => Recall.get_sql_by_hash(params),
                                                                :order => "appt_date desc", :per_page => 30, :page => params[:page]
@@ -546,18 +584,29 @@ class SalesController < ApplicationController
     end
   end
 
+  def auto_firm
+    key = params[:q] if params[:q]
+    @results = Firm.where("firm_name like '%#{key}%'").all
+    respond_to do |format|
+      format.js
+    end
+  end
+
   def auto_tag
     key = params[:q] if params[:q]
     @results = Tag.where("name like '%#{key}%'")
-    #respond_to do |format|
-    #  format.js
-    #end
     render :template => "sales/auto_position"
+  end
+
+  def auto_full_name
+    key = params[:q] if params[:q]
+    @results = Contact.where("concat(last_name,first_name) like '%#{key}%'").all
+    render :template => "sales/auto_contact"
   end
 
   def auto_contact
     key = params[:q] if params[:q]
-    @results = Contact.active.where(["firm_id = ? and last_name like '%#{key}%'", params[:firm_id]])
+    @results = Contact.active.where(["firm_id = ? and concat(last_name,first_name) like '%#{key}%'", params[:firm_id]])
     respond_to do |format|
       format.js
     end

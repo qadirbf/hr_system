@@ -1,12 +1,41 @@
+<script type="text/javascript" src="/jquery/jquery.autocomplete.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css" />
+<script>
+    $(document).ready(function () {
+        $("#new_firm_name").autocomplete("/sales/auto_firm", {
+            delay:10,
+            minChars:0,
+            multiple:false,
+            parse:function (data) {
+                return $.map(eval(data), function (item) {
+                    return {
+                        data:item,
+                        value:item.name,
+                        result:item.name
+                    }
+                });
+            },
+            formatItem:function (item) {
+                return item.name;
+            }
+        }).result(function (e, item) {
+                    $("#auto_firm").val(item.name);
+                    $("#new_firm_id").val(item.id);
+                });
+    });
+</script>
 <h1 class="title"><%= [@title, @contact.firm.firm_name].join(' - ') %></h1>
 <%= form_for @contact, :url => "/#{params[:db_type]}/contact_update", :html => {:multipart => true} do |f| %>
   <%= errors_for @contact %>
   <%= f.hidden_field :firm_id %> <%= hidden_field_tag :id, params[:id] %>
   <table class="blue_tb">
     <tr>
-      <td colspan="4"><%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
+      <td colspan="2"><%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
         <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
       <td colspan="2"><%= f.check_box :resigned, {}, 1, 0 %> 联系人已离职</td>
+      <td colspan="2" id="auto_firm" style="<%= @contact.try(:resigned).to_i > 0 ? '' : 'display: none;' -%>">新就职公司<%= text_field_tag :new_firm_name %>
+        <%= hidden_field_tag :new_firm_id %>
+      </td>
     </tr>
     <tr>
       <th>姓</th>
@@ -123,4 +152,15 @@
       city_td.load("/sales/get_cities", {id:pid, object:'contact', field:'city_id'})
     })
   })
+
+        $(function(){
+            $("#contact_resigned:checkbox").click(function(){
+                if($("#contact_resigned:checkbox").attr("checked")=="checked"){
+                    $("#auto_firm").show();
+                }
+                else{
+                    $("#auto_firm").hide();
+                }
+            } );
+        })
 </script>
