@@ -248,7 +248,7 @@ class SalesController < ApplicationController
   alias contact_show contact_view
 
   def contact_destroy
-    c = Contact.active.find(params[:id])
+    c = Contact.find(params[:id])
     #c.destroy
     c.delete_at = Time.now
     c.save
@@ -902,7 +902,7 @@ class SalesController < ApplicationController
     user = current_user
 
     if crm_sys?
-      @sys_nav_menus = [['/crm/search', '公司搜索'], ['/crm/my_firms/', '我的公司'], ['/crm/firm_edit/', '添加公司'], ['/crm/my_recall', '我的跟进任务'],
+      @sys_nav_menus = [['/crm/search', '公司搜索'], ['/crm/my_firms/', '我的公司'], ['/crm/firm_edit/', '添加公司'], ['/crm/contact_destroy', '我的跟进任务'],
                         ['/crm/demand_list', '招聘需求列表']]
     else
       @sys_nav_menus = [['/res/search', '资源搜索'], ['/res/my_firms/', '我的资源'], ['/res/firm_edit/', '添加公司'], ['/res/my_recall', '我的跟进任务'],
