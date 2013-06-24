@@ -7,10 +7,11 @@ class City < ActiveRecord::Base
   end
 
   def self.city_type(prov_id, cheng_du_mode=false)
+    ary = (Rails.env.production? ? [2, 14, 31, 18] : [3, 15, 32, 19])
     if cheng_du_mode
-      ([3, 15, 32, 19].include?(prov_id) ? 2 : 1)
+      (ary.include?(prov_id) ? 2 : 1)
     else
-      ([3, 15, 32, 19].include?(prov_id) ? 2 : 1)
+      (ary.include?(prov_id) ? 2 : 1)
     end
   end
 
