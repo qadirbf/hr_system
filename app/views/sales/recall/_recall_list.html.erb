@@ -12,8 +12,10 @@
       <%# end -%>
       <td><%= link_to_function format_date(r.appt_date, :min), "open_url('/#{params[:db_type]}/recall_edit/#{r.id}')", :style => "color: #{color}" %></td>
       <td>
+        <% if contact -%>
         <%= link_to_function contact.full_name(true, true), "open_url('/#{params[:db_type]}/contact_show/#{contact.id}')", :style => "color: #{color}" if contact %>
-        <%= "(已离职)".red.html_safe if contact.resigned.to_i > 0 -%>
+        <%= "(已离职)".red.html_safe if contact.try(:resigned).to_i > 0 -%>
+        <% end -%>
       </td>
       <td style="color: <%= color -%>"><%= r.contact_by_label %></td>
       <td style="color: <%= color -%>"><%= r.stage %></td>
