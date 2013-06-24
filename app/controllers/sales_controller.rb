@@ -288,7 +288,7 @@ class SalesController < ApplicationController
     if current_user.is_res?
       session[:down_resume_count]||=0
       session[:down_resume_count] += 1
-      _t = current_user.is_admin? ? 30 : 10
+      _t = current_user.is_admin? ? 30 : 20
       if session[:down_resume_count] > _t
         render :text => "<script>alert('你下载的简历数量超出了#{_t}个，将不能再下载简历！');history.back()</script>".html_safe
         return false
@@ -416,9 +416,13 @@ class SalesController < ApplicationController
     if params[:appt_date_gte].blank? && params[:appt_date_lte].blank? && params[:from] != "no_compt"
       params[:appt_date_gte] = params[:appt_date_lte] = Time.now.format_date(:date)
     end
-    unless user.is_admin?
+
+    if params[:employee_id_eq].blank?
       params[:employee_id_eq] = user.id
     end
+    #unless user.is_admin?
+    #  params[:employee_id_eq] = user.id
+    #end
 
     @recalls = Recall.dep_recalls(user.department_id).paginate :conditions => Recall.get_sql_by_hash(params),
                                                                :order => "appt_date desc", :per_page => 30, :page => params[:page]
