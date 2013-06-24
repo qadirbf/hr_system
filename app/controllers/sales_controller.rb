@@ -44,7 +44,7 @@ class SalesController < ApplicationController
     @can_grab = @firm.can_grab_by?(user)
     @is_special_firm = (@firm.id == 4)
     @can_submit_order = (user.is_admin? or res_sys?)
-    @show_firm_in_recall_list = true if current_user.is_admin?
+    @show_firm_in_recall_list = false
     preload_recall
     render :template => "/sales/firm_view"
   end
@@ -594,13 +594,13 @@ class SalesController < ApplicationController
 
   def auto_tag
     key = params[:q] if params[:q]
-    @results = Tag.where("name like '%#{key}%'")
+    @results = Tag.where("name like '%#{key}%'").order("created_at desc").all
     render :template => "sales/auto_position"
   end
 
   def auto_full_name
     key = params[:q] if params[:q]
-    @results = Contact.where("concat(last_name,first_name) like '%#{key}%'").all
+    @results = Contact.where("concat(last_name,first_name) like '%#{key}%'").order("last_name desc").all
     render :template => "sales/auto_contact"
   end
 

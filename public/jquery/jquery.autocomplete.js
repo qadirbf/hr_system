@@ -19,7 +19,7 @@ $.fn.extend({
 			url: isUrl ? urlOrData : null,
 			data: isUrl ? null : urlOrData,
 			delay: isUrl ? $.Autocompleter.defaults.delay : 10,
-			max: options && !options.scroll ? 10 : 150
+			max: options && !options.scroll ? 30 : 150
 		}, options);
 		
 		// if highlight is set to false, replace it with a do-nothing function
@@ -414,7 +414,7 @@ $.Autocompleter.defaults = {
 	matchCase: false,
 	matchSubset: true,
 	matchContains: false,
-	cacheLength: 10,
+	cacheLength: 20,
 	max: 100,
 	mustMatch: false,
 	extraParams: {},
