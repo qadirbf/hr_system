@@ -577,12 +577,15 @@ class SalesController < ApplicationController
 
   def auto_position
     key = params[:q] if params[:q]
-    sql = []
-    sql << (key.blank? ? "name is not null" : "name like '%#{key}%'")
-    if params[:t].to_i != 0
-      sql << "firm_type_id = #{params[:t].to_i}"
-    end
-    @results = ContactPosition.where(sql.join(" AND "))
+    #sql = []
+    #sql << (key.blank? ? "name is not null" : "name like '%#{key}%'")
+    #if params[:t].to_i != 0
+    #  sql << "firm_type_id = #{params[:t].to_i}"
+    #end
+    #@results1 = ContactPosition.where(sql.join(" AND "))
+    # 2013-06-25 将职位联想改成从联系人的职位里面获取，之前是从设置的所有职位里面获取。
+    @results = Contact.find :all, :conditions => "position_cn like '%%#{key}%%'", :select => " distinct id, position_cn as name"
+
     respond_to do |format|
       format.js
     end
