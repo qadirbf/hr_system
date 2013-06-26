@@ -569,9 +569,8 @@ class SalesController < ApplicationController
     tab_arr << "select contacts.firm_id from contacts #{c_joins} where #{c_sqls.join(' and ')}" if c_sqls.size>0
     tab_arr << "select contact_demands.firm_id from contact_demands #{d_joins} where #{d_sqls.join(' and ')}" if d_sqls.size>0
 
-    con_sql = tab_arr.size>0 ? " id in (#{tab_arr.join(' union ')})" : "1=1"
-
-    @firms = Firm.paginate_by_sql(["select * from (select * from firms where #{con_sql} order by rating desc, id desc limit 5000) sa", p_hash],
+    con_sql = tab_arr.size>0 ? " firms.id in (#{tab_arr.join(' union ')})" : "1=1"
+    @firms = Firm.paginate_by_sql(["select * from (select firms.*, count(contacts.firm_id) as num from firms left join contacts on contacts.firm_id = firms.id where #{con_sql} group by contacts.firm_id order by num desc, rating desc, id desc limit 5000) sa", p_hash],
                                   :page => params[:page], :order => "rating desc, id desc", :per_page => 30)
   end
 
