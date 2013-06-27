@@ -511,7 +511,14 @@ class SalesController < ApplicationController
 
     f_arr, c_arr, d_arr = Firm.get_sql_by_hash(f_hash), Contact.get_sql_by_hash(c_hash), ContactDemand.get_sql_by_hash(d_hash)
     f_sqls, c_sqls, d_sqls = [f_arr[0]], [c_arr[0]], [d_arr[0]]
+
+    [f_sqls, c_sqls, d_sqls].each do |a| #------------
+      a.delete_if{|b| b.blank?}
+    end #------------
+
     f_joins, c_joins, d_joins = "", "", ""
+    join = ""       #-------------------
+    join += " left join contacts on contacts.firm_id = firms.id"   #-------------------
 
     p_hash = f_arr[1].merge(c_arr[1]).merge(d_arr[1])
     unless f_hash[:phone_like].blank?
@@ -529,6 +536,7 @@ class SalesController < ApplicationController
     end
 
     unless f_hash[:category_ids].blank?
+      join += " right join firm_cat_links on firm_cat_links.firm_id = firms.id"      #-------------------
       f_joins += " right join firm_cat_links on firm_cat_links.firm_id = firms.id"
       f_sqls << "(firm_cat_links.firm_category_id = :category_ids)"
       p_hash.merge!(:category_ids => f_hash[:category_ids])
@@ -547,12 +555,14 @@ class SalesController < ApplicationController
       p_hash.merge!(:age1 => c_hash[:age1])
     end
     unless c_hash[:res_id].blank?
-      c_joins += " join firm_leads on firm_leads.firm_id=contacts.firm_id and firm_leads.leads_type_id=2"
+      join += " left join firm_leads on firm_leads.firm_id=firms.id and firm_leads.leads_type_id=2"      #-------------------
+      c_joins += "left join firm_leads on firm_leads.firm_id=firms.id and firm_leads.leads_type_id=2"
       c_sqls << "firm_leads.employee_id=:res_id"
       p_hash.merge!(:res_id => c_hash[:res_id])
     end
     unless d_hash[:sales_id].blank?
-      d_joins += " join firm_leads on firm_leads.firm_id=contact_demands.firm_id and firm_leads.leads_type_id=1"
+      join += " left join firm_leads on firm_leads.firm_id=firms.id and firm_leads.leads_type_id=1"      #-------------------
+      d_joins += "left join firm_leads on firm_leads.firm_id=firms.id and firm_leads.leads_type_id=1"
       d_sqls << "firm_leads.employee_id=:sales_id"
       p_hash.merge!(:sales_id => d_hash[:sales_id])
     end
@@ -563,15 +573,23 @@ class SalesController < ApplicationController
       p_hash.merge!(:firm_phone => "#{f_hash[:phone]}%")
     end
 
-    [f_sqls, c_sqls, d_sqls].each { |a| a.reject! { |f| f.blank? } }
-    tab_arr = []
-    tab_arr << "select firms.id as firm_id from firms #{f_joins} where #{f_sqls.join(' and ')}" if f_sqls.size>0
-    tab_arr << "select contacts.firm_id from contacts #{c_joins} where #{c_sqls.join(' and ')}" if c_sqls.size>0
-    tab_arr << "select contact_demands.firm_id from contact_demands #{d_joins} where #{d_sqls.join(' and ')}" if d_sqls.size>0
+    con = [f_sqls, c_sqls, d_sqls].delete_if{|b| b.blank?}.join(" and ")
 
-    con_sql = tab_arr.size>0 ? " firms.id in (#{tab_arr.join(' union ')})" : "1=1"
-    @firms = Firm.paginate_by_sql(["select * from (select firms.*, count(contacts.firm_id) as num from firms left join contacts on contacts.firm_id = firms.id where #{con_sql} group by contacts.firm_id order by num desc, rating desc, id desc limit 5000) sa", p_hash],
-                                  :page => params[:page], :order => "rating desc, id desc", :per_page => 30)
+    @firms = Firm.paginate :conditions => [con, p_hash], :select => "firms.*, COUNT(contacts.firm_id) as num",
+                           :joins => join, :per_page => 30, :page => params[:page],
+                           :group => "contacts.firm_id",
+                           :order => "num desc, rating desc, id desc"
+
+
+    #[f_sqls, c_sqls, d_sqls].each { |a| a.reject! { |f| f.blank? } }
+    #tab_arr = []
+    #tab_arr << "select firms.id as firm_id from firms #{f_joins} where #{f_sqls.join(' and ')}" if f_sqls.size>0
+    #tab_arr << "select contacts.firm_id from contacts #{c_joins} where #{c_sqls.join(' and ')}" if c_sqls.size>0
+    #tab_arr << "select contact_demands.firm_id from contact_demands #{d_joins} where #{d_sqls.join(' and ')}" if d_sqls.size>0
+    #
+    #con_sql = tab_arr.size>0 ? " firms.id in (#{tab_arr.join(' union ')})" : "1=1"
+    #@firms = Firm.paginate_by_sql(["select * from (select firms.*, count(contacts.firm_id) as num from firms left join contacts on contacts.firm_id = firms.id where #{con_sql} group by contacts.firm_id order by num desc, rating desc, id desc limit 5000) sa", p_hash],
+    #                              :page => params[:page], :order => "rating desc, id desc", :per_page => 30)
   end
 
   def auto_position
@@ -583,7 +601,7 @@ class SalesController < ApplicationController
     #end
     #@results1 = ContactPosition.where(sql.join(" AND "))
     # 2013-06-25 将职位联想改成从联系人的职位里面获取，之前是从设置的所有职位里面获取。
-    @results = Contact.find :all, :conditions => "position_cn like '%%#{key}%%'", :select => " distinct id, position_cn as name"
+    @results = Contact.find :all, :conditions => "position_cn like '%%#{key}%%' and position_cn != ''", :select => " distinct id, position_cn as name"
 
     respond_to do |format|
       format.js
@@ -904,7 +922,7 @@ class SalesController < ApplicationController
     user = current_user
 
     if crm_sys?
-      @sys_nav_menus = [['/crm/search', '公司搜索'], ['/crm/my_firms/', '我的公司'], ['/crm/firm_edit/', '添加公司'], ['/crm/contact_destroy', '我的跟进任务'],
+      @sys_nav_menus = [['/crm/search', '公司搜索'], ['/crm/my_firms/', '我的公司'], ['/crm/firm_edit/', '添加公司'], ['/crm/my_recall', '我的跟进任务'],
                         ['/crm/demand_list', '招聘需求列表']]
     else
       @sys_nav_menus = [['/res/search', '资源搜索'], ['/res/my_firms/', '我的资源'], ['/res/firm_edit/', '添加公司'], ['/res/my_recall', '我的跟进任务'],
