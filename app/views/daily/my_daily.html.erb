@@ -1,0 +1,11 @@
+<h1 class="title"><%= @title %>
+  <%= button_to_function "添加日报", "go_url('/#{params[:db_type]}/daily_edit.php", :class => "btn" %>
+</h1>
+<%= form_tag "/#{params[:db_type]}/my_daily" do %>
+
+
+<% end %>
+
+<%= page_links @dailies %>
+<%= render :partial => "/daily/daily_list", :locals => {:dailies => @dailies} %>
+<%= page_links @dailies %>

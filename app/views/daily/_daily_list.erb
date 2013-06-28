@@ -1,0 +1,28 @@
+<table class="list_tb">
+  <tr class="title">
+    <td>名称</td>
+    <td>公司</td>
+    <td>对象</td>
+    <td>日期</td>
+    <td>备注</td>
+    <td>最后修改时间</td>
+    <td>操作</td>
+  </tr>
+  <% dailies.each do |d| %>
+      <tr>
+        <td><%=  %></td>
+        <td><%=  %></td>
+        <td><%=  %></td>
+        <td><%=  %></td>
+
+        <td><%=  %></td>
+        <td><%=  %></td>
+
+        <td>
+          <%= link_to "查看", {:action => "daily_view", :id => d.id}, :target => "_blank", :title => "查看详细需求" -%>&nbsp;&nbsp;
+          <%= link_to "修改", {:controller => "#{params[:db_type]}", :action => "daily_edit", :id => d.id}, :target => "_blank" -%>&nbsp;&nbsp;
+          <%= link_to "删除", {:controller => "#{params[:db_type]}", :action => "daily_delete", :id => d.id}, :confirm => "Are you sure?" -%>
+        </td>
+      </tr>
+  <% end %>
+</table>

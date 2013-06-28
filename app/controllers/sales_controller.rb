@@ -1,6 +1,8 @@
 #encoding:utf-8
 class SalesController < ApplicationController
 
+  include DailyController
+
   helper_method :crm_sys?, :res_sys?
 
   def firm_edit
