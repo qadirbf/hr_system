@@ -1,0 +1,88 @@
+<h1 class="title"><%= @title %></h1>
+<%= include_datepicker %>
+<script type="text/javascript" src="/jquery/jquery.autocomplete.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css" />
+<script>
+    $(document).ready(function () {
+        $("#object_name").autocomplete("/sales/auto_object", {
+            delay:10,
+            minChars:0,
+            multiple:false,
+            parse:function (data) {
+                return $.map(eval(data), function (item) {
+                    return {
+                        data:item,
+                        value:item.name,
+                        result:item.name
+                    }
+                });
+            },
+            formatItem:function (item) {
+                return item.name;
+            }
+        }).result(function (e, item) {
+                    $("#object_name").val(item.name);
+                    $("#daily_obj_id").val(item.id);
+                });
+        $("#contact_name").autocomplete("/sales/auto_contact", {
+            delay:10,
+            minChars:0,
+            cacheLength:0,
+            extraParams: {firm_id:function(){return $('#daily_obj_id').val();}},
+            multiple:false,
+            parse:function (data) {
+                return $.map(eval(data), function (item) {
+                    return {
+                        data:item,
+                        value:item.name,
+                        result:item.name
+                    }
+                });
+            },
+            formatItem:function (item) {
+                return item.name;
+            }
+        }).result(function (e, item) {
+                    $("#contact_name").val(item.name);
+                    $("#daily_contact_id").val(item.id);
+                });
+    });
+</script>
+<%= form_for @daily, :url => "/#{params[:db_type]}/daily_update" do |f| %>
+    <%= hidden_field_tag "id", params[:id] -%>
+    <%= hidden_field_tag "type", params[:db_type] -%>
+    <%= errors_for @daily %>
+    <table class="blue_tb" style="100%">
+      <tr>
+        <th>名称</th>
+        <td><%= f.text_field :name %></td>
+      </tr>
+      <tr>
+        <th>客户/项目</th>
+        <td><%= text_field_tag :object_name %>
+          <%= f.hidden_field :obj_id %>
+        </td>
+      </tr>
+      <tr>
+        <th>联系人/候选人</th>
+        <td><%= text_field_tag :contact_name %>
+          <%= f.hidden_field :contact_id %>
+        </td>
+      </tr>
+      <tr>
+        <th>日期</th>
+        <td><%= f.text_field :day,  :class => "datepicker" %></td>
+      </tr>
+      <tr>
+        <th>备注</th>
+        <td>
+          <%= f.text_area :notes, :style => "width:400px;height:160px;" -%>
+        </td>
+      </tr>
+      <tr>
+        <th></th>
+        <td><%= submit_tag "保存", :class => "btn btn-primary" %>
+          <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
+      </tr>
+    </table>
+<% end %>
