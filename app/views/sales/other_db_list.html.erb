@@ -1,0 +1,52 @@
+<h1 class="title"><%= @title %>
+</h1>
+<style>table select, table input[type=text] {
+    width: 120px;
+}</style>
+<%= form_tag "/#{params[:db_type]}/other_db_list" do %>
+    <table class="common_tb">
+      <tr>
+        <td>
+          Provice: <%= select_tag "province_id", options_for_select(Province.all { |p| [p.id.to_s, p.name] }, params[:province_id]), {:include_blank=>true} -%>
+        </td>
+        <td>
+          关键词: <%= text_field_tag "keyword", params[:keyword] -%>
+        </td>
+        <td>
+          电话/Email: <%= text_field_tag "contact", params[:contact] -%>
+        </td>
+        <td>
+          <%= submit_tag "搜索", :class => 'btn btn-primary' %>
+        </td>
+      </tr>
+    </table>
+<% end %>
+
+<%= page_links @candidates %>
+
+<table class="list_tb">
+  <tr class="title">
+    <th>Source</th>
+    <th>Name</th>
+    <th>Sex</th>
+    <th>City</th>
+    <th>Industry</th>
+    <th>Email</th>
+    <th>Mobile</th>
+    <th>Remarks</th>
+  </tr>
+  <% @candidates.each do |c| -%>
+      <tr>
+      <td><%= h c.source -%></td>
+      <td><%= link_to c.name, {:action=>"other_db_show", :id=>c.id}, {:target => :blank} -%></td>
+      <td><%= h c.sex -%></td>
+      <td><%= h c.city -%></td>
+      <td><%= h c.industry -%></td>
+      <td><%= h c.email -%></td>
+      <td><%= h c.mobile -%></td>
+      <td><%= truncate(c.remarks, :length=>50) -%></td>
+      </tr>
+  <% end -%>
+
+</table>
+<%= page_links @candidates %>

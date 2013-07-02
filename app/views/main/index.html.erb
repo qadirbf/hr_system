@@ -38,6 +38,7 @@
 <%= link_to "候选人列表", {:controller => "res", :action => "contact_list"} %>
 <%= link_to "我的订单", {:controller => "res", :action => "my_orders"} %>
 <%#= link_to "我的日报", {:controller => "res", :action => "my_daily"} %>
+<%= link_to "补充资源库", {:controller => "res", :action => "other_db_list"} -%>
 <% end -%>
 
 <% if user.is_hr? or user.is_admin? -%>

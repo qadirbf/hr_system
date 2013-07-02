@@ -1,0 +1,12 @@
+<h1 class="title"><%= @title %>
+</h1>
+<table class="list_tb">
+
+  <% OtherCandidate.column_names.each do |f| -%>
+      <tr>
+        <th><%= f -%></th>
+        <td><%= @candidate.send(f.to_sym) -%></td>
+      </tr>
+  <% end -%>
+
+</table>

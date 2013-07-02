@@ -4,6 +4,7 @@ class SalesController < ApplicationController
   include DailyController
 
   helper_method :crm_sys?, :res_sys?
+  include OtherCandidateDb
 
   def firm_edit
     unless params[:id].blank?
