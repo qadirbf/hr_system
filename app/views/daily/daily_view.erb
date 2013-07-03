@@ -1,0 +1,46 @@
+<h1 class="title"><%= @title %></h1>
+<style>
+  .blue_tb th{
+      padding-left: 20px;
+      margin: 2px;
+      height: 30px;
+      width: 150px;
+  }
+</style>
+<table class="blue_tb" style="100%">
+  <tr>
+    <th width='100'>名称</th>
+    <td><%= @daily.name %></td>
+  </tr>
+  <tr>
+    <th>客户/项目</th>
+    <td><%= @daily.try(:show_firm_name) %>
+    </td>
+  </tr>
+  <tr>
+    <th>联系人/候选人</th>
+    <td><%= @daily.try(:show_contact_name) %>
+    </td>
+  </tr>
+  <tr>
+    <th>日期</th>
+    <td><%= @daily.day %></td>
+  </tr>
+  <tr>
+    <th>备注</th>
+    <td>
+      <%= @daily.notes -%>
+    </td>
+  </tr>
+  <tr>
+    <th>编辑信息</th>
+    <td>
+      <%= @daily.edit_info -%>
+    </td>
+  </tr>
+  <tr>
+    <th></th>
+    <td><%= button_to_function "修改", "go_url('/#{params[:db_type]}/daily_edit/#{@daily.id}.php')", :class => "btn btn-primary" %>
+      <%= button_to_function "删除", "confirm_url('确定删除？','/#{params[:db_type]}/daily_destroy?id=#{@daily.id}')", :class => "btn" %></td>
+  </tr>
+</table>

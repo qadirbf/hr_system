@@ -1,0 +1,17 @@
+<h1 class="title"><%= @title %></h1>
+<%= include_datepicker %>
+<%= form_tag "/#{params[:db_type]}/count_daily" do %>
+    <table style="width:90%" class="common_tb">
+      <tr>
+        <td>员工： <%= select_tag :created_by_eq, options_for_select([['所有', '']]+@emps, params[:created_by_eq]) %></td>
+        <td>日期： <%= text_field_tag :day_eq, params[:day_eq], :class => "datepicker" %></td>
+        <td>备注：<%= text_field_tag :notes_like, params[:notes_like] %></td>
+        <td><%= submit_tag "搜索", :class => "btn btn-primary" %></td>
+      </tr>
+    </table>
+
+<% end %>
+
+<%= page_links @dailies %>
+<%= render :partial => "/daily/daily_list", :locals => {:dailies => @dailies} %>
+<%= page_links @dailies %>

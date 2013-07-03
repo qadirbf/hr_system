@@ -10,12 +10,12 @@ class Contact < ActiveRecord::Base
   belongs_to :created_user,:class_name=>'Employee',:foreign_key=>"created_by"
   belongs_to :updated_user,:class_name=>'Employee',:foreign_key=>"updated_by"
   belongs_to :grab_res,:class_name=>'Employee',:foreign_key=>"employee_id"
-  belongs_to :daily
   has_one :candidate
   has_many :recalls
   has_many :recommend_histories
   has_many :contact_resumes
   has_many :orders
+  has_many :dailies
   validates_presence_of :last_name,:message=>"请填写联系人的姓"
   validates_presence_of :first_name,:message=>"请填写联系人的名字"
   validates_presence_of :salutation,:message=>"请填写联系人的称呼"

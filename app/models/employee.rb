@@ -9,6 +9,7 @@ class Employee < ActiveRecord::Base
   has_many :attend_records
   has_many :orders
   has_many :share_orders
+  has_many :dailies
 
   include HrLib::Security
 

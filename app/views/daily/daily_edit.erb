@@ -4,7 +4,7 @@
 <link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css" />
 <script>
     $(document).ready(function () {
-        $("#object_name").autocomplete("/sales/auto_object", {
+        $("#daily_firm_name").autocomplete("/sales/auto_object", {
             delay:10,
             minChars:0,
             multiple:false,
@@ -21,10 +21,10 @@
                 return item.name;
             }
         }).result(function (e, item) {
-                    $("#object_name").val(item.name);
+                    $("#daily_firm_name").val(item.name);
                     $("#daily_obj_id").val(item.id);
                 });
-        $("#contact_name").autocomplete("/sales/auto_contact", {
+        $("#daily_contact_name").autocomplete("/sales/auto_contact", {
             delay:10,
             minChars:0,
             cacheLength:0,
@@ -43,7 +43,7 @@
                 return item.name;
             }
         }).result(function (e, item) {
-                    $("#contact_name").val(item.name);
+                    $("#daily_contact_name").val(item.name);
                     $("#daily_contact_id").val(item.id);
                 });
     });
@@ -59,13 +59,13 @@
       </tr>
       <tr>
         <th>客户/项目</th>
-        <td><%= text_field_tag :object_name %>
+        <td><%= f.text_field :firm_name, :value => @daily.try(:show_firm_name) %>
           <%= f.hidden_field :obj_id %>
         </td>
       </tr>
       <tr>
         <th>联系人/候选人</th>
-        <td><%= text_field_tag :contact_name %>
+        <td><%= f.text_field :contact_name, :value => @daily.try(:show_contact_name) %>
           <%= f.hidden_field :contact_id %>
         </td>
       </tr>

@@ -4,6 +4,7 @@ class Firm < ActiveRecord::Base
   has_many :recalls, :dependent => :destroy
   belongs_to :province
   belongs_to :city
+  has_many :dailies
   has_many :contact_demands, :dependent => :destroy
   has_many :firm_leads, :dependent => :destroy
   has_many :firm_cat_links, :dependent => :destroy

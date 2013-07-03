@@ -1,4 +1,14 @@
 <% user = current_user %>
+<style>
+    #main a{
+        margin-left: 5px;
+    }
+  #main a:hover{
+      font-size: 16px;
+      color: #000000;
+      font-weight: bold;
+  }
+</style>
 <% if @msgs.size>0 %>
   <div class="alert alert-info">
     <b>您有未读的系统消息：</b><br/>
@@ -11,8 +21,8 @@
 
 <% if user -%>
     <h1 class="title">通用</h1>
-    <%= link_to "上班打卡", {:controller => "attendance", :action => "add_record", :flag => 1, :r => rand} %>&nbsp;&nbsp;
-    <%= link_to "下班打卡", {:controller => "attendance", :action => "add_record", :flag => 2, :r => rand} %>&nbsp;&nbsp;
+    <%= link_to "上班打卡", {:controller => "attendance", :action => "add_record", :flag => 1, :r => rand} %>
+    <%= link_to "下班打卡", {:controller => "attendance", :action => "add_record", :flag => 2, :r => rand} %>
     <%= link_to "查看打卡信息", {:controller => "attendance", :action => "show_record", :r => rand} %>
     <br/>
 <% end -%>
@@ -25,7 +35,7 @@
 <%= link_to "我的跟进任务", {:controller => "crm", :action => "my_recall"} %>
 <%= link_to "招聘需求列表", {:controller => "crm", :action => "demand_list"} %>
 <%= link_to "我的订单", {:controller => "crm", :action => "my_orders"} %>
-<%#= link_to "我的日报", {:controller => "crm", :action => "my_daily"} %>
+<%= link_to "我的日报", {:controller => "crm", :action => "my_daily"} %>
 <% end -%>
 
 <% if user.is_res? or user.is_admin? -%>
@@ -37,13 +47,14 @@
 <%= link_to "招聘需求列表", {:controller => "res", :action => "demand_list"} %>
 <%= link_to "候选人列表", {:controller => "res", :action => "contact_list"} %>
 <%= link_to "我的订单", {:controller => "res", :action => "my_orders"} %>
-<%#= link_to "我的日报", {:controller => "res", :action => "my_daily"} %>
+<%= link_to "我的日报", {:controller => "res", :action => "my_daily"} %>
 <%= link_to "补充资源库", {:controller => "res", :action => "other_db_list"} -%>
 <% end -%>
 
 <% if user.is_hr? or user.is_admin? -%>
 <h1 class="title">人事部</h1>
 <%= link_to "员工列表", {:controller => "employees", :action => "list"} %>
+<%= link_to "日报统计", {:controller => "crm", :action => "count_daily"} %>
 <% end -%>
 
 <% if user.is_admin? -%>
