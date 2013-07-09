@@ -278,26 +278,34 @@ class AttendanceController < ApplicationController
   end
 
   def input_record
-    params[:this_date] = params[:this_date]||Time.now.strftime("%Y-%m-%d")
+    params[:this_date] = params[:this_date]||Time.now.strftime("%Y-%m-01")
+    params[:this_date1] = params[:this_date1]||Time.now.strftime("%Y-%m-%d")
   end
 
   def add_attendance
     begin
       Timeout.timeout(1800) do
         this_date = params[:this_date]
-        this_date = Time.now.strftime("%Y-%m-%d") if this_date.blank?
-        #check=Attendance.find(:first,:conditions=>"branch_office_id=#{branch_office_id} and this_date like '%#{this_date}%'")
-        real_start_time = params[:real_start_time]
-        real_start_time = Attendance::S_TIME if (real_start_time == "" or real_start_time.blank?)
-        real_end_time = params[:real_end_time]
-        real_end_time = Attendance::E_TIME if real_end_time == "" or real_end_time.blank?
+        this_date = Time.now.strftime("%Y-%m-01") if this_date.blank?
+        this_date1 = params[:this_date1]
+        this_date1 = Time.now.strftime("%Y-%m-%d") if this_date1.blank?
 
-        if params[:record_exist].to_i == 1 #重新生成时，删除已存在的信息
-          Attendance.destroy_all(["employee_id > 0 and this_date = to_date1('#{this_date} 00:00:00')"])
+        from = Date.parse(this_date)
+        to = Date.parse(this_date1)
+        (from...to).each do |day|
+          real_start_time = params[:real_start_time]
+          real_start_time = Attendance::S_TIME if (real_start_time == "" or real_start_time.blank?)
+          real_end_time = params[:real_end_time]
+          real_end_time = Attendance::E_TIME if real_end_time == "" or real_end_time.blank?
+
+          if params[:record_exist].to_i == 1 #重新生成时，删除已存在的信息
+            Attendance.destroy_all(["employee_id > 0 and this_date = '#{this_date}')"])
+          end
+
+          flag = params[:flag]
+          Attendance.add_attendance(this_date, real_start_time, real_end_time, flag, current_user.username)
         end
 
-        flag = params[:flag]
-        Attendance.add_attendance(this_date, real_start_time, real_end_time, flag, current_user.username)
         flash[:notice] = "操作成功！"
         redirect_to(:action => 'show_record', :record_time => this_date)
       end

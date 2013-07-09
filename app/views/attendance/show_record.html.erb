@@ -83,7 +83,7 @@
       <% @employees.each do |employee|
         record_in = @in_records[employee.id]
         record_out = @out_records[employee.id]
-        if record_in||record_out %>
+            if record_in||record_out %>
               <tr>
                 <td width="33%"><%= employee.name_cn %>(<%= employee.username %>)</td>
                 <td width="33%">
@@ -97,7 +97,18 @@
                   <%= link_to '?', url_for("http://ip138.com/ips138.asp?ip=#{record_out.ip}"), :target => "_blank" %></span>
                   <% end %></td>
               </tr>
-          <% end %>
+            <% else -%>
+              <tr>
+                <td width="33%"><%= employee.name_cn %>(<%= employee.username %>)</td>
+                <td width="33%">
+                  <% if record_in.blank? %>
+                  未打卡
+                  <% end %></td>
+                <td width="33%">
+                  <% if record_out.blank? %><%= "未打卡" %>
+                  <% end %></td>
+              </tr>
+            <% end %>
       <% end %>
     </table>
   </span>

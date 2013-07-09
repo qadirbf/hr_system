@@ -6,6 +6,7 @@
     <td class="header"><font color="red" size="-1" >*</font>选择日期：</td>
     <td valign="top">
       <%= text_field_tag :this_date, format_date(Time.parse(params[:this_date]), :date), :class => "datepicker"%>
+      <%= text_field_tag :this_date1, format_date(Time.parse(params[:this_date1]), :date), :class => "datepicker"%>
     </td>
   </tr>
 
