@@ -35,6 +35,10 @@
     <td><%= @order.position_and_contact %></td>
   </tr>
   <tr>
+    <th>订单提交信息</th>
+    <td><%= @order.employee.username + "于" + format_date(@order.created_at, :full) + "提交" %></td>
+  </tr>
+  <tr>
     <th>备注</th>
     <td><%= @order.notes %></td>
   </tr>
