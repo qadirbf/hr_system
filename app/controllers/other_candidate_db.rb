@@ -28,6 +28,11 @@ module OtherCandidateDb
       p_hash.merge!({:contact => params[:contact]})
     end
 
+    unless params[:sex].blank?
+      ary << " sex = :sex"
+      p_hash.merge!({:sex => params[:sex]})
+    end
+
     @candidates = scope.paginate :conditions => [ary.join(" and "), p_hash], :order => "created_at desc", :per_page => 30, :page => params[:page]
 
   end

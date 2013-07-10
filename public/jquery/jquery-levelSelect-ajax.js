@@ -172,8 +172,8 @@
                         next.attr("id","d"+(thislevel+1));
                         targetid.after(next);
 
-                        spans.css({"background":"","border":"","margin":""});
-                        $(this).parent().css({"background":"orange","border":"1px ridge","margin":"-1"});
+                        spans.css({"background":"","margin":""});
+                        $(this).parent().css({"background":"orange","margin":"-1"});
                         param.pid = $(this).prev().val();
                         fs.add_data(next,param);
                     }else{
