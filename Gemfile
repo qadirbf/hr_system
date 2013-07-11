@@ -22,6 +22,7 @@ end
 
 gem 'jquery-rails'
 gem 'will_paginate','3.0.3'
+gem 'spreadsheet'
 
 gem 'web-app-theme'
 

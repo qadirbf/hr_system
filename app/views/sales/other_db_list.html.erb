@@ -7,7 +7,7 @@
     <table class="common_tb">
       <tr>
         <td>
-          Provice: <%= select_tag "province_id", options_for_select(Province.all { |p| [p.id.to_s, p.name] }, params[:province_id]), {:include_blank=>true} -%>
+          Provice: <%= select_tag "province_id", options_for_select(Province.all { |p| [p.id.to_s, p.name] }, params[:province_id]), {:include_blank => true} -%>
         </td>
         <td>
           关键词: <%= text_field_tag "keyword", params[:keyword] -%>
@@ -24,7 +24,9 @@
       </tr>
     </table>
 <% end %>
-
+<% if current_user.is_admin? -%>
+    <%= link_to "导出到EXCEL", {:action => "export_source_to_excel"}, :style => "color:blue;margin-right:20px;" -%>
+<% end -%>
 <%= page_links @candidates %>
 
 <table class="list_tb">
@@ -40,14 +42,14 @@
   </tr>
   <% @candidates.each do |c| -%>
       <tr>
-      <td><%= h c.source -%></td>
-      <td><%= link_to c.name, {:action=>"other_db_show", :id=>c.id}, {:target => :blank} -%></td>
-      <td><%= h c.sex -%></td>
-      <td><%= h c.city -%></td>
-      <td><%= h c.industry -%></td>
-      <td><%= h c.email -%></td>
-      <td><%= h c.mobile -%></td>
-      <td><%= truncate(c.remarks, :length=>50) -%></td>
+        <td><%= h c.source -%></td>
+        <td><%= link_to c.name, {:action => "other_db_show", :id => c.id}, {:target => :blank} -%></td>
+        <td><%= h c.sex -%></td>
+        <td><%= h c.city -%></td>
+        <td><%= h c.industry -%></td>
+        <td><%= h c.email -%></td>
+        <td><%= h c.mobile -%></td>
+        <td><%= truncate(c.remarks, :length => 50) -%></td>
       </tr>
   <% end -%>
 

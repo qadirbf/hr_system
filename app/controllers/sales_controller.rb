@@ -675,7 +675,7 @@ class SalesController < ApplicationController
       unless params[:position_description].blank?
         begin
           old_resume = @demand.position_description
-          fm = FileManager.new({:root_folder_path => FileManager.expand_path(ContactDemand.position_description_file_folder), :file_max_size => 500.kilobytes, :file_exts => ['rar', 'zip', 'doc', 'docx', 'pdf']})
+          fm = FileManager.new({:root_folder_path => FileManager.expand_path(ContactDemand.position_description_file_folder), :file_max_size => 500.kilobytes, :file_exts => ['rar', 'zip', 'doc', 'docx', 'pdf', 'xls', 'xlsx']})
           @demand.update_attributes(:position_description => fm.upload_file(params[:position_description]))
           fm.kill_file(old_resume)
         rescue RuntimeError => e
@@ -855,6 +855,8 @@ class SalesController < ApplicationController
         ary.each do |i|
           ShareOrder.create!({:order_id => @order.id, :employee_id => share["employee_id_#{i}"], :created_by => current_user.id,
                               :percentage => share["percentage_#{i}"], :money => (@order.total_amount * share["percentage_#{i}"].to_i / 100)})
+          # send message to shared employees
+          EmpMsg.send_msg(0,share["employee_id_#{i}"],"你有新的分单","你有新的分单，详情请点击链接。<a href='/#{params[:db_type]}/show_order/#{@order.id}.php'>详细</a>")
         end
         redirect_to :action => "my_orders", :format => "php"
       else
