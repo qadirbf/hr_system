@@ -19,6 +19,9 @@
           电话/Email: <%= text_field_tag "contact", params[:contact] -%>
         </td>
         <td>
+          行业：<%= text_field_tag "industry", params[:industry] -%>
+        </td>
+        <td>
           <%= submit_tag "搜索", :class => 'btn btn-primary' %>
         </td>
       </tr>

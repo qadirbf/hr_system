@@ -40,12 +40,16 @@
     <td>&nbsp;</td>
     <td style="vertical-align: top;">
       <% @employees.each do |employee| -%>
+          <% s = 0 -%>
           <table style="border-collapse:collapse;border-color:#ececec;margin-bottom: 5px;" border="1" class="crm-table" width="100%" cellSpacing=0 cellPadding=5 border=0>
             <tr>
-              <th width=210>员工</th>
-              <th width=220>订单号</th>
-              <th width=315>时间</th>
-              <th width=195>金额</th>
+              <th width=110>员工</th>
+              <th width=150>订单号</th>
+              <th width=200>公司</th>
+              <th width=170>职位</th>
+              <th width=180>时间</th>
+              <th width=130>订单金额</th>
+              <th width=130>业绩金额</th>
               <th>提成</th>
             </tr>
             <% orders = @share_orders.select { |o| o.employee_id == employee.id } -%>
@@ -57,12 +61,20 @@
                   <td>
                     <%= o.order.order_no -%>
                   </td>
+                  <td><%= o.order.firm.firm_name rescue "" -%></td>
+                  <td><%= o.order.contact_demand.position_type_text rescue "" -%></td>
                   <td><%= format_date(o.order.created_at, :full) -%></td>
                   <td><%= number_with_delimiter(o.order.total_amount, :local => :cn) %>元</td>
+                  <td>
+                    <% d = o.duty_count -%>
+                    <%= number_with_delimiter(d, :local => :cn) %>元
+                    <% s += d -%>
+                  </td>
                   <td><%= number_with_delimiter(o.money, :local => :cn) %>元</td>
                 </tr>
             <% end -%>
           </table>
+          <span style="float: right;margin-right: 50px;">业绩总额：<%= number_with_delimiter(s, :local => :cn) %>元</span>
       <% end -%>
     </td>
 </table>

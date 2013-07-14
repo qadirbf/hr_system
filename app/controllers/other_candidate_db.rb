@@ -32,6 +32,11 @@ module OtherCandidateDb
       p_hash.merge!({:sex => params[:sex]})
     end
 
+    unless params[:industry]
+      ary << " industry like :industry"
+      p_hash.merge!({:industry => params[:industry]})
+    end
+
     @candidates = OtherCandidate.paginate :conditions => [ary.join(" and "), p_hash], :order => "created_at desc", :per_page => 30, :page => params[:page]
 
   end
@@ -63,6 +68,10 @@ module OtherCandidateDb
     unless params[:sex].blank?
       ary << " sex = :sex"
       p_hash.merge!({:sex => params[:sex]})
+    end
+    unless params[:industry]
+      ary << " industry like :industry"
+      p_hash.merge!({:industry => params[:industry]})
     end
 
     @candidates = OtherCandidate.all :conditions => [ary.join(" and "), p_hash], :order => "created_at desc"
