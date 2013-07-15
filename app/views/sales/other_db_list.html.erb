@@ -7,7 +7,7 @@
     <table class="common_tb">
       <tr>
         <td>
-          Provice: <%= select_tag "province_id", options_for_select(Province.all { |p| [p.id.to_s, p.name] }, params[:province_id]), {:include_blank => true} -%>
+          Provice: <%= select_tag "province_id", options_for_select(Province.all.map{ |p| [p.name_cn, p.id.to_s] }, params[:province_id]), {:include_blank => true} -%>
         </td>
         <td>
           关键词: <%= text_field_tag "keyword", params[:keyword] -%>

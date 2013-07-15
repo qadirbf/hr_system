@@ -10,9 +10,9 @@ module OtherCandidateDb
     p_hash = {}
 
     unless params[:province_id].blank?
-      #scope = scope.where(["province_id = ?", params[:province_id]])
-      ary << "province_id = :province_id"
-      p_hash.merge!({:province_id => params[:province_id]})
+      cities = City.get_cities(params[:province_id])
+      ary << "city in (:cities)"
+      p_hash.merge!({:cities => cities.collect(&:name_cn)})
     end
 
     unless params[:keyword].blank?
@@ -32,8 +32,11 @@ module OtherCandidateDb
       p_hash.merge!({:sex => params[:sex]})
     end
 
-    unless params[:industry]
-      ary << " industry like :industry"
+    unless params[:industry].blank?
+      i = params[:industry].split(" ")
+      tmp = []
+      i.each{|a| tmp << "industry like '#{a}'"}
+      ary << "(#{tmp.join(" or ")})"
       p_hash.merge!({:industry => params[:industry]})
     end
 
@@ -51,8 +54,9 @@ module OtherCandidateDb
     p_hash = {}
 
     unless params[:province_id].blank?
-      ary << "province_id = :province_id"
-      p_hash.merge!({:province_id => params[:province_id]})
+      cities = City.get_cities(params[:province_id])
+      ary << "city in (:cities)"
+      p_hash.merge!({:cities => cities.collect(&:name_cn)})
     end
 
     unless params[:keyword].blank?
@@ -69,8 +73,11 @@ module OtherCandidateDb
       ary << " sex = :sex"
       p_hash.merge!({:sex => params[:sex]})
     end
-    unless params[:industry]
-      ary << " industry like :industry"
+    unless params[:industry].blank?
+      i = params[:industry].split(" ")
+      tmp = []
+      i.each{|a| tmp << "industry like '#{a}'"}
+      ary << "(#{tmp.join(" or ")})"
       p_hash.merge!({:industry => params[:industry]})
     end
 
