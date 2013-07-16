@@ -10,9 +10,8 @@ module OtherCandidateDb
     p_hash = {}
 
     unless params[:province_id].blank?
-      cities = City.get_cities(params[:province_id])
-      ary << "city in (:cities)"
-      p_hash.merge!({:cities => cities.collect(&:name_cn)})
+      ary << "province_id = :province_id"
+      p_hash.merge!({:province_id => params[:province_id]})
     end
 
     unless params[:keyword].blank?
@@ -33,14 +32,26 @@ module OtherCandidateDb
     end
 
     unless params[:industry].blank?
-      i = params[:industry].split(" ")
+      i = params[:industry].split(/ |,/)
       tmp = []
-      i.each{|a| tmp << "industry like '#{a}'"}
+      i.each{|a| tmp << "industry like '%#{a}%'"}
       ary << "(#{tmp.join(" or ")})"
       p_hash.merge!({:industry => params[:industry]})
     end
+    # 年龄
+    tmp_ary = []
+    unless params[:age1].blank?
+      tmp_ary << "age >= #{params[:age1].to_i}"
+    end
+    unless params[:age2].blank?
+      tmp_ary << "age <= #{params[:age2].to_i}"
+    end
+    age_con = " (#{tmp_ary.join(" and ")}) "
+    ary << age_con unless tmp_ary.blank?
 
-    @candidates = OtherCandidate.paginate :conditions => [ary.join(" and "), p_hash], :order => "created_at desc", :per_page => 30, :page => params[:page]
+    @candidates = OtherCandidate.paginate :conditions => [ary.join(" and "), p_hash],
+                                          :order => "remarks desc, created_at desc",
+                                          :per_page => 30, :page => params[:page]
 
   end
 
@@ -54,9 +65,8 @@ module OtherCandidateDb
     p_hash = {}
 
     unless params[:province_id].blank?
-      cities = City.get_cities(params[:province_id])
-      ary << "city in (:cities)"
-      p_hash.merge!({:cities => cities.collect(&:name_cn)})
+      ary << "province_id = :province_id"
+      p_hash.merge!({:province_id => params[:province_id]})
     end
 
     unless params[:keyword].blank?
@@ -74,14 +84,24 @@ module OtherCandidateDb
       p_hash.merge!({:sex => params[:sex]})
     end
     unless params[:industry].blank?
-      i = params[:industry].split(" ")
+      i = params[:industry].split(/ |,/)
       tmp = []
-      i.each{|a| tmp << "industry like '#{a}'"}
+      i.each{|a| tmp << "industry like '%#{a}%'"}
       ary << "(#{tmp.join(" or ")})"
       p_hash.merge!({:industry => params[:industry]})
     end
+    # 年龄
+    tmp_ary = []
+    unless params[:age1].blank?
+      tmp_ary << "age >= #{params[:age1].to_i}"
+    end
+    unless params[:age2].blank?
+      tmp_ary << "age <= #{params[:age2].to_i}"
+    end
+    age_con = " (#{tmp_ary.join(" and ")}) "
+    ary << age_con unless tmp_ary.blank?
 
-    @candidates = OtherCandidate.all :conditions => [ary.join(" and "), p_hash], :order => "created_at desc"
+    @candidates = OtherCandidate.all :conditions => [ary.join(" and "), p_hash], :order => "remarks desc, created_at desc"
     send_data(xls_content_for(@candidates),
               :type => "text/excel;charset=utf-8; header=present",
               :filename => "#{Time.now.strftime("%Y-%m-%d")}简历库.xls")
@@ -99,7 +119,7 @@ module OtherCandidateDb
     sheet1.row(0).concat %w{姓名 性别 生日 城市 户口 目前工资 工作经验 联系地址 邮编 邮箱 手机 家庭电话 工作电话 期望行业 期望工作地点 期望职位 备注 }
     count_row = 1
     objs.each do |obj|
-      user = obj.user
+      user = obj
       sheet1[count_row, 0]= user.name
       sheet1[count_row, 1]= user.sex
       sheet1[count_row, 2]= user.birth
