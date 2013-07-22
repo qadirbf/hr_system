@@ -1,0 +1,238 @@
+<h1 class="title"><%= @title %></h1>
+<%= include_datepicker %>
+<script type="text/javascript" src="/jquery/jquery.autocomplete.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css"/>
+<script>
+    $(document).ready(function () {
+        $(".auto_firm_name").autocomplete("/sales/auto_object", {
+            delay:10,
+            minChars:0,
+            multiple:false,
+            extraParams:{num:function () {
+                return document.activeElement.id.split("_").pop();
+            }},
+            parse:function (data) {
+                return $.map(eval(data), function (item) {
+                    return {
+                        data:item,
+                        value:item.name,
+                        result:item.name
+                    }
+                });
+            },
+            formatItem:function (item) {
+                return item.name;
+            }
+        }).result(function (e, item) {
+                    $("#daily_firm_name_" + item.num).val(item.name);
+                    $("#daily_obj_id_" + item.num).val(item.id);
+                });
+        $(".auto_contact_name").autocomplete("/sales/auto_contact", {
+            delay:10,
+            minChars:0,
+            cacheLength:0,
+            extraParams:{num:function () {
+                return document.activeElement.id.split("_").pop();
+            }, firm_id:function () {
+                return $('#daily_obj_id_' + document.activeElement.id.split("_").pop()).val();
+            }},
+            multiple:false,
+            parse:function (data) {
+                return $.map(eval(data), function (item) {
+                    return {
+                        data:item,
+                        value:item.name,
+                        result:item.name
+                    }
+                });
+            },
+            formatItem:function (item) {
+                return item.name;
+            }
+        }).result(function (e, item) {
+                    $("#daily_contact_name_" + item.num).val(item.name);
+                    $("#daily_contact_id_" + item.num).val(item.id);
+                });
+    });
+</script>
+<%= form_tag :url => "/#{params[:db_type]}/add_daily", :html => {:onsubmit => "return before_submit();"} %>
+    <%= hidden_field_tag "type", params[:db_type] -%>
+    <table class="blue_tb" witdh=100%>
+      <tr class="title">
+        <th width=230>名称</th>
+        <th width=150>客户/项目</th>
+        <th width=150>联系人/候选人</th>
+        <th width=200>日期</th>
+        <th>备注</th>
+      </tr>
+
+      <tr class="show_tr" id="tr1">
+        <td><%= text_field_tag "daily[name_1]" %></td>
+        <td>
+          <%= text_field_tag "daily[firm_name_1]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+          <%= hidden_field_tag "daily[obj_id_1]" %>
+        </td>
+        <td>
+          <%= text_field_tag "daily[contact_name_1]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+          <%= hidden_field_tag "daily[contact_id_1]" %>
+        </td>
+        <td><%= text_field_tag "daily[day_1]", '', :class => "datepicker" %></td>
+        <td>
+          <%= text_area_tag "daily[notes_1]", '', :style => "width:450px;height:40px;" -%>
+        </td>
+      </tr>
+      <tr class="hide" id="tr2">
+        <td><%= text_field_tag "daily[name_2]" %></td>
+        <td><%= text_field_tag "daily[firm_name_2]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+          <%= hidden_field_tag "daily[obj_id_2]" %>
+        </td>
+        <td><%= text_field_tag "daily[contact_name_2]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+          <%= hidden_field_tag "daily[contact_id_2]" %>
+        </td>
+        <td><%= text_field_tag "daily[day_2]", '', :class => "datepicker" %></td>
+        <td>
+          <%= text_area_tag "daily[notes_2]", '', :style => "width:450px;height:40px;" -%>
+        </td>
+      </tr>
+      <tr class="hide" id="tr3">
+        <td><%= text_field_tag "daily[name_3]" %></td>
+        <td><%= text_field_tag "daily[firm_name_3]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+          <%= hidden_field_tag "daily[obj_id_3]" %>
+        </td>
+        <td><%= text_field_tag "daily[contact_name_3]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+          <%= hidden_field_tag "daily[contact_id_3]" %>
+        </td>
+        <td><%= text_field_tag "daily[day_3]", '', :class => "datepicker" %></td>
+        <td>
+          <%= text_area_tag "daily[notes_3]", '', :style => "width:450px;height:40px;" -%>
+        </td>
+      </tr>
+      <tr class="hide" id="tr4">
+        <td><%= text_field_tag "daily[name_4]" %></td>
+        <td><%= text_field_tag "daily[firm_name_4]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+          <%= hidden_field_tag "daily[obj_id_4]" %>
+        </td>
+        <td><%= text_field_tag "daily[contact_name_4]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+          <%= hidden_field_tag "daily[contact_id_4]" %>
+        </td>
+        <td><%= text_field_tag "daily[day_4]", '', :class => "datepicker" %></td>
+        <td>
+          <%= text_area_tag "daily[notes_4]", '', :style => "width:450px;height:40px;" -%>
+        </td>
+      </tr>
+      <tr class="hide" id="tr5">
+        <td><%= text_field_tag "daily[name_5]" %></td>
+        <td><%= text_field_tag "daily[firm_name_5]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+          <%= hidden_field_tag "daily[obj_id_5]" %>
+        </td>
+        <td><%= text_field_tag "daily[contact_name_5]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+          <%= hidden_field_tag "daily[contact_id_5]" %>
+        </td>
+        <td><%= text_field_tag "daily[day_5]", '', :class => "datepicker" %></td>
+        <td>
+          <%= text_area_tag "daily[notes_5]", '', :style => "width:450px;height:40px;" -%>
+        </td>
+      </tr>
+      <tr class="hide" id="tr6">
+        <td><%= text_field_tag "daily[name_6]" %></td>
+        <td><%= text_field_tag "daily[firm_name_6]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+          <%= hidden_field_tag "daily[obj_id_6]" %>
+        </td>
+        <td><%= text_field_tag "daily[contact_name_6]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+          <%= hidden_field_tag "daily[contact_id_6]" %>
+        </td>
+        <td><%= text_field_tag "daily[day_6]", '', :class => "datepicker" %></td>
+        <td>
+          <%= text_area_tag "daily[notes_6]", '', :style => "width:450px;height:40px;" -%>
+        </td>
+      </tr>
+      <tr class="hide" id="tr7">
+        <td><%= text_field_tag "daily[name_7]" %></td>
+        <td><%= text_field_tag "daily[firm_name_7]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+          <%= hidden_field_tag "daily[obj_id_7]" %>
+        </td>
+        <td><%= text_field_tag "daily[contact_name_7]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+          <%= hidden_field_tag "daily[contact_id_7]" %>
+        </td>
+        <td><%= text_field_tag "daily[day_7]", '', :class => "datepicker" %></td>
+        <td>
+          <%= text_area_tag "daily[notes_7]", '', :style => "width:450px;height:40px;" -%>
+        </td>
+      </tr>
+      <tr class="hide" id="tr8">
+        <td><%= text_field_tag "daily[name_8]" %></td>
+        <td><%= text_field_tag "daily[firm_name_8]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+          <%= hidden_field_tag "daily[obj_id_8]" %>
+        </td>
+        <td><%= text_field_tag "daily[contact_name_8]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+          <%= hidden_field_tag "daily[contact_id_8]" %>
+        </td>
+        <td><%= text_field_tag "daily[day_8]", '', :class => "datepicker" %></td>
+        <td>
+          <%= text_area_tag "daily[notes_8]", '', :style => "width:450px;height:40px;" -%>
+        </td>
+      </tr>
+      <tr class="hide" id="tr9">
+        <td><%= text_field_tag "daily[name_9]" %></td>
+        <td><%= text_field_tag "daily[firm_name_9]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+          <%= hidden_field_tag "daily[obj_id_9]" %>
+        </td>
+        <td><%= text_field_tag "daily[contact_name_9]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+          <%= hidden_field_tag "daily[contact_id_9]" %>
+        </td>
+        <td><%= text_field_tag "daily[day_9]", '', :class => "datepicker" %></td>
+        <td>
+          <%= text_area_tag "daily[notes_9]", '', :style => "width:450px;height:40px;" -%>
+        </td>
+      </tr>
+      <tr class="hide" id="tr10">
+        <td><%= text_field_tag "daily[name_10]" %></td>
+        <td><%= text_field_tag "daily[firm_name_10]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+          <%= hidden_field_tag "daily[obj_id_10]" %>
+        </td>
+        <td><%= text_field_tag "daily[contact_name_10]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+          <%= hidden_field_tag "daily[contact_id_10]" %>
+        </td>
+        <td><%= text_field_tag "daily[day_10]", '', :class => "datepicker" %></td>
+        <td>
+          <%= text_area_tag "daily[notes_10]", '', :style => "width:450px;height:40px;" -%>
+        </td>
+      </tr>
+      <tr>
+        <th><a href="javascript:void(0)" onclick="add_one()">再添加一个</a>&nbsp;&nbsp;</th>
+        <td colspan="4">
+          <%= submit_tag "保存", :class => "btn btn-primary" %>
+          <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
+      </tr>
+    </table>
+
+<script>
+
+    function before_submit() {
+        var flag = true
+        $("tr.show_tr input[type!='hidden']").each(function (i, ele) {
+            if ($(ele).val() == "") {
+                flag = false
+            }
+        })
+        if (flag) {
+        } else {
+            alert("请填写完整再提交！")
+        }
+        return flag
+    }
+
+    function add_one() {
+        var i = $("tr.show_tr").length;
+        if (i >= 10) {
+            alert("为避免服务器压力，同一次请不要提交太多数据。")
+        } else {
+            $("#tr" + (i + 1)).attr("class", "show_tr")
+        }
+    }
+</script>
+<style>
+    tr.hide {
+        display: none;
+    }
+</style>

@@ -2,7 +2,11 @@
 </h1>
 <style>table select, table input[type=text] {
     width: 120px;
-}</style>
+}
+        .list_tb tr td{
+            text-align: center;
+        }
+</style>
 <%= form_tag "other_db_list" do %>
     <table class="common_tb">
       <tr>
@@ -45,24 +49,26 @@
 
 <table class="list_tb">
   <tr class="title">
-    <th>Source</th>
-    <th>Name</th>
-    <th>Sex</th>
-    <th>City</th>
-    <th>Industry</th>
-    <th>Email</th>
-    <th>Mobile</th>
-    <th>Remarks</th>
+    <th width=80>姓名</th>
+    <th width=50>性别</th>
+    <th width=90>所在城市</th>
+    <th width=200>期望行业</th>
+    <th width=150>期望职位</th>
+    <th width=150>期望工资</th>
+    <th width=200>Email</th>
+    <th width=150>手机</th>
+    <th>备注</th>
   </tr>
   <% @candidates.each do |c| -%>
       <tr>
-        <td><%= h c.source -%></td>
         <td><%= link_to c.name, {:action => "other_db_show", :id => c.id}, {:target => :blank} -%></td>
         <td><%= h c.sex -%></td>
         <td><%= h c.city -%></td>
-        <td><%= h c.industry -%></td>
-        <td><%= h c.email -%></td>
-        <td><%= h c.mobile -%></td>
+        <td style="text-align: left;"><%= h c.industry -%></td>
+        <td style="text-align: left;"><%= h c.job_post -%></td>
+        <td><%= h c.salary -%></td>
+        <td style="text-align: left;"><%= h c.email -%></td>
+        <td style="text-align: left;"><%= h c.mobile -%></td>
         <td><%= truncate(c.remarks, :length => 50) -%></td>
       </tr>
   <% end -%>

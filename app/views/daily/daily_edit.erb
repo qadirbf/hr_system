@@ -1,7 +1,7 @@
 <h1 class="title"><%= @title %></h1>
 <%= include_datepicker %>
 <script type="text/javascript" src="/jquery/jquery.autocomplete.js"></script>
-<link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css"/>
 <script>
     $(document).ready(function () {
         $("#daily_firm_name").autocomplete("/sales/auto_object", {
@@ -28,7 +28,9 @@
             delay:10,
             minChars:0,
             cacheLength:0,
-            extraParams: {firm_id:function(){return $('#daily_obj_id').val();}},
+            extraParams:{firm_id:function () {
+                return $('#daily_obj_id').val();
+            }},
             multiple:false,
             parse:function (data) {
                 return $.map(eval(data), function (item) {
@@ -52,36 +54,34 @@
     <%= hidden_field_tag "id", params[:id] -%>
     <%= hidden_field_tag "type", params[:db_type] -%>
     <%= errors_for @daily %>
-    <table class="blue_tb" style="100%">
-      <tr>
-        <th>名称</th>
-        <td><%= f.text_field :name %></td>
-      </tr>
-      <tr>
-        <th>客户/项目</th>
-        <td><%= f.text_field :firm_name, :value => @daily.try(:show_firm_name) %>
-          <%= f.hidden_field :obj_id %>
-        </td>
-      </tr>
-      <tr>
-        <th>联系人/候选人</th>
-        <td><%= f.text_field :contact_name, :value => @daily.try(:show_contact_name) %>
-          <%= f.hidden_field :contact_id %>
-        </td>
-      </tr>
-      <tr>
-        <th>日期</th>
-        <td><%= f.text_field :day,  :class => "datepicker" %></td>
-      </tr>
-      <tr>
+    <table class="blue_tb" witdh=100%>
+      <tr class="title">
+        <th width=230>名称</th>
+        <th width=150>客户/项目</th>
+        <th width=150>联系人/候选人</th>
+        <th width=200>日期</th>
         <th>备注</th>
+      </tr>
+
+      <tr>
+        <td><%= text_field_tag "daily[name]",  @daily.try(:name)  %></td>
         <td>
-          <%= f.text_area :notes, :style => "width:400px;height:160px;" -%>
+          <%= text_field_tag "daily[firm_name]", @daily.try(:show_firm_name) %>
+          <%= hidden_field_tag "daily[obj_id]", @daily.try(:obj_id) %>
+        </td>
+        <td>
+          <%= text_field_tag "daily[contact_name]", @daily.try(:show_contact_name) %>
+          <%= hidden_field_tag "daily[contact_id]", @daily.try(:contact_id) %>
+        </td>
+        <td><%= text_field_tag "daily[day]", @daily.try(:day), :class => "datepicker" %></td>
+        <td>
+          <%= text_area_tag "daily[notes]", @daily.try(:notes), :style => "width:450px;height:40px;" -%>
         </td>
       </tr>
       <tr>
         <th></th>
-        <td><%= submit_tag "保存", :class => "btn btn-primary" %>
+        <td colspan="4">
+          <%= submit_tag "保存", :class => "btn btn-primary" %>
           <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
       </tr>
     </table>

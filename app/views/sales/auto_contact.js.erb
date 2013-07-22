@@ -2,9 +2,9 @@
     <% i=0 %>[
     <% @results.each do |result| %>
     <% if i==0 %>
-    {name:"<%= result.full_name(true) %>",show:"<%= result.full_name(true) + " " %>",id:"<%= result.id -%>"}
+    {name:"<%= result.full_name(true) %>",show:"<%= result.full_name(true) + " " %>",id:"<%= result.id -%>", num:"<%= params[:num] -%>"}
     <% else %>
-    ,{name:"<%= result.full_name(true) %>",show:"<%= result.full_name(true) + " " %>",id:"<%= result.id -%>"}
+    ,{name:"<%= result.full_name(true) %>",show:"<%= result.full_name(true) + " " %>",id:"<%= result.id -%>", num:"<%= params[:num] -%>"}
     <% end %>
     <% i+=1 -%>
     <% end -%>]

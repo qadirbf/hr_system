@@ -21,6 +21,28 @@ module DailyController
     render :template => "/daily/daily_edit"
   end
 
+  def add_daily
+    unless request.post?
+      @title = "添加日报"
+      render :template => "/daily/add_daily"
+    else
+      daily = params[:daily]
+      ary = []
+      (1..5).each do |i|
+        if !daily["name_#{i}"].blank? && !daily["firm_name_#{i}"].blank? && !daily["contact_name_#{i}"].blank? && !daily["day_#{i}"].blank?
+          ary << [daily["name_#{i}"], daily["firm_name_#{i}"], daily["obj_id_#{i}"], daily["contact_name_#{i}"], daily["contact_id_#{i}"], daily["day_#{i}"], daily["notes_#{i}"]]
+        end
+      end
+
+      ary.each do |d|
+        Daily.create({:name => d[0], :firm_name => d[1], :obj_id => d[2], :contact_name => d[3], :contact_id => d[4],
+                      :day => d[5], :notes => d[6], :created_by => current_user.id, :updated_by => current_user.id})
+      end
+      redirect_to :action => :my_daily
+    end
+
+  end
+
   def daily_update
     user = current_user
     unless params[:id].blank?
@@ -46,7 +68,7 @@ module DailyController
 
   def daily_destroy
     daily = Daily.find params[:id]
-    if daily.created_by == current_user
+    if daily.created_by == current_user.id
       daily.destroy
     else
       flash[:notice] = "只能删除自己的日报！"
@@ -57,8 +79,7 @@ module DailyController
   def auto_object
     key = params[:q] if params[:q]
     @results = Firm.where("firm_name like '%#{key}%'").all
-
-    render :template => "sales/auto_firm"
+    render :template => "/daily/auto_firm"
   end
 
   # 日报统计
