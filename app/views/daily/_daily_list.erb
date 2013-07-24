@@ -1,8 +1,8 @@
 <table class="list_tb">
   <tr class="title">
-    <td>名称</td>
     <td>公司</td>
     <td>对象</td>
+    <td>电话</td>
     <td>日期</td>
     <td>备注</td>
     <td>最后修改</td>
@@ -10,11 +10,11 @@
   </tr>
   <% dailies.each do |d| %>
       <tr>
-        <td><%= d.name  %></td>
         <td>
           <%= d.show_firm_name -%>
         </td>
         <td><%= d.show_contact_name %></td>
+        <td><%= d.phone  %></td>
         <td><%= d.day %></td>
         <td><%= d.notes %></td>
         <td><%= d.edit_info %></td>

@@ -3,7 +3,15 @@ module DailyController
 
   def my_daily
     @title = "我的日报"
-    @dailies = Daily.paginate :conditions => "created_by = #{current_user.id}", :per_page => 20, :page => params[:page]
+    @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
+    _sql, hash = Daily.get_sql_by_hash(params)
+    sql = [_sql]
+    if params[:created_by_eq].blank?
+      sql <<  "created_by = :created_by"
+      hash.merge!({:created_by => current_user.id})
+    end
+    sql.delete_if{|a| a.blank? }
+    @dailies = Daily.paginate :conditions => [sql.join(" and "), hash], :per_page => 20, :page => params[:page]
     render :template => "/daily/my_daily"
   end
 

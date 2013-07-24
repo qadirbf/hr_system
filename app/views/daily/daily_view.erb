@@ -9,11 +9,7 @@
 </style>
 <table class="blue_tb" style="100%">
   <tr>
-    <th width='100'>名称</th>
-    <td><%= @daily.name %></td>
-  </tr>
-  <tr>
-    <th>客户/项目</th>
+    <th width=100>客户/项目</th>
     <td><%= @daily.try(:show_firm_name) %>
     </td>
   </tr>
@@ -21,6 +17,10 @@
     <th>联系人/候选人</th>
     <td><%= @daily.try(:show_contact_name) %>
     </td>
+  </tr>
+  <tr>
+    <th>电话</th>
+    <td><%= @daily.try(:phone) %></td>
   </tr>
   <tr>
     <th>日期</th>
