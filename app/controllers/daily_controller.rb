@@ -11,7 +11,7 @@ module DailyController
       hash.merge!({:created_by => current_user.id})
     end
     sql.delete_if{|a| a.blank? }
-    @dailies = Daily.paginate :conditions => [sql.join(" and "), hash], :per_page => 20, :page => params[:page]
+    @dailies = Daily.paginate :conditions => [sql.join(" and "), hash], :order => "day desc, created_at desc", :per_page => 20, :page => params[:page]
     render :template => "/daily/my_daily"
   end
 
@@ -37,13 +37,13 @@ module DailyController
       daily = params[:daily]
       ary = []
       (1..5).each do |i|
-        if !daily["name_#{i}"].blank? && !daily["firm_name_#{i}"].blank? && !daily["contact_name_#{i}"].blank? && !daily["day_#{i}"].blank?
-          ary << [daily["name_#{i}"], daily["firm_name_#{i}"], daily["obj_id_#{i}"], daily["contact_name_#{i}"], daily["contact_id_#{i}"], daily["day_#{i}"], daily["notes_#{i}"]]
+        if !daily["phone_#{i}"].blank? && !daily["firm_name_#{i}"].blank? && !daily["contact_name_#{i}"].blank? && !daily["day_#{i}"].blank?
+          ary << [daily["firm_name_#{i}"], daily["obj_id_#{i}"], daily["contact_name_#{i}"], daily["contact_id_#{i}"], daily["phone_#{i}"], daily["day_#{i}"], daily["notes_#{i}"]]
         end
       end
 
       ary.each do |d|
-        Daily.create({:name => d[0], :firm_name => d[1], :obj_id => d[2], :contact_name => d[3], :contact_id => d[4],
+        Daily.create({:firm_name => d[0], :obj_id => d[1], :contact_name => d[2], :contact_id => d[3], :phone => d[4],
                       :day => d[5], :notes => d[6], :created_by => current_user.id, :updated_by => current_user.id})
       end
       redirect_to :action => :my_daily
