@@ -2,18 +2,43 @@
 <%= include_datepicker %>
 <%= form_for @employee, :url => "/employees/update" do |f| %>
     <%= hidden_field_tag "id", params[:id] -%>
-  <%= errors_for @employee %>
-<table class="blue_tb" style="100%">
-  <tr><th>用户名</th><td><%= f.text_field :username %></td>
-    <th>密码</th><td><%= f.text_field :password,:value=>@employee.encode&&@employee.decode_pass %></td>
-    <th>允许登录？</th><td><%= f.select :active,[['是',1],['否',0]],{:include_blank=>true} %></td></tr>
-  <tr><th>部门</th><td><%= f.select :department_id,@departments,{:include_blank=>true} %></td>
-    <th>手机</th><td><%= f.text_field :mobile %></td><th>邮箱</th><td><%= f.text_field :email %></td></tr>
-  <tr><th>入职时间</th><td><%= f.text_field :join_date,:value=>format_date(@employee.join_date,:date),:class=>"datepicker" %></td>
-    <th>座机</th><td><%= f.text_field :phone %></td><th>分机</th><td><%= f.text_field :phone_ext %></td></tr>
-  <tr><th>离职时间</th><td><%= f.text_field :leave_date,:value=>format_date(@employee.leave_date,:date),:class=>"datepicker" %></td>
-    <th>离职原因</th><td colspan="3"><%= f.text_area :leave_reason, :rows => 3, :style => "width:90%" %></td></tr>
-  <tr><td colspan="6"><%= submit_tag "保存", :class => "btn btn-primary" %>
-    <%= button_to_function "取消", "cancel()", :class => "btn" %></td> </tr>
-</table>
+    <%= errors_for @employee %>
+    <table class="blue_tb" style="100%">
+      <tr>
+        <th>用户名</th>
+        <td><%= f.text_field :username %></td>
+        <th>密码</th>
+        <td><%= f.text_field :password, :value => @employee.encode&&@employee.decode_pass %></td>
+        <th>允许登录？</th>
+        <td><%= f.select :active, [['是', 1], ['否', 0]], {:include_blank => true} %></td>
+      </tr>
+      <tr>
+        <th>部门</th>
+        <td><%= f.select :department_id, @departments, {:include_blank => true} %></td>
+        <th>角色</th>
+        <td><%= select_tag "role", options_for_select(([["", ""]] + @roles), @employee.role_id) %></td>
+      </tr>
+      <tr>
+        <th>入职时间</th>
+        <td><%= f.text_field :join_date, :value => format_date(@employee.join_date, :date), :class => "datepicker" %></td>
+        <th>手机</th>
+        <td><%= f.text_field :mobile %></td>
+        <th>邮箱</th>
+        <td><%= f.text_field :email %></td>
+      </tr>
+      <tr>
+        <th>离职时间</th>
+        <td><%= f.text_field :leave_date, :value => format_date(@employee.leave_date, :date), :class => "datepicker" %></td>
+        <th>座机</th>
+        <td><%= f.text_field :phone %></td>
+        <th>分机</th>
+        <td><%= f.text_field :phone_ext %></td>
+      </tr>
+      <tr>
+        <th>离职原因</th>
+        <td colspan="3"><%= f.text_area :leave_reason, :rows => 3, :style => "width:90%" %></td>
+        <td colspan="2"><%= submit_tag "保存", :class => "btn btn-primary" %>
+          <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
+      </tr>
+    </table>
 <% end %>

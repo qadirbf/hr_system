@@ -27,7 +27,7 @@
     <br/>
 <% end -%>
 
-<% if user.is_sales? or user.is_admin? -%>
+<% if user.is_sales? or user.right_level > 1 -%>
 <h1 class="title">销售部</h1>
 <%= link_to "搜索公司", {:controller => "crm", :action => "search"} %>
 <%= link_to "添加公司", {:controller => "crm", :action => "firm_edit"} %>  <br/>
@@ -38,7 +38,7 @@
 <%= link_to "我的日报", {:controller => "crm", :action => "my_daily"} %>
 <% end -%>
 
-<% if user.is_res? or user.is_admin? -%>
+<% if user.is_res? or user.right_level > 1 -%>
 <h1 class="title">顾问部</h1>
 <%= link_to "资源搜索", {:controller => "res", :action => "search"} %>
 <%= link_to "添加公司", {:controller => "res", :action => "firm_edit"} %>  <br/>

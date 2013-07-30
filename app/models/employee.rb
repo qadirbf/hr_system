@@ -10,6 +10,7 @@ class Employee < ActiveRecord::Base
   has_many :orders
   has_many :share_orders
   has_many :dailies
+  has_one :roles_employee
 
   include HrLib::Security
 
@@ -40,6 +41,24 @@ class Employee < ActiveRecord::Base
 
   def active_label
     self.active==1 ? '是' : '否'
+  end
+
+  def role_id
+    self.roles_employee.role_id rescue 0
+  end
+
+  def right_level
+    role_name = self.roles_employee.role.name rescue ""
+    case role_name
+      when "admin"
+        5
+      when "manager"
+        4
+      when "leader"
+        3
+      else
+        2
+    end
   end
 
   #def in_trial_time?

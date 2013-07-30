@@ -21,7 +21,7 @@
       创建时间 &ge; <%= text_field_tag :created_at_gte, params[:created_at_gte], :class => "datepicker" %>
       &le; <%= text_field_tag :created_at_lte, params[:created_at_lte], :class => "datepicker" %>
       备注： <%= text_field_tag :notes_like, params[:notes_like] %>
-      <% if current_user.is_admin? -%>
+      <% if current_user.right_level > 2 -%>
       员工： <%= select_tag :employee_id_eq, options_for_select([['所有', '']]+@emps, params[:employee_id_eq].to_i) %>
       <% end -%>
     </td></tr>

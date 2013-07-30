@@ -9,27 +9,52 @@ class EmployeesController < ApplicationController
       @title = "添加员工"
       @employee = Employee.new
     end
-    @departments = Department.all.map{|d| [d.name,d.id]}
+    @roles = Role.all.map { |r| [Role::ROLES_TITLE[r.name.to_sym], r.id] }
+    @departments = Department.all.map { |d| [d.name, d.id] }
   end
 
   def update
     user = current_user
     unless params[:id].blank?
       @employee = Employee.find(params[:id])
-      @employee.update_attributes(params[:employee].merge(:updated_by=>user.id))
+      @employee.update_attributes(params[:employee].merge(:updated_by => user.id))
       if !@employee.leave_date.blank? && @employee.active != 1
         FirmLead.update_all("employee_id = 0", "employee_id = #{@employee.id}")
       end
     else
-      @employee = Employee.create(params[:employee].merge(:updated_by=>user.id,:created_by=>user.id))
+      @employee = Employee.create(params[:employee].merge(:updated_by => user.id, :created_by => user.id))
     end
     if @employee.errors.empty?
+      unless params[:role].blank?
+        role = Role.find_by_id(params[:role].to_i)
+        tmp = @employee.roles_employee || RolesEmployee.new
+        tmp.update_attributes({:role_id => role.id, :employee_id => @employee.id})
+      end
       flash[:notice] = "成功保存！"
-      redirect_to :action=>"view",:id=>@employee.id
+      redirect_to :action => "view", :id => @employee.id
     else
       @title = params[:id].blank? ? "添加员工" : "修改员工"
-      @departments = Department.all.map{|d| [d.name,d.id]}
-      render :action=>"edit"
+      @departments = Department.all.map { |d| [d.name, d.id] }
+      render :action => "edit"
+    end
+  end
+
+  def set_firm_type
+    @title = "设置行业类别权限"
+    @firm_types = FirmType.all
+    @employee = Employee.where("id = #{params[:id]}").first
+
+    if request.post?
+      unless params[:firm_type].blank?
+        EmployeesFirmType.delete_all("employee_id = #{@employee.id}")
+        params[:firm_type].each do |type|
+          EmployeesFirmType.create({:employee_id => @employee.id, :firm_type_id => type})
+        end
+        redirect_to :action => :view, :id => @employee.id
+      end
+    else
+      ids = FirmType.where("employees_firm_types.employee_id = #{@employee.id}").joins("left join employees_firm_types on employees_firm_types.firm_type_id = firm_types.id").select("firm_types.id as id").all.collect(&:id)
+      params[:firm_type] ||= ids
     end
   end
 
@@ -45,21 +70,21 @@ class EmployeesController < ApplicationController
     end
     e.destroy
     flash[:notice] = "成功删除！"
-    redirect_to :action=>"list"
+    redirect_to :action => "list"
   end
 
   def list
     @title = "员工列表"
-    @departments = Department.all.map{|d| [d.name,d.id]}
+    @departments = Department.all.map { |d| [d.name, d.id] }
 
-    @employees = Employee.paginate :conditions=>Employee.get_sql_by_hash(params),:order=>"username",
-                                   :per_page=>30,:page=>params[:page]
+    @employees = Employee.paginate :conditions => Employee.get_sql_by_hash(params), :order => "username",
+                                   :per_page => 30, :page => params[:page]
   end
 
   def login
     @title = "请登录"
     if request.post?
-      user = Employee.active_emps.authenticate(params[:username],params[:password])
+      user = Employee.active_emps.authenticate(params[:username], params[:password])
       if user
 
 
@@ -71,7 +96,7 @@ class EmployeesController < ApplicationController
 
         flash[:notice] = "成功登录！"
         flash[:last_url] = flash[:last_url] if flash[:last_url]
-        LoginHistory.add_history user.username,nil,user.id,nil,request.remote_ip,0
+        LoginHistory.add_history user.username, nil, user.id, nil, request.remote_ip, 0
 
         # 打卡
         record_in = AttendRecord.get_clock_in_record(user.id, Time.now.format_date(:date))
@@ -87,23 +112,23 @@ class EmployeesController < ApplicationController
     render :layout => "sign"
   rescue AppError => e
     flash[:notice] = "用户名或密码错误！"
-    LoginHistory.add_history params[:username],params[:password],nil,nil,request.remote_ip, 1
-    redirect_to :action=>"login"
+    LoginHistory.add_history params[:username], params[:password], nil, nil, request.remote_ip, 1
+    redirect_to :action => "login"
   end
 
   def logout
     reset_session
     flash[:notice] = "成功退出系统！"
-    redirect_to :action=>"login"
+    redirect_to :action => "login"
   end
 
   protected
 
   def init_menu
     unless logged_in?
-      @sys_nav_menus = [['/employees/login','登录']]
+      @sys_nav_menus = [['/employees/login', '登录']]
     else
-      @sys_nav_menus = [['/employees/list','员工列表']]
+      @sys_nav_menus = [['/employees/list', '员工列表']]
     end
   end
 
