@@ -28,6 +28,15 @@ class Firm < ActiveRecord::Base
     !!FirmLead.first(:select=>"id",:conditions=>["firm_id=? and employee_id=?",self.id,user.id]) or user.is_admin?
   end
 
+  def lead_by_manager?(user, type)
+    return false unless user.is_manager?
+    leads_type = (type == "crm" ? 1 : 2)
+    leads_man = self.firm_leads.where("leads_type_id = ?", leads_type).select("distinct employee_id").first.try(:employee_id)
+    firm_types = EmployeesFirmType.where("employee_id = #{user.id}").select("firm_type_id").collect(&:firm_type_id)
+    emps = EmployeesFirmType.where("firm_type_id in (?)", firm_types).select("distinct employee_id").collect(&:employee_id)
+    return emps.include?(leads_man)
+  end
+
   def sales_followed_by?(user)
     self.lead_by_id(1).employee_id==user.id
   end

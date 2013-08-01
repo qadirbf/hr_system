@@ -31,6 +31,10 @@ class Employee < ActiveRecord::Base
     self.id==1
   end
 
+  def is_manager?
+    self.right_level == 4
+  end
+
   def to_s
     self.username
   end

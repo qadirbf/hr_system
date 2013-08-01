@@ -455,7 +455,7 @@ class SalesController < ApplicationController
     @title = (res_sys? ? "我的资源" : "我的公司")
     #params[:sales_id]||=current_user.id
 
-    if current_user.right_level > 2
+    if current_user.is_admin?
       user_id = params[:user_id].to_i
       type_id = res_sys? ? 2 : 1
       where_sql = (user_id == 0 ? ["firm_leads.employee_id > 0 and firm_leads.leads_type_id = :type_id", {type_id: type_id}] : ["firm_leads.employee_id = :user_id and firm_leads.leads_type_id = :type_id", {user_id: user_id, type_id: type_id}])
@@ -466,6 +466,21 @@ class SalesController < ApplicationController
         render :template => "/sales/my_contacts"
       else
         @employees = Employee.active_emps.sales.select('id,username').order("username").map { |e| [e.username, e.id] }
+      end
+    elsif current_user.is_manager?  # 经理权限
+      user_id = params[:user_id].to_i
+      type_id = res_sys? ? 2 : 1
+      # 获取经理管辖的行业的所有员工
+      firm_types = EmployeesFirmType.where("employee_id = #{current_user.id}").select("firm_type_id").collect(&:firm_type_id)
+      emps = EmployeesFirmType.where("firm_type_id in (?)", firm_types).select("distinct employee_id").collect(&:employee_id)
+      where_sql = (user_id == 0 ? ["firm_leads.employee_id in (:emps) and firm_leads.leads_type_id = :type_id", {type_id: type_id, emps: emps}] : ["firm_leads.employee_id = :user_id and firm_leads.leads_type_id = :type_id", {user_id: user_id, type_id: type_id}])
+      @firms = Firm.includes(:firm_leads).where(where_sql).order("firm_leads.grab_date").paginate(:page => params[:page], :per_page => 30)
+
+      if res_sys?
+        @employees = Employee.active_emps.res.where("id in (?)", (emps << current_user.id)).select('id,username').order("username").map { |e| [e.username, e.id] }
+        render :template => "/sales/my_contacts"
+      else
+        @employees = Employee.active_emps.sales.where("id in (?)", (emps << current_user.id)).select('id,username').order("username").map { |e| [e.username, e.id] }
       end
     else
       params[:user_id] ||= current_user.id
@@ -996,9 +1011,15 @@ class SalesController < ApplicationController
         obj = firm
     end
     @contacts = contacts.compact.map { |c| [c.full_name(true, true), c.id] }
-
-    @pending_calls = obj.recalls.dep_recalls(current_user.department_id).where("completed_at is null").order("appt_date desc").limit(5)
-    @com_calls = obj.recalls.dep_recalls(current_user.department_id).where("completed_at is not null").order("appt_date desc").limit(5)
+    if current_user.is_manager?
+      firm_types = EmployeesFirmType.where("employee_id = #{current_user.id}").select("firm_type_id").collect(&:firm_type_id)
+      emps = EmployeesFirmType.where("firm_type_id in (?)", firm_types).select("distinct employee_id").collect(&:employee_id)
+      @pending_calls = obj.recalls.where("completed_at is null and employee_id in (?)", emps).order("appt_date desc").limit(5)
+      @com_calls = obj.recalls.where("completed_at is not null and employee_id in (?)", emps).order("appt_date desc").limit(5)
+    else
+      @pending_calls = obj.recalls.dep_recalls(current_user.department_id).where("completed_at is null").order("appt_date desc").limit(5)
+      @com_calls = obj.recalls.dep_recalls(current_user.department_id).where("completed_at is not null").order("appt_date desc").limit(5)
+    end
   end
 
 end

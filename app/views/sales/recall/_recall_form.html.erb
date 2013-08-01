@@ -43,7 +43,7 @@
     <td rowspan="2"><%= text_area :recall, :notes, :rows=>5,:style=>"width:90%" %></td> </tr>
   <tr><td colspan="5"><%= check_box :recall, :complete, {}, 1, 0 %> 完成任务
     重要性： <%= select :recall, :important, Recall::IMPORTANT_TYPES, {:include_blank => true} %> &nbsp;
-    <% if @firm.is_followed_by?(current_user) %>
+    <% if @firm.is_followed_by?(current_user) or @firm.lead_by_manager?(current_user, params[:db_type]) %>
       <%= submit_tag "保存",:class=>"btn btn-primary" %>
       <% if @recall.id&&@recall.employee_id==current_user.id %>
         <%= button_to_function "删除任务", "confirm_url('确定删除？','/#{params[:db_type]}/recall_destroy/#{@recall.id}')", :class => "btn" %>
