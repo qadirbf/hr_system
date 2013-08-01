@@ -16,7 +16,7 @@
     <th>部门</th>
     <td><%= @employee.department %></td>
     <th>角色</th>
-    <td><%= @employee.roles_employee.role_name %></td>
+    <td><%= @employee.roles_employee.role_name rescue "未设置" %></td>
     <th>手机</th>
     <td><%= @employee.mobile %></td>
   </tr>
