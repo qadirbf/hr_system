@@ -27,11 +27,11 @@
                 });
     });
 </script>
-<%= form_tag "/#{params[:db_type]}/recall_update", :target => "_blank" do %>
+<%= form_tag "/#{params[:db_type]}/recall_update", :autocomplete => "off", :target => "_blank" do %>
   <%= hidden_field :recall, :firm_id %> <%= hidden_field_tag :id, @recall.id %>
 <table class="list_tb">
   <tr class="title"><td>安排时间</td><td>联系人</td><td>联系方式</td><td>阶段</td><td>跟进员工</td><td>备注</td></tr>
-  <tr><td><%= text_field :recall, :appt_date,:class=>"dtimepicker",:value=>format_date(@recall.appt_date,:min) %></td>
+  <tr><td><%= text_field :recall, :appt_date, {:class=>"dtimepicker",:value=>format_date(@recall.appt_date,:min)} %></td>
     <td>
       <%= text_field_tag :contact_name -%>
       <%= hidden_field :recall, :contact_id %>

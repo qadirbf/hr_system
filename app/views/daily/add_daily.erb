@@ -55,7 +55,7 @@
                 });
     });
 </script>
-<%= form_tag "/#{params[:db_type]}/add_daily", :onsubmit => "return before_submit();" %>
+<%= form_tag "/#{params[:db_type]}/add_daily", :autocomplete => "off", :onsubmit => "return before_submit();" %>
     <%= hidden_field_tag "type", params[:db_type] -%>
     <table class="blue_tb" witdh=100%>
       <tr class="title">

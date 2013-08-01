@@ -43,7 +43,7 @@ class SalesController < ApplicationController
     user = current_user
     @firm = Firm.find(params[:id])
     @title = @firm.firm_name
-    @can_edit = (@firm.is_followed_by?(user) or user.is_admin?)
+    @can_edit = (@firm.is_followed_by?(user) or user.is_admin? or @firm.lead_by_manager?(user, params[:db_type]))
     @can_grab = @firm.can_grab_by?(user)
     @is_special_firm = (@firm.id == 4)
     @can_submit_order = (user.is_admin? or res_sys?)
