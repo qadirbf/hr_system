@@ -4,7 +4,9 @@ class FinancialController < ApplicationController
 
   def order_list
     @title = "订单列表"
-    @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
+    firm_types = EmployeesFirmType.where("employee_id = #{current_user.id}").select("firm_type_id").collect(&:firm_type_id)
+    emps = EmployeesFirmType.where("firm_type_id in (?)", firm_types).select("distinct employee_id").collect(&:employee_id)
+    @emps = Employee.active_emps.where("id in (?)", emps).select('id,username').order("username").map { |e| [e.username, e.id] }
 
     order_hash = params[:order]||{}
     _sql, p_hash = Order.get_sql_by_hash(order_hash)
@@ -16,10 +18,13 @@ class FinancialController < ApplicationController
       p_hash.merge!({:firm_name => "%#{params[:firm_name]}%"})
     end
 
+    joins += " left join share_orders on share_orders.order_id = orders.id "
+    sql << "share_orders.employee_id in (:emps)"
+    p_hash.merge!(:emps => emps)
+
     unless params[:share_order_employee].blank?
       sql << " share_orders.employee_id = :share_emp "
       p_hash.merge!({:share_emp => params[:share_order_employee]})
-      joins += " left join share_orders on share_orders.order_id = orders.id "
     end
 
     sql.delete_if { |s| s.blank? }
@@ -99,7 +104,7 @@ class FinancialController < ApplicationController
   end
 
   def check_right
-    unless current_user.is_admin?
+    unless current_user.right_level > 3
       render :text => "没有权限访问该页面"
     end
   end

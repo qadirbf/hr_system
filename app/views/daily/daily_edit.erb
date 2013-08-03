@@ -59,28 +59,32 @@
         <th width=150>客户/项目</th>
         <th width=150>联系人/候选人</th>
         <th width=230>电话</th>
-        <th width=200>日期</th>
+        <th width=100>职位</th>
+        <th width=150>日期</th>
+        <th width=50>已完成？</th>
         <th>备注</th>
       </tr>
 
       <tr>
         <td>
-          <%= text_field_tag "daily[firm_name]", @daily.try(:show_firm_name) %>
+          <%= text_field_tag "daily[firm_name]", @daily.try(:show_firm_name), :style => "width:180px;" %>
           <%= hidden_field_tag "daily[obj_id]", @daily.try(:obj_id) %>
         </td>
         <td>
-          <%= text_field_tag "daily[contact_name]", @daily.try(:show_contact_name) %>
+          <%= text_field_tag "daily[contact_name]", @daily.try(:show_contact_name), :style => "width:180px;" %>
           <%= hidden_field_tag "daily[contact_id]", @daily.try(:contact_id) %>
         </td>
-        <td><%= text_field_tag "daily[phone]", @daily.try(:phone) %></td>
+        <td><%= text_field_tag "daily[phone]", @daily.try(:phone), :style => "width:100px;" %></td>
+        <td><%= text_field_tag "daily[position_cn]", @daily.try(:position_cn), :style => "width:180px;" %></td>
         <td><%= text_field_tag "daily[day]", @daily.try(:day), :class => "datepicker" %></td>
+        <td><%= check_box_tag "daily[completed_flag]", 1, (@daily.try(:completed_flag).to_i > 0 ? true : false) %> 完成任务</td>
         <td>
           <%= text_area_tag "daily[notes]", @daily.try(:notes), :style => "width:450px;height:40px;" -%>
         </td>
       </tr>
       <tr>
         <th></th>
-        <td colspan="4">
+        <td colspan="6">
           <%= submit_tag "保存", :class => "btn btn-primary" %>
           <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
       </tr>

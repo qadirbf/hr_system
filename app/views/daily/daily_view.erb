@@ -19,12 +19,21 @@
     </td>
   </tr>
   <tr>
+    <th>职位</th>
+    <td><%= @daily.try(:position_cn) %>
+    </td>
+  </tr>
+  <tr>
     <th>电话</th>
     <td><%= @daily.try(:phone) %></td>
   </tr>
   <tr>
     <th>日期</th>
     <td><%= @daily.day %></td>
+  </tr>
+  <tr>
+    <th>完成情况</th>
+    <td><%= @daily.completed_label %></td>
   </tr>
   <tr>
     <th>备注</th>

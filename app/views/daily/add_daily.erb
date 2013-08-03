@@ -56,155 +56,177 @@
     });
 </script>
 <%= form_tag "/#{params[:db_type]}/add_daily", :autocomplete => "off", :onsubmit => "return before_submit();" %>
-    <%= hidden_field_tag "type", params[:db_type] -%>
-    <table class="blue_tb" witdh=100%>
-      <tr class="title">
-        <th width=150>客户/项目</th>
-        <th width=150>联系人/候选人</th>
-        <th width=200>电话</th>
-        <th width=200>日期</th>
-        <th>备注</th>
-      </tr>
+<%= hidden_field_tag "type", params[:db_type] -%>
+<table class="blue_tb" witdh=100%>
+  <tr class="title">
+    <th width=150>客户/项目</th>
+    <th width=150>联系人/候选人</th>
+    <th width=150>电话</th>
+    <th width=100>职位</th>
+    <th width=150>日期</th>
+    <th width=50>已完成？</th>
+    <th>备注</th>
+  </tr>
 
-      <tr class="show_tr" id="tr1">
-        <td>
-          <%= text_field_tag "daily[firm_name_1]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
-          <%= hidden_field_tag "daily[obj_id_1]" %>
-        </td>
-        <td>
-          <%= text_field_tag "daily[contact_name_1]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
-          <%= hidden_field_tag "daily[contact_id_1]" %>
-        </td>
-        <td><%= text_field_tag "daily[phone_1]" %></td>
-        <td><%= text_field_tag "daily[day_1]", '', :class => "datepicker" %></td>
-        <td>
-          <%= text_area_tag "daily[notes_1]", '', :style => "width:450px;height:40px;" -%>
-        </td>
-      </tr>
-      <tr class="hide" id="tr2">
-        <td><%= text_field_tag "daily[firm_name_2]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
-          <%= hidden_field_tag "daily[obj_id_2]" %>
-        </td>
-        <td><%= text_field_tag "daily[contact_name_2]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
-          <%= hidden_field_tag "daily[contact_id_2]" %>
-        </td>
-        <td><%= text_field_tag "daily[phone_2]" %></td>
-        <td><%= text_field_tag "daily[day_2]", '', :class => "datepicker" %></td>
-        <td>
-          <%= text_area_tag "daily[notes_2]", '', :style => "width:450px;height:40px;" -%>
-        </td>
-      </tr>
-      <tr class="hide" id="tr3">
-        <td><%= text_field_tag "daily[firm_name_3]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
-          <%= hidden_field_tag "daily[obj_id_3]" %>
-        </td>
-        <td><%= text_field_tag "daily[contact_name_3]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
-          <%= hidden_field_tag "daily[contact_id_3]" %>
-        </td>
-        <td><%= text_field_tag "daily[phone_3]" %></td>
-        <td><%= text_field_tag "daily[day_3]", '', :class => "datepicker" %></td>
-        <td>
-          <%= text_area_tag "daily[notes_3]", '', :style => "width:450px;height:40px;" -%>
-        </td>
-      </tr>
-      <tr class="hide" id="tr4">
-        <td><%= text_field_tag "daily[firm_name_4]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
-          <%= hidden_field_tag "daily[obj_id_4]" %>
-        </td>
-        <td><%= text_field_tag "daily[contact_name_4]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
-          <%= hidden_field_tag "daily[contact_id_4]" %>
-        </td>
-        <td><%= text_field_tag "daily[phone_4]" %></td>
-        <td><%= text_field_tag "daily[day_4]", '', :class => "datepicker" %></td>
-        <td>
-          <%= text_area_tag "daily[notes_4]", '', :style => "width:450px;height:40px;" -%>
-        </td>
-      </tr>
-      <tr class="hide" id="tr5">
-        <td><%= text_field_tag "daily[firm_name_5]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
-          <%= hidden_field_tag "daily[obj_id_5]" %>
-        </td>
-        <td><%= text_field_tag "daily[contact_name_5]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
-          <%= hidden_field_tag "daily[contact_id_5]" %>
-        </td>
-        <td><%= text_field_tag "daily[phone_5]" %></td>
-        <td><%= text_field_tag "daily[day_5]", '', :class => "datepicker" %></td>
-        <td>
-          <%= text_area_tag "daily[notes_5]", '', :style => "width:450px;height:40px;" -%>
-        </td>
-      </tr>
-      <tr class="hide" id="tr6">
-        <td><%= text_field_tag "daily[firm_name_6]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
-          <%= hidden_field_tag "daily[obj_id_6]" %>
-        </td>
-        <td><%= text_field_tag "daily[contact_name_6]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
-          <%= hidden_field_tag "daily[contact_id_6]" %>
-        </td>
-        <td><%= text_field_tag "daily[phone_6]" %></td>
-        <td><%= text_field_tag "daily[day_6]", '', :class => "datepicker" %></td>
-        <td>
-          <%= text_area_tag "daily[notes_6]", '', :style => "width:450px;height:40px;" -%>
-        </td>
-      </tr>
-      <tr class="hide" id="tr7">
-        <td><%= text_field_tag "daily[firm_name_7]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
-          <%= hidden_field_tag "daily[obj_id_7]" %>
-        </td>
-        <td><%= text_field_tag "daily[contact_name_7]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
-          <%= hidden_field_tag "daily[contact_id_7]" %>
-        </td>
-        <td><%= text_field_tag "daily[phone_7]" %></td>
-        <td><%= text_field_tag "daily[day_7]", '', :class => "datepicker" %></td>
-        <td>
-          <%= text_area_tag "daily[notes_7]", '', :style => "width:450px;height:40px;" -%>
-        </td>
-      </tr>
-      <tr class="hide" id="tr8">
-        <td><%= text_field_tag "daily[firm_name_8]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
-          <%= hidden_field_tag "daily[obj_id_8]" %>
-        </td>
-        <td><%= text_field_tag "daily[contact_name_8]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
-          <%= hidden_field_tag "daily[contact_id_8]" %>
-        </td>
-        <td><%= text_field_tag "daily[phone_8]" %></td>
-        <td><%= text_field_tag "daily[day_8]", '', :class => "datepicker" %></td>
-        <td>
-          <%= text_area_tag "daily[notes_8]", '', :style => "width:450px;height:40px;" -%>
-        </td>
-      </tr>
-      <tr class="hide" id="tr9">
-        <td><%= text_field_tag "daily[firm_name_9]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
-          <%= hidden_field_tag "daily[obj_id_9]" %>
-        </td>
-        <td><%= text_field_tag "daily[contact_name_9]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
-          <%= hidden_field_tag "daily[contact_id_9]" %>
-        </td>
-        <td><%= text_field_tag "daily[phone_9]" %></td>
-        <td><%= text_field_tag "daily[day_9]", '', :class => "datepicker" %></td>
-        <td>
-          <%= text_area_tag "daily[notes_9]", '', :style => "width:450px;height:40px;" -%>
-        </td>
-      </tr>
-      <tr class="hide" id="tr10">
-        <td><%= text_field_tag "daily[firm_name_10]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
-          <%= hidden_field_tag "daily[obj_id_10]" %>
-        </td>
-        <td><%= text_field_tag "daily[contact_name_10]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
-          <%= hidden_field_tag "daily[contact_id_10]" %>
-        </td>
-        <td><%= text_field_tag "daily[phone_10]" %></td>
-        <td><%= text_field_tag "daily[day_10]", '', :class => "datepicker" %></td>
-        <td>
-          <%= text_area_tag "daily[notes_10]", '', :style => "width:450px;height:40px;" -%>
-        </td>
-      </tr>
-      <tr>
-        <th><a href="javascript:void(0)" onclick="add_one()">再添加一个</a>&nbsp;&nbsp;</th>
-        <td colspan="4">
-          <%= submit_tag "保存", :class => "btn btn-primary" %>
-          <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
-      </tr>
-    </table>
+  <tr class="show_tr" id="tr1">
+    <td>
+      <%= text_field_tag "daily[firm_name_1]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+      <%= hidden_field_tag "daily[obj_id_1]" %>
+    </td>
+    <td>
+      <%= text_field_tag "daily[contact_name_1]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+      <%= hidden_field_tag "daily[contact_id_1]" %>
+    </td>
+    <td><%= text_field_tag "daily[phone_1]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[position_cn_1]", "", :class => "position_text" %></td>
+    <td><%= text_field_tag "daily[day_1]", '', :class => "datepicker" %></td>
+    <td><%= check_box_tag "daily[completed_flag_1]", 1, false %> 完成任务</td>
+    <td>
+      <%= text_area_tag "daily[notes_1]", '', :style => "width:450px;height:40px;" -%>
+    </td>
+  </tr>
+  <tr class="hide" id="tr2">
+    <td><%= text_field_tag "daily[firm_name_2]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+      <%= hidden_field_tag "daily[obj_id_2]" %>
+    </td>
+    <td><%= text_field_tag "daily[contact_name_2]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+      <%= hidden_field_tag "daily[contact_id_2]" %>
+    </td>
+    <td><%= text_field_tag "daily[phone_2]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[position_cn_2]", "", :class => "position_text" %></td>
+    <td><%= text_field_tag "daily[day_2]", '', :class => "datepicker" %></td>
+    <td><%= check_box_tag "daily[completed_flag_2]", 1, false %> 完成任务</td>
+    <td>
+      <%= text_area_tag "daily[notes_2]", '', :style => "width:450px;height:40px;" -%>
+    </td>
+  </tr>
+  <tr class="hide" id="tr3">
+    <td><%= text_field_tag "daily[firm_name_3]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+      <%= hidden_field_tag "daily[obj_id_3]" %>
+    </td>
+    <td><%= text_field_tag "daily[contact_name_3]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+      <%= hidden_field_tag "daily[contact_id_3]" %>
+    </td>
+    <td><%= text_field_tag "daily[phone_3]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[position_cn_3]", "", :class => "position_text" %></td>
+    <td><%= text_field_tag "daily[day_3]", '', :class => "datepicker" %></td>
+    <td><%= check_box_tag "daily[completed_flag_3]", 1, false %> 完成任务</td>
+    <td>
+      <%= text_area_tag "daily[notes_3]", '', :style => "width:450px;height:40px;" -%>
+    </td>
+  </tr>
+  <tr class="hide" id="tr4">
+    <td><%= text_field_tag "daily[firm_name_4]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+      <%= hidden_field_tag "daily[obj_id_4]" %>
+    </td>
+    <td><%= text_field_tag "daily[contact_name_4]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+      <%= hidden_field_tag "daily[contact_id_4]" %>
+    </td>
+    <td><%= text_field_tag "daily[phone_4]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[position_cn_4]", "", :class => "position_text" %></td>
+    <td><%= text_field_tag "daily[day_4]", '', :class => "datepicker" %></td>
+    <td><%= check_box_tag "daily[completed_flag_4]", 1, false %> 完成任务</td>
+    <td>
+      <%= text_area_tag "daily[notes_4]", '', :style => "width:450px;height:40px;" -%>
+    </td>
+  </tr>
+  <tr class="hide" id="tr5">
+    <td><%= text_field_tag "daily[firm_name_5]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+      <%= hidden_field_tag "daily[obj_id_5]" %>
+    </td>
+    <td><%= text_field_tag "daily[contact_name_5]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+      <%= hidden_field_tag "daily[contact_id_5]" %>
+    </td>
+    <td><%= text_field_tag "daily[phone_5]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[position_cn_5]", "", :class => "position_text" %></td>
+    <td><%= text_field_tag "daily[day_5]", '', :class => "datepicker" %></td>
+    <td><%= check_box_tag "daily[completed_flag_5]", 1, false %> 完成任务</td>
+    <td>
+      <%= text_area_tag "daily[notes_5]", '', :style => "width:450px;height:40px;" -%>
+    </td>
+  </tr>
+  <tr class="hide" id="tr6">
+    <td><%= text_field_tag "daily[firm_name_6]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+      <%= hidden_field_tag "daily[obj_id_6]" %>
+    </td>
+    <td><%= text_field_tag "daily[contact_name_6]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+      <%= hidden_field_tag "daily[contact_id_6]" %>
+    </td>
+    <td><%= text_field_tag "daily[phone_6]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[position_cn_6]", "", :class => "position_text" %></td>
+    <td><%= text_field_tag "daily[day_6]", '', :class => "datepicker" %></td>
+    <td><%= check_box_tag "daily[completed_flag_6]", 1, false %> 完成任务</td>
+    <td>
+      <%= text_area_tag "daily[notes_6]", '', :style => "width:450px;height:40px;" -%>
+    </td>
+  </tr>
+  <tr class="hide" id="tr7">
+    <td><%= text_field_tag "daily[firm_name_7]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+      <%= hidden_field_tag "daily[obj_id_7]" %>
+    </td>
+    <td><%= text_field_tag "daily[contact_name_7]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+      <%= hidden_field_tag "daily[contact_id_7]" %>
+    </td>
+    <td><%= text_field_tag "daily[phone_7]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[position_cn_7]", "", :class => "position_text" %></td>
+    <td><%= text_field_tag "daily[day_7]", '', :class => "datepicker" %></td>
+    <td><%= check_box_tag "daily[completed_flag_7]", 1, false %> 完成任务</td>
+    <td>
+      <%= text_area_tag "daily[notes_7]", '', :style => "width:450px;height:40px;" -%>
+    </td>
+  </tr>
+  <tr class="hide" id="tr8">
+    <td><%= text_field_tag "daily[firm_name_8]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+      <%= hidden_field_tag "daily[obj_id_8]" %>
+    </td>
+    <td><%= text_field_tag "daily[contact_name_8]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+      <%= hidden_field_tag "daily[contact_id_8]" %>
+    </td>
+    <td><%= text_field_tag "daily[phone_8]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[position_cn_8]", "", :class => "position_text" %></td>
+    <td><%= text_field_tag "daily[day_8]", '', :class => "datepicker" %></td>
+    <td><%= check_box_tag "daily[completed_flag_8]", 1, false %> 完成任务</td>
+    <td>
+      <%= text_area_tag "daily[notes_8]", '', :style => "width:450px;height:40px;" -%>
+    </td>
+  </tr>
+  <tr class="hide" id="tr9">
+    <td><%= text_field_tag "daily[firm_name_9]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+      <%= hidden_field_tag "daily[obj_id_9]" %>
+    </td>
+    <td><%= text_field_tag "daily[contact_name_9]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+      <%= hidden_field_tag "daily[contact_id_9]" %>
+    </td>
+    <td><%= text_field_tag "daily[phone_9]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[position_cn_9]", "", :class => "position_text" %></td>
+    <td><%= text_field_tag "daily[day_9]", '', :class => "datepicker" %></td>
+    <td><%= check_box_tag "daily[completed_flag_9]", 1, false %> 完成任务</td>
+    <td>
+      <%= text_area_tag "daily[notes_9]", '', :style => "width:450px;height:40px;" -%>
+    </td>
+  </tr>
+  <tr class="hide" id="tr10">
+    <td><%= text_field_tag "daily[firm_name_10]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+      <%= hidden_field_tag "daily[obj_id_10]" %>
+    </td>
+    <td><%= text_field_tag "daily[contact_name_10]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+      <%= hidden_field_tag "daily[contact_id_10]" %>
+    </td>
+    <td><%= text_field_tag "daily[phone_10]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[position_cn_10]", "", :class => "position_text" %></td>
+    <td><%= text_field_tag "daily[day_10]", '', :class => "datepicker" %></td>
+    <td><%= check_box_tag "daily[completed_flag_10]", 1, false %> 完成任务</td>
+    <td>
+      <%= text_area_tag "daily[notes_10]", '', :style => "width:450px;height:40px;" -%>
+    </td>
+  </tr>
+  <tr>
+    <th><a href="javascript:void(0)" onclick="add_one()">再添加一个</a>&nbsp;&nbsp;</th>
+    <td colspan="6">
+      <%= submit_tag "保存", :class => "btn btn-primary" %>
+      <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
+  </tr>
+</table>
 
 <script>
     function before_submit() {
@@ -235,4 +257,9 @@
     tr.hide {
         display: none;
     }
+
+    .auto_firm_name, .auto_contact_name, .position_text {
+        width: 180px;
+    }
+        .phone_text {width:100px;}
 </style>

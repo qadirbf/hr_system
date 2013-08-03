@@ -23,4 +23,8 @@ class Daily < ActiveRecord::Base
     end
   end
 
+  def completed_label
+    self.completed_flag.to_i == 1 ? "已完成" : "未完成"
+  end
+
 end

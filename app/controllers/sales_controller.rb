@@ -240,7 +240,7 @@ class SalesController < ApplicationController
     if @contact.delete_at.blank?
       @title = "联系人 - #{@contact.full_name(true)}"
       @firm = @contact.firm
-      @can_edit = (@firm.is_followed_by?(current_user) or current_user.is_admin?)
+      @can_edit = (@firm.is_followed_by?(current_user) or current_user.is_admin? or current_user.right_level > 2)
       preload_recall
       render :template => "/sales/contact_view"
     else
@@ -648,7 +648,7 @@ class SalesController < ApplicationController
 
   def auto_contact
     key = params[:q] if params[:q]
-    @results = Contact.active.where(["firm_id = ? and concat(last_name,first_name) like '%#{key}%'", params[:firm_id]])
+    @results = Contact.active.where(["firm_id = ? and concat(last_name,first_name) like '%#{key}%'", params[:firm_id].to_i])
     respond_to do |format|
       format.js
     end

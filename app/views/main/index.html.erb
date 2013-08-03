@@ -1,22 +1,23 @@
 <% user = current_user %>
 <style>
-    #main a{
+    #main a {
         margin-left: 5px;
     }
-  #main a:hover{
-      font-size: 16px;
-      color: #000000;
-      font-weight: bold;
-  }
+
+    #main a:hover {
+        font-size: 16px;
+        color: #000000;
+        font-weight: bold;
+    }
 </style>
 <% if @msgs.size>0 %>
-  <div class="alert alert-info">
-    <b>您有未读的系统消息：</b><br/>
-    <% @msgs.each do |msg| %>
-      <img src="/images/msg.gif">
-      <%= link_to msg.title, {:controller => "msg", :action => "msg_view", :id => msg.id} %>
-    <% end %>
-  </div>
+    <div class="alert alert-info">
+      <b>您有未读的系统消息：</b><br/>
+      <% @msgs.each do |msg| %>
+          <img src="/images/msg.gif">
+          <%= link_to msg.title, {:controller => "msg", :action => "msg_view", :id => msg.id} %>
+      <% end %>
+    </div>
 <% end %>
 
 <% if user -%>
@@ -28,38 +29,41 @@
 <% end -%>
 
 <% if user.is_sales? or user.right_level > 2 -%>
-<h1 class="title">销售部</h1>
-<%= link_to "搜索公司", {:controller => "crm", :action => "search"} %>
-<%= link_to "添加公司", {:controller => "crm", :action => "firm_edit"} %>  <br/>
-<%= link_to "我的公司", {:controller => "crm", :action => "my_firms"} %>
-<%= link_to "我的跟进任务", {:controller => "crm", :action => "my_recall"} %>
-<%= link_to "招聘需求列表", {:controller => "crm", :action => "demand_list"} %>
-<%= link_to "我的订单", {:controller => "crm", :action => "my_orders"} %>
-<%= link_to "我的日报", {:controller => "crm", :action => "my_daily"} %>
+    <h1 class="title">销售部</h1>
+    <%= link_to "搜索公司", {:controller => "crm", :action => "search"} %>
+    <%= link_to "添加公司", {:controller => "crm", :action => "firm_edit"} %>  <br/>
+    <%= link_to "我的公司", {:controller => "crm", :action => "my_firms"} %>
+    <%= link_to "我的跟进任务", {:controller => "crm", :action => "my_recall"} %>
+    <%= link_to "招聘需求列表", {:controller => "crm", :action => "demand_list"} %>
+    <%= link_to "我的订单", {:controller => "crm", :action => "my_orders"} %>
+    <%= link_to "我的日报", {:controller => "crm", :action => "my_daily"} %>
 <% end -%>
 
 <% if user.is_res? or user.right_level > 2 -%>
-<h1 class="title">顾问部</h1>
-<%= link_to "资源搜索", {:controller => "res", :action => "search"} %>
-<%= link_to "添加公司", {:controller => "res", :action => "firm_edit"} %>  <br/>
-<%= link_to "我的资源", {:controller => "res", :action => "my_firms"} %>
-<%= link_to "我的跟进任务", {:controller => "res", :action => "my_recall"} %>
-<%= link_to "招聘需求列表", {:controller => "res", :action => "demand_list"} %>
-<%= link_to "候选人列表", {:controller => "res", :action => "contact_list"} %>
-<%= link_to "我的订单", {:controller => "res", :action => "my_orders"} %>
-<%= link_to "我的日报", {:controller => "res", :action => "my_daily"} %>
-<%= link_to "补充资源库", {:controller => "res", :action => "other_db_list"} -%>
+    <h1 class="title">顾问部</h1>
+    <%= link_to "资源搜索", {:controller => "res", :action => "search"} %>
+    <%= link_to "添加公司", {:controller => "res", :action => "firm_edit"} %>  <br/>
+    <%= link_to "我的资源", {:controller => "res", :action => "my_firms"} %>
+    <%= link_to "我的跟进任务", {:controller => "res", :action => "my_recall"} %>
+    <%= link_to "招聘需求列表", {:controller => "res", :action => "demand_list"} %>
+    <%= link_to "候选人列表", {:controller => "res", :action => "contact_list"} %>
+    <%= link_to "我的订单", {:controller => "res", :action => "my_orders"} %>
+    <%= link_to "我的日报", {:controller => "res", :action => "my_daily"} %>
+    <%= link_to "补充资源库", {:controller => "res", :action => "other_db_list"} -%>
 <% end -%>
 
 <% if user.is_hr? or user.is_admin? -%>
-<h1 class="title">人事部</h1>
-<%= link_to "员工列表", {:controller => "employees", :action => "list"} %>
-<%= link_to "日报统计", {:controller => "crm", :action => "count_daily"} %>
+    <h1 class="title">人事部</h1>
+    <%= link_to "员工列表", {:controller => "employees", :action => "list"} %>
+    <%= link_to "日报统计", {:controller => "crm", :action => "count_daily"} %>
+<% end -%>
+
+<% if user.right_level > 3 -%>
+    <h1 class="title">财务</h1>
+    <%= link_to "订单列表", {:controller => "financial", :action => "order_list"}, :target => "_blank" %>
 <% end -%>
 
 <% if user.is_admin? -%>
-    <h1 class="title">财务</h1>
-    <%= link_to "订单列表", {:controller => "financial", :action => "order_list"}, :target => "_blank" %>
     <h1 class="title">设置</h1>
     <%= link_to "职位类型一览", {:controller => "firm_types", :action => "list"}, :target => "_blank" %>
 <% end -%>
