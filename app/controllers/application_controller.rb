@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
     unless params[:controller]=="employees"&&params[:action]=="login"
       if session[:last_visit_time]
         if session[:last_visit_time] + $CLIENT_EXPIRE_MINUTES.minutes < Time.now
-          reset_session unless RAILS_ENV=="development"
+          reset_session unless ENV['RAILS_ENV'] == "development"
         end
       end
 

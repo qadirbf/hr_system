@@ -59,7 +59,8 @@
 <%= hidden_field_tag "type", params[:db_type] -%>
 <table class="blue_tb" witdh=100%>
   <tr class="title">
-    <th width=150>客户/项目</th>
+    <th>项目名称</th>
+    <th width=150>公司名</th>
     <th width=150>联系人/候选人</th>
     <th width=150>电话</th>
     <th width=100>职位</th>
@@ -69,6 +70,7 @@
   </tr>
 
   <tr class="show_tr" id="tr1">
+    <td><%= text_field_tag "daily[name_1]", "", :class => "name_text" %></td>
     <td>
       <%= text_field_tag "daily[firm_name_1]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
       <%= hidden_field_tag "daily[obj_id_1]" %>
@@ -86,6 +88,7 @@
     </td>
   </tr>
   <tr class="hide" id="tr2">
+    <td><%= text_field_tag "daily[name_2]", "", :class => "name_text" %></td>
     <td><%= text_field_tag "daily[firm_name_2]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
       <%= hidden_field_tag "daily[obj_id_2]" %>
     </td>
@@ -101,6 +104,7 @@
     </td>
   </tr>
   <tr class="hide" id="tr3">
+    <td><%= text_field_tag "daily[name_3]", "", :class => "name_text" %></td>
     <td><%= text_field_tag "daily[firm_name_3]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
       <%= hidden_field_tag "daily[obj_id_3]" %>
     </td>
@@ -116,6 +120,7 @@
     </td>
   </tr>
   <tr class="hide" id="tr4">
+    <td><%= text_field_tag "daily[name_4]", "", :class => "name_text" %></td>
     <td><%= text_field_tag "daily[firm_name_4]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
       <%= hidden_field_tag "daily[obj_id_4]" %>
     </td>
@@ -131,6 +136,7 @@
     </td>
   </tr>
   <tr class="hide" id="tr5">
+    <td><%= text_field_tag "daily[name_5]", "", :class => "name_text" %></td>
     <td><%= text_field_tag "daily[firm_name_5]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
       <%= hidden_field_tag "daily[obj_id_5]" %>
     </td>
@@ -146,6 +152,7 @@
     </td>
   </tr>
   <tr class="hide" id="tr6">
+    <td><%= text_field_tag "daily[name_6]", "", :class => "name_text" %></td>
     <td><%= text_field_tag "daily[firm_name_6]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
       <%= hidden_field_tag "daily[obj_id_6]" %>
     </td>
@@ -161,6 +168,7 @@
     </td>
   </tr>
   <tr class="hide" id="tr7">
+    <td><%= text_field_tag "daily[name_7]", "", :class => "name_text" %></td>
     <td><%= text_field_tag "daily[firm_name_7]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
       <%= hidden_field_tag "daily[obj_id_7]" %>
     </td>
@@ -176,6 +184,7 @@
     </td>
   </tr>
   <tr class="hide" id="tr8">
+    <td><%= text_field_tag "daily[name_8]", "", :class => "name_text" %></td>
     <td><%= text_field_tag "daily[firm_name_8]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
       <%= hidden_field_tag "daily[obj_id_8]" %>
     </td>
@@ -191,6 +200,7 @@
     </td>
   </tr>
   <tr class="hide" id="tr9">
+    <td><%= text_field_tag "daily[name_9]", "", :class => "name_text" %></td>
     <td><%= text_field_tag "daily[firm_name_9]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
       <%= hidden_field_tag "daily[obj_id_9]" %>
     </td>
@@ -206,6 +216,7 @@
     </td>
   </tr>
   <tr class="hide" id="tr10">
+    <td><%= text_field_tag "daily[name_10]", "", :class => "name_text" %></td>
     <td><%= text_field_tag "daily[firm_name_10]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
       <%= hidden_field_tag "daily[obj_id_10]" %>
     </td>
@@ -258,8 +269,15 @@
         display: none;
     }
 
-    .auto_firm_name, .auto_contact_name, .position_text {
+    .auto_firm_name {
         width: 180px;
     }
-        .phone_text {width:100px;}
+
+    .phone_text, .auto_contact_name, .position_text {
+        width: 100px;
+    }
+
+    .name_text {
+        width: 150px;
+    }
 </style>

@@ -6,7 +6,7 @@
           <%= button_to_function "修改公司", "go_url('/#{params[:db_type]}/firm_edit.php?id=#{@firm.id}')", :class => "btn" %>
           <%= button_to_function "释放公司", "confirm_url('确定释放？','/#{params[:db_type]}/ungrab_firm.php?id=#{@firm.id}')", :class => "btn" %>
           <%= button_to_function "添加联系人", "open_url('/#{params[:db_type]}/contact_edit.php?firm_id=#{@firm.id}')", :class => "btn" %>
-          <% if @firm.sales_followed_by?(current_user) %>
+          <% if @firm.sales_followed_by?(current_user) or current_user.is_admin? %>
               <%= button_to_function "删除公司", "confirm_url('确定删除？','/#{params[:db_type]}/firm_destroy.php?id=#{@firm.id}')", :class => "btn" %>
               <%= button_to_function "添加招聘需求", "open_url('/#{params[:db_type]}/demand_edit.php?firm_id=#{@firm.id}')", :class => "btn" %>
           <% end %>
