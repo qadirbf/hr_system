@@ -120,12 +120,14 @@
       <tr>
         <th>期望工作地点</th>
         <td><%= text_field :contact, :expect_work_place_like %></td>
-        <td rowspan="2" colspan="2"><%= submit_tag "搜索", :class => "btn btn-primary" %> &nbsp;
-          <%= button_to_function "重置", "reset()", :class => "btn" %></td>
+        <th>手机号</th>
+        <td><%= text_field :contact, :mobile_like %></td>
       </tr>
       <tr>
         <th>负责的顾问</th>
         <td><%= select :contact, :res_id, @res, {:include_blank => true} %></td>
+        <td colspan="2"><%= submit_tag "搜索", :class => "btn btn-primary" %> &nbsp;
+          <%= button_to_function "重置", "reset()", :class => "btn" %></td>
       </tr>
       <% if res_sys? -%>
           <tr>

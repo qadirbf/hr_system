@@ -536,7 +536,7 @@ class SalesController < ApplicationController
 
     f_joins, c_joins, d_joins = "", "", ""
     join = ""       #-------------------
-    join += " left join contacts on contacts.firm_id = firms.id"   #-------------------
+    join += " left join contacts on contacts.firm_id = firms.id and contacts.delete_at is null"   #-------------------
 
     p_hash = f_arr[1].merge(c_arr[1]).merge(d_arr[1])
     unless f_hash[:phone_like].blank?
