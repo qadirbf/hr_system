@@ -1,5 +1,6 @@
 <table class="list_tb">
   <tr class="title">
+    <td>项目ID</td>
     <td>公司</td>
     <td>对象</td>
     <td>职位</td>
@@ -19,6 +20,7 @@
         color = "red"
          end -%>
       <tr>
+        <td><%= open_demand_page d.demand_id, d.demand_id %></td>
         <td style="color: <%= color -%>">
           <%= d.show_firm_name -%>
         </td>

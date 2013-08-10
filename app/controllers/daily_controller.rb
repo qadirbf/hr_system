@@ -39,7 +39,7 @@ module DailyController
       (1..5).each do |i|
         if !daily["phone_#{i}"].blank? && !daily["firm_name_#{i}"].blank? && !daily["contact_name_#{i}"].blank? && !daily["day_#{i}"].blank?
           ary << [daily["firm_name_#{i}"], daily["obj_id_#{i}"], daily["contact_name_#{i}"], daily["contact_id_#{i}"],
-                  daily["phone_#{i}"], daily["day_#{i}"], daily["notes_#{i}"], daily["position_cn_#{i}"], daily["completed_flag_#{i}"], daily["name_#{i}"]]
+                  daily["phone_#{i}"], daily["day_#{i}"], daily["notes_#{i}"], daily["position_cn_#{i}"], daily["completed_flag_#{i}"], daily["demand_id_#{i}"]]
         end
       end
 
@@ -62,7 +62,7 @@ module DailyController
 
         Daily.create({:firm_name => d[0], :obj_id => d[1], :contact_name => d[2], :contact_id => d[3], :phone => d[4],
                       :day => d[5], :notes => d[6], :position_cn => d[7], :completed_flag => flag, :created_by => current_user.id,
-                      :updated_by => current_user.id, :recall_id => r.try(:id), :name => d[9]})
+                      :updated_by => current_user.id, :recall_id => r.try(:id), :demand_id => d[9]})
       end
       redirect_to :action => :my_daily
     end
@@ -80,13 +80,16 @@ module DailyController
     if @daily.errors.empty?
       @daily.save
       flag = (@daily.day.to_s > Time.now.strftime("%Y-%m-%d") ? 0 : @daily.completed_flag.to_i)  # 标记是否已完成的日报
-      if flag > 0  #已完成的日报，同步一条call
-        Recall.create({:appt_date => @daily.day, :employee_id => @daily.created_by, :firm_id => @daily.obj_id, :contact_id => @daily.try(:contact_id),
-                           :notes => @daily.notes, :completed_by => @daily.created_by, :created_by => @daily.created_by, :contact_by_id => 1,
-                           :completed_at => Time.now})
-      else
-        Recall.create({:appt_date => @daily.day, :employee_id => @daily.created_by, :firm_id => @daily.obj_id, :contact_id => @daily.try(:contact_id),
-                           :notes => @daily.notes, :created_by => @daily.created_by, :contact_by_id => 1})
+      if @daily.recall_id.blank?      # 没有同步call
+        call = Recall.create({:appt_date => @daily.day, :employee_id => @daily.created_by, :firm_id => @daily.obj_id, :contact_id => @daily.try(:contact_id),
+                       :notes => @daily.notes, :created_by => @daily.created_by, :contact_by_id => 1})
+        @daily.update_attribute(:demand_id, call.id)
+      else # 如果已经同步了call的情况
+        call = Recall.where("id = #{@daily.recall_id}").first
+        call.update_attribute(:notes, @daily.notes)
+      end
+      if flag > 0  #已完成的日报，并且没有同步recall
+        call.update_attributes({:completed_by => @daily.created_by, :contact_by_id => 1, :completed_at => Time.now})
       end
       flash[:notice] = "成功保存！"
       redirect_to :action => "my_daily", :controller => params[:db_type]
@@ -126,6 +129,55 @@ module DailyController
     ary = Daily.get_sql_by_hash(params)
     @dailies = Daily.paginate :conditions => ary, :per_page => 20, :page => params[:page]
     render :template => "/daily/count_daily"
+  end
+
+  def output_daily
+    if request.post? && !params[:id].blank?
+      demand = ContactDemand.where("id = #{params[:id]}").first
+      ary = Daily.find_by_sql("select obj_id, count(obj_id) as num from dailies where demand_id = #{params[:id].to_i} group by obj_id order by num desc;").collect(&:obj_id)
+      dailies = Daily.where("demand_id = ?", params[:id]).order("find_in_set(obj_id,'#{ary.join(',')}')")
+      send_data(xls_content_for_daily(dailies, demand),
+                :type => "text/excel;charset=utf-8; header=present",
+                :filename => "#{demand.firm.firm_name}-#{demand.position_type_text}.xls")
+    else
+      render :template => "/daily/output_daily"
+    end
+  end
+
+  def get_project
+    d = ContactDemand.where("id = #{params[:id]}").first
+    if d
+      render :text=>%?{"success":"true","firm_name":"#{d.firm.firm_name}","position":"#{d.position_type_text}"}?
+    else
+      render :text=>%?{"success":"false","info":"没有查到该项目数据！"}?
+    end
+
+  end
+
+  def xls_content_for_daily(objs, demand)
+    xls_report = StringIO.new
+    book = Spreadsheet::Workbook.new
+    sheet1 = book.create_worksheet :name => "工作报告"
+
+    blue = Spreadsheet::Format.new :color => :blue, :weight => :bold, :size => 10
+    sheet1.row(0).default_format = blue
+
+    sheet1.row(0).concat(["公司名", demand.firm.firm_name])
+    sheet1.row(1).concat(["招聘职位", demand.position_type_text])
+
+    sheet1.row(3).concat %w{ 公司名 联系人 电话 日期 员工 }
+    count_row = 4
+    objs.each do |obj|
+      daily = obj
+      sheet1[count_row, 0]= daily.show_firm_name
+      sheet1[count_row, 1]= daily.show_contact_name
+      sheet1[count_row, 2]= daily.phone
+      sheet1[count_row, 3]= daily.day
+      sheet1[count_row, 4]= daily.created_user.username
+      count_row += 1
+    end
+    book.write xls_report
+    xls_report.string
   end
 
 end

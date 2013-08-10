@@ -1,5 +1,6 @@
 <h1 class="title"><%= @title %>
   <%= button_to_function "添加日报", "go_url('/#{params[:db_type]}/add_daily.php')", :class => "btn" %>
+  <%= button_to_function "导出日报", "go_url('/#{params[:db_type]}/output_daily.php')", :class => "btn" %>
 </h1>
 <%= include_datepicker %>
 <%= form_tag "/#{params[:db_type]}/my_daily" do %>

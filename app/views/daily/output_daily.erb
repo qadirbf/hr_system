@@ -1,0 +1,51 @@
+<h1 class="title">按项目导出日报</h1>
+请输入项目ID查询项目:<%= text_field_tag 'project_id', '', :style => "width:50px;" -%>
+<span id="load_span"></span>&nbsp;
+<%= button_to_function "查询", "commit()", :class => "btn btn-primary" -%>
+<%= form_tag "output_daily" do -%>
+    <%= hidden_field_tag "id", "" -%>
+    <%= submit_tag "导出到excel", :class => "btn" -%>
+<% end -%>
+<table class="blue_tb">
+  <tr>
+    <th width=100>公司名</th>
+    <td id="firm_name"></td>
+  </tr>
+  <tr>
+    <th>职位名</th>
+    <td id="position_name"></td>
+  </tr>
+</table>
+
+<script>
+    function output() {
+        $("form").submit();
+    }
+
+    function commit() {
+        var id = $("#project_id").val()
+        $.ajax({
+            type:"POST",
+            url:"/res/get_project",
+            data:{id:id},
+            beforeSend:function () {
+                $("#load_span").html("查询中...")
+            },
+            success:function (json) {
+                var j = eval('(' + json + ')');
+                if (j.success == "true") {
+                    $("#id").val(id)
+                    $("#load_span").html("")
+                    $("#firm_name").html(j.firm_name)
+                    $("#position_name").html(j.position)
+                }
+                else {
+                    $("#load_span").html("")
+                    $("#firm_name").html("")
+                    $("#position_name").html("")
+                    alert(j.info);
+                }
+            }
+        });
+    }
+</script>
