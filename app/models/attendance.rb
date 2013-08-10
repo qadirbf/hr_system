@@ -61,8 +61,8 @@ class Attendance < ActiveRecord::Base
       employees.each do |employee|
         record_in = AttendRecord.get_clock_in_record(employee.id, this_date)
         record_out = AttendRecord.get_clock_out_record(employee.id, this_date)
-        attend = Attendance.new({:employee_id => employee.id, :this_date => this_date, :real_start_time => real_start_time,
-                                 :real_end_time => real_end_time, :edit_by => user_name||'system', :edit_time => Time.now, :early => 0, :late => 0, :absence_reason => 0})
+        attend = Attendance.new({:employee_id => employee.id, :this_date => this_date, :real_start_time => record_in.try(:record_time),
+                                 :real_end_time => record_out.try(:record_time), :edit_by => user_name||'system', :edit_time => Time.now, :early => 0, :late => 0, :absence_reason => 0})
         attend.memo = "已离职" unless employee.leave_date.blank?
         this_start_time = Time.parse("#{this_date} #{real_start_time}")
         this_end_time = Time.parse("#{this_date} #{real_end_time}")

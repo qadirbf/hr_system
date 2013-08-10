@@ -292,7 +292,7 @@ class AttendanceController < ApplicationController
 
         from = Date.parse(this_date)
         to = Date.parse(this_date1)
-        (from...to).each do |day|
+        (from..to).each do |day|
           real_start_time = params[:real_start_time]
           real_start_time = Attendance::S_TIME if (real_start_time == "" or real_start_time.blank?)
           real_end_time = params[:real_end_time]
@@ -301,9 +301,8 @@ class AttendanceController < ApplicationController
           if params[:record_exist].to_i == 1 #重新生成时，删除已存在的信息
             Attendance.destroy_all(["employee_id > 0 and this_date = '#{this_date}')"])
           end
-
           flag = params[:flag]
-          Attendance.add_attendance(this_date, real_start_time, real_end_time, flag, current_user.username)
+          Attendance.add_attendance(day.to_s, real_start_time, real_end_time, flag, current_user.username)
         end
 
         flash[:notice] = "操作成功！"
