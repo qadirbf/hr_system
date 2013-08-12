@@ -165,15 +165,17 @@ module DailyController
     sheet1.row(0).concat(["公司名", demand.firm.firm_name])
     sheet1.row(1).concat(["招聘职位", demand.position_type_text])
 
-    sheet1.row(3).concat %w{ 公司名 联系人 电话 日期 员工 }
+    sheet1.row(3).concat %w{ 公司名 联系人 电话 职位 日期 员工 备注 }
     count_row = 4
     objs.each do |obj|
       daily = obj
       sheet1[count_row, 0]= daily.show_firm_name
       sheet1[count_row, 1]= daily.show_contact_name
       sheet1[count_row, 2]= daily.phone
-      sheet1[count_row, 3]= daily.day
-      sheet1[count_row, 4]= daily.created_user.username
+      sheet1[count_row, 3]= daily.position_cn
+      sheet1[count_row, 4]= daily.day
+      sheet1[count_row, 5]= daily.created_user.username
+      sheet1[count_row, 6]= daily.notes
       count_row += 1
     end
     book.write xls_report

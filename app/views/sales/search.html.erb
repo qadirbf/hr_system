@@ -77,17 +77,23 @@
         <td><%= text_field :contact, :notes_like %></td>
       </tr>
       <tr>
-        <th>性别</th>
-        <td><%= select :contact, :sex_eq, [['男', 1], ['女', 2]], {:include_blank => true} %></td>
+        <th>手机号</th>
+        <td><%= text_field :contact, :mobile_like %></td>
         <th>期望年薪备注</th>
         <td><%= text_field :contact, :expect_salary_notes_like %></td>
+      </tr>
+      <tr>
+        <th>性别</th>
+        <td><%= select :contact, :sex_eq, [['男', 1], ['女', 2]], {:include_blank => true} %></td>
+        <th>已离职？</th>
+        <td><%= select :contact, :resigned_eq, [['是', 1], ['否', 0]], {:include_blank => true} %></td>
       </tr>
       <tr>
         <th>年龄</th>
         <td><%= text_field :contact, :age, :style => "width:30px;" %> 至
           <%= text_field :contact, :age1, :style => "width:30px;" %></td>
-        <th>已离职？</th>
-        <td><%= select :contact, :resigned_eq, [['是', 1], ['否', 0]], {:include_blank => true} %></td>
+        <th>近期考虑工作变动？</th>
+        <td><%= select :contact, :want_new_job_eq, [['是', 1], ['否', 0]], {:include_blank => true} %></td>
       </tr>
       <tr>
         <!--
@@ -99,8 +105,8 @@
           <%= text_field :contact, :work_age, :style => "width:30px;" %> 年 至
           <%= text_field :contact, :work_age1, :style => "width:30px;" %> 年
         </td>
-        <th>近期考虑工作变动？</th>
-        <td><%= select :contact, :want_new_job_eq, [['是', 1], ['否', 0]], {:include_blank => true} %></td>
+        <th>负责的顾问</th>
+        <td><%= select :contact, :res_id, @res, {:include_blank => true} %></td>
       </tr>
       <tr>
         <th>当前职业类型</th>
@@ -120,15 +126,10 @@
       <tr>
         <th>期望工作地点</th>
         <td><%= text_field :contact, :expect_work_place_like %></td>
-        <th>手机号</th>
-        <td><%= text_field :contact, :mobile_like %></td>
-      </tr>
-      <tr>
-        <th>负责的顾问</th>
-        <td><%= select :contact, :res_id, @res, {:include_blank => true} %></td>
         <td colspan="2"><%= submit_tag "搜索", :class => "btn btn-primary" %> &nbsp;
           <%= button_to_function "重置", "reset()", :class => "btn" %></td>
       </tr>
+
       <% if res_sys? -%>
           <tr>
             <td colspan="4" class="splitor"><b>招聘需求：</b></td>

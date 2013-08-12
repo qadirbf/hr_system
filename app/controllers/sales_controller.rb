@@ -587,7 +587,7 @@ class SalesController < ApplicationController
 
     unless f_hash[:phone].blank?
       f_sqls << "firms.phone like :firm_phone "
-      c_sqls << "contacts.phone like :firm_phone "
+      #c_sqls << "contacts.phone like :firm_phone "
       p_hash.merge!(:firm_phone => "#{f_hash[:phone]}%")
     end
 
