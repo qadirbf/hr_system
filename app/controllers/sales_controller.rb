@@ -1016,6 +1016,9 @@ class SalesController < ApplicationController
       emps = EmployeesFirmType.where("firm_type_id in (?)", firm_types).select("distinct employee_id").collect(&:employee_id)
       @pending_calls = obj.recalls.where("completed_at is null and employee_id in (?)", emps).order("appt_date desc").limit(5)
       @com_calls = obj.recalls.where("completed_at is not null and employee_id in (?)", emps).order("appt_date desc").limit(5)
+    elsif current_user.is_admin?
+      @pending_calls = obj.recalls.where("completed_at is null").order("appt_date desc").limit(5)
+      @com_calls = obj.recalls.where("completed_at is not null").order("appt_date desc").limit(5)
     else
       @pending_calls = obj.recalls.dep_recalls(current_user.department_id).where("completed_at is null").order("appt_date desc").limit(5)
       @com_calls = obj.recalls.dep_recalls(current_user.department_id).where("completed_at is not null").order("appt_date desc").limit(5)
