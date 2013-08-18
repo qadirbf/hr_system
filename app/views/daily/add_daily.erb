@@ -60,13 +60,14 @@
 <table class="blue_tb" witdh=100%>
   <tr class="title">
     <th>项目ID</th>
-    <th width=150>公司名</th>
-    <th width=150>联系人/候选人</th>
-    <th width=150>电话</th>
-    <th width=100>职位</th>
-    <th width=150>日期</th>
-    <th width=50>已完成？</th>
+    <th>公司名</th>
+    <th>联系人/候选人</th>
+    <th>电话</th>
+    <th>职位</th>
+    <th>日期</th>
+    <th>已完成？</th>
     <th>备注</th>
+    <th>面试安排</th>
   </tr>
 
   <tr class="show_tr" id="tr1">
@@ -84,8 +85,9 @@
     <td><%= text_field_tag "daily[day_1]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_1]", 1, false %> 完成任务</td>
     <td>
-      <%= text_area_tag "daily[notes_1]", '', :style => "width:450px;height:40px;" -%>
+      <%= text_area_tag "daily[notes_1]", '', :style => "width:300px;height:40px;" -%>
     </td>
+    <td><%= text_field_tag "daily[app_interview_date_1]", '', :class => "datepicker" -%></td>
   </tr>
   <tr class="hide" id="tr2">
     <td><%= text_field_tag "daily[demand_id_2]", "", :class => "name_text" %></td>
@@ -100,8 +102,9 @@
     <td><%= text_field_tag "daily[day_2]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_2]", 1, false %> 完成任务</td>
     <td>
-      <%= text_area_tag "daily[notes_2]", '', :style => "width:450px;height:40px;" -%>
+      <%= text_area_tag "daily[notes_2]", '', :style => "width:300px;height:40px;" -%>
     </td>
+    <td><%= text_field_tag "daily[app_interview_date_2]", '', :class => "datepicker" -%></td>
   </tr>
   <tr class="hide" id="tr3">
     <td><%= text_field_tag "daily[demand_id_3]", "", :class => "name_text" %></td>
@@ -116,8 +119,9 @@
     <td><%= text_field_tag "daily[day_3]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_3]", 1, false %> 完成任务</td>
     <td>
-      <%= text_area_tag "daily[notes_3]", '', :style => "width:450px;height:40px;" -%>
+      <%= text_area_tag "daily[notes_3]", '', :style => "width:300px;height:40px;" -%>
     </td>
+    <td><%= text_field_tag "daily[app_interview_date_3]", '', :class => "datepicker" -%></td>
   </tr>
   <tr class="hide" id="tr4">
     <td><%= text_field_tag "daily[demand_id_4]", "", :class => "name_text" %></td>
@@ -132,8 +136,9 @@
     <td><%= text_field_tag "daily[day_4]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_4]", 1, false %> 完成任务</td>
     <td>
-      <%= text_area_tag "daily[notes_4]", '', :style => "width:450px;height:40px;" -%>
+      <%= text_area_tag "daily[notes_4]", '', :style => "width:300px;height:40px;" -%>
     </td>
+    <td><%= text_field_tag "daily[app_interview_date_4]", '', :class => "datepicker" -%></td>
   </tr>
   <tr class="hide" id="tr5">
     <td><%= text_field_tag "daily[demand_id_5]", "", :class => "name_text" %></td>
@@ -148,8 +153,9 @@
     <td><%= text_field_tag "daily[day_5]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_5]", 1, false %> 完成任务</td>
     <td>
-      <%= text_area_tag "daily[notes_5]", '', :style => "width:450px;height:40px;" -%>
+      <%= text_area_tag "daily[notes_5]", '', :style => "width:300px;height:40px;" -%>
     </td>
+    <td><%= text_field_tag "daily[app_interview_date_5]", '', :class => "datepicker" -%></td>
   </tr>
   <tr class="hide" id="tr6">
     <td><%= text_field_tag "daily[demand_id_6]", "", :class => "name_text" %></td>
@@ -164,8 +170,9 @@
     <td><%= text_field_tag "daily[day_6]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_6]", 1, false %> 完成任务</td>
     <td>
-      <%= text_area_tag "daily[notes_6]", '', :style => "width:450px;height:40px;" -%>
+      <%= text_area_tag "daily[notes_6]", '', :style => "width:300px;height:40px;" -%>
     </td>
+    <td><%= text_field_tag "daily[app_interview_date_6]", '', :class => "datepicker" -%></td>
   </tr>
   <tr class="hide" id="tr7">
     <td><%= text_field_tag "daily[demand_id_7]", "", :class => "name_text" %></td>
@@ -180,8 +187,9 @@
     <td><%= text_field_tag "daily[day_7]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_7]", 1, false %> 完成任务</td>
     <td>
-      <%= text_area_tag "daily[notes_7]", '', :style => "width:450px;height:40px;" -%>
+      <%= text_area_tag "daily[notes_7]", '', :style => "width:300px;height:40px;" -%>
     </td>
+    <td><%= text_field_tag "daily[app_interview_date_7]", '', :class => "datepicker" -%></td>
   </tr>
   <tr class="hide" id="tr8">
     <td><%= text_field_tag "daily[demand_id_8]", "", :class => "name_text" %></td>
@@ -196,8 +204,9 @@
     <td><%= text_field_tag "daily[day_8]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_8]", 1, false %> 完成任务</td>
     <td>
-      <%= text_area_tag "daily[notes_8]", '', :style => "width:450px;height:40px;" -%>
+      <%= text_area_tag "daily[notes_8]", '', :style => "width:300px;height:40px;" -%>
     </td>
+    <td><%= text_field_tag "daily[app_interview_date_8]", '', :class => "datepicker" -%></td>
   </tr>
   <tr class="hide" id="tr9">
     <td><%= text_field_tag "daily[demand_id_9]", "", :class => "name_text" %></td>
@@ -212,8 +221,9 @@
     <td><%= text_field_tag "daily[day_9]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_9]", 1, false %> 完成任务</td>
     <td>
-      <%= text_area_tag "daily[notes_9]", '', :style => "width:450px;height:40px;" -%>
+      <%= text_area_tag "daily[notes_9]", '', :style => "width:300px;height:40px;" -%>
     </td>
+    <td><%= text_field_tag "daily[app_interview_date_9]", '', :class => "datepicker" -%></td>
   </tr>
   <tr class="hide" id="tr10">
     <td><%= text_field_tag "daily[demand_id_10]", "", :class => "name_text" %></td>
@@ -228,8 +238,9 @@
     <td><%= text_field_tag "daily[day_10]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_10]", 1, false %> 完成任务</td>
     <td>
-      <%= text_area_tag "daily[notes_10]", '', :style => "width:450px;height:40px;" -%>
+      <%= text_area_tag "daily[notes_10]", '', :style => "width:300px;height:40px;" -%>
     </td>
+    <td><%= text_field_tag "daily[app_interview_date_10]", '', :class => "datepicker" -%></td>
   </tr>
   <tr>
     <th><a href="javascript:void(0)" onclick="add_one()">再添加一个</a>&nbsp;&nbsp;</th>
@@ -278,6 +289,6 @@
     }
 
     .name_text {
-        width: 150px;
+        width: 100px;
     }
 </style>

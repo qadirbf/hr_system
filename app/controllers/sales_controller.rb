@@ -949,6 +949,8 @@ class SalesController < ApplicationController
                         ['/res/demand_list', '招聘需求列表']]
     end
     @sys_nav_menus << ['/res/contact_list', '候选人列表'] if user.is_res?
+    @sys_nav_menus << ['/res/my_daily', '我的日报'] if user.is_res?
+    @sys_nav_menus << ['/res/interview_list', '面试安排'] if user.is_res?
     @sys_nav_menus << ['/res/my_orders/', '我的订单']
 
   end

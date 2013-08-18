@@ -56,14 +56,15 @@
     <%= errors_for @daily %>
     <table class="blue_tb" witdh=100%>
       <tr class="title">
-        <th width=150>项目ID</th>
-        <th width=150>公司名</th>
-        <th width=150>联系人/候选人</th>
-        <th width=230>电话</th>
-        <th width=100>职位</th>
-        <th width=150>日期</th>
-        <th width=50>已完成？</th>
+        <th>项目ID</th>
+        <th>公司名</th>
+        <th>联系人/候选人</th>
+        <th>电话</th>
+        <th>职位</th>
+        <th>日期</th>
+        <th>已完成？</th>
         <th>备注</th>
+        <th>面试安排</th>
       </tr>
 
       <tr>
@@ -83,8 +84,9 @@
         <td><%= text_field_tag "daily[day]", @daily.try(:day), :class => "datepicker" %></td>
         <td><%= check_box_tag "daily[completed_flag]", 1, (@daily.try(:completed_flag).to_i > 0 ? true : false) %> 完成任务</td>
         <td>
-          <%= text_area_tag "daily[notes]", @daily.try(:notes), :style => "width:450px;height:40px;" -%>
+          <%= text_area_tag "daily[notes]", @daily.try(:notes), :style => "width:300px;height:40px;" -%>
         </td>
+        <td><%= text_field_tag "daily[app_interview_date]",  @daily.try(:app_interview_date), :class => "datepicker" -%></td>
       </tr>
       <tr>
         <th></th>

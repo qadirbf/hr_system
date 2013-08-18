@@ -47,6 +47,12 @@
     </td>
   </tr>
   <tr>
+    <th>面试安排</th>
+    <td>
+      <%= @daily.app_interview_date -%>&nbsp;<%= show_day_of_week(@daily.app_interview_date) -%>
+    </td>
+  </tr>
+  <tr>
     <th>编辑信息</th>
     <td>
       <%= @daily.edit_info -%>
