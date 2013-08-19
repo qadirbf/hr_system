@@ -253,7 +253,7 @@
 <script>
     function before_submit() {
         var flag = true
-        $("tr.show_tr input[type!='hidden']").each(function (i, ele) {
+        $("tr.show_tr input[type!='hidden'][class!='datepicker hasDatepicker']").each(function (i, ele) {
             if ($(ele).val() == "" || $(ele).val() == undefined) {
                 flag = false
             }

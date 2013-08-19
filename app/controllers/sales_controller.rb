@@ -950,7 +950,7 @@ class SalesController < ApplicationController
     end
     @sys_nav_menus << ['/res/contact_list', '候选人列表'] if user.is_res?
     @sys_nav_menus << ['/res/my_daily', '我的日报'] if user.is_res?
-    @sys_nav_menus << ['/res/interview_list', '面试安排'] if user.is_res?
+    @sys_nav_menus << ['/res/interview_list', '面试安排'] if user.is_res? or user.right_level > 3
     @sys_nav_menus << ['/res/my_orders/', '我的订单']
 
   end
