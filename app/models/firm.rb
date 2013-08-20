@@ -20,6 +20,10 @@ class Firm < ActiveRecord::Base
 
   include HrLib::Functions
 
+  def self.contacts_file_folder
+    "public/contacts"
+  end
+
   def rating_type
     get_array_type_text RATING_TYPE, self.rating
   end

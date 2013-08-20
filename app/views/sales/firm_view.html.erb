@@ -11,6 +11,7 @@
               <%= button_to_function "添加招聘需求", "open_url('/#{params[:db_type]}/demand_edit.php?firm_id=#{@firm.id}')", :class => "btn" %>
           <% end %>
       <% end -%>
+      <%= button_to_function "上传通讯录#{@firm.contacts_file.blank? ? '' : '(已上传)'}", "go_url('/#{params[:db_type]}/upload_contacts.php?id=#{@firm.id}')", :class => "btn" %>
       <% if @can_grab %>
           <%= button_to_function "获取公司", "confirm_url('确定获取？', '/#{params[:db_type]}/grab_firm.php?id=#{@firm.id}')", :class => "btn" %>
       <% end %>

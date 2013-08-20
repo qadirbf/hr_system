@@ -933,6 +933,30 @@ class SalesController < ApplicationController
     redirect_to :action => :my_orders
   end
 
+  # 上传通讯录
+  def upload_contacts
+    @title = "上传通讯录"
+    if request.post? && params[:contacts_file] && params[:id]
+      firm = Firm.where("id = ?", params[:id]).first
+      old_file = firm.contacts_file
+      fm = FileManager.new({:root_folder_path => FileManager.expand_path(Firm.contacts_file_folder), :file_max_size => 500.kilobytes, :file_exts => ['xlsx', 'xls', 'pdf']})
+      fm.kill_file(old_file) unless old_file.blank?
+      firm.update_attribute(:contacts_file, fm.upload_file(params[:contacts_file]))
+      flash[:notice] = "上传成功"
+      redirect_to :action => :firm_view, :id => firm.id, :format => "php"
+    end
+  end
+
+  def download_contacts_file
+    firm = Firm.where("id = ?", params[:id]).first
+    filename = [Rails.root, Firm.contacts_file_folder, firm.contacts_file].join('/')
+    if firm.contacts_file && File.exists?(filename)
+      send_file filename
+    else
+      render :text => "<script>alert('通讯录文件不存在，未上传或已被删除！');history.back()</script>".html_safe
+    end
+  end
+
   protected
 
   def init_menu

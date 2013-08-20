@@ -42,6 +42,11 @@
             评级： <%= firm.rating_type -%> &nbsp;&nbsp;&nbsp;&nbsp;
             备注： <%= h firm.notes %></td>
         </tr>
+        <tr>
+          <td colspan="2">
+            通讯录：<%= (link_to firm.contacts_file.split("_").last, {:action => "download_contacts_file", :id => firm.id}) unless firm.contacts_file.blank? %>
+          </td>
+        </tr>
       </table>
     </td>
     <td>

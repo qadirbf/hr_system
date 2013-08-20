@@ -1,0 +1,14 @@
+<h1 class="title"><%= @title %></h1>
+<%= form_tag "/#{params[:db_type]}/upload_contacts", {:multipart => true} do %>
+    <%= hidden_field_tag :id, params[:id] %>
+    <table class="blue_tb">
+      <tr>
+        <th width=100>通讯录文件</th>
+        <td><%= file_field_tag :contacts_file %></td>
+      </tr>
+      <tr>
+        <td colspan="2"><%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
+          <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
+      </tr>
+    </table>
+<% end %>
