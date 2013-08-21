@@ -10,6 +10,7 @@ class Firm < ActiveRecord::Base
   has_many :firm_cat_links, :dependent => :destroy
   has_many :firm_tags
   has_many :orders
+  has_many :firms_contacts
   validates_presence_of :firm_name,:message=>"公司名字不能为空"
   validates_presence_of :province_id,:message=>"请选择省份"
   validates_presence_of :city_id,:message=>"请选择城市"

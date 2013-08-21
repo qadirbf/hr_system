@@ -939,18 +939,19 @@ class SalesController < ApplicationController
     if request.post? && params[:contacts_file] && params[:id]
       firm = Firm.where("id = ?", params[:id]).first
       old_file = firm.contacts_file
-      fm = FileManager.new({:root_folder_path => FileManager.expand_path(Firm.contacts_file_folder), :file_max_size => 500.kilobytes, :file_exts => ['xlsx', 'xls', 'pdf']})
+      fm = FileManager.new({:root_folder_path => FileManager.expand_path(Firm.contacts_file_folder), :file_max_size => 1.megabytes, :file_exts => ['xlsx', 'xls', 'pdf', 'doc', 'docx', 'jpg', 'png']})
       fm.kill_file(old_file) unless old_file.blank?
-      firm.update_attribute(:contacts_file, fm.upload_file(params[:contacts_file]))
+      firm.firms_contacts << FirmsContact.new({:firm_id => firm.id, :uploaded_by => current_user.id, :load_path => fm.upload_file(params[:contacts_file])})
+      #firm.update_attribute(:contacts_file, fm.upload_file(params[:contacts_file]))
       flash[:notice] = "上传成功"
       redirect_to :action => :firm_view, :id => firm.id, :format => "php"
     end
   end
 
   def download_contacts_file
-    firm = Firm.where("id = ?", params[:id]).first
-    filename = [Rails.root, Firm.contacts_file_folder, firm.contacts_file].join('/')
-    if firm.contacts_file && File.exists?(filename)
+    c = FirmsContact.find(params[:id])
+    filename = [Rails.root, Firm.contacts_file_folder, c.load_path].join('/')
+    if c.load_path && File.exists?(filename)
       send_file filename
     else
       render :text => "<script>alert('通讯录文件不存在，未上传或已被删除！');history.back()</script>".html_safe

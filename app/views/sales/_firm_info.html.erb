@@ -44,7 +44,12 @@
         </tr>
         <tr>
           <td colspan="2">
-            通讯录：<%= (link_to firm.contacts_file.split("_").last, {:action => "download_contacts_file", :id => firm.id}) unless firm.contacts_file.blank? %>
+            通讯录：
+            <% unless firm.firms_contacts.blank? -%>
+                <% firm.firms_contacts.each do |f| -%>
+                    <%= link_to f.load_path.split("_").last, {:action => "download_contacts_file", :id => f.id} %>&nbsp;&nbsp;;&nbsp;&nbsp;
+                <% end -%>
+            <% end -%>
           </td>
         </tr>
       </table>

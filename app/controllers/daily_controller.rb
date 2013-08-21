@@ -46,7 +46,7 @@ module DailyController
       ary.each do |d|
         # 联系人是否在系统内，否则添加到系统
         if d[3].blank?
-          contact = Contact.new({:firm_id => d[1], :first_name => d[2], :last_name => "", :position_cn => d[7]})
+          contact = Contact.new({:firm_id => d[1], :mobile => d[4], :first_name => d[2], :last_name => "", :position_cn => d[7]})
           contact.save(:validate => false)
           d[3] = contact.id
         end
