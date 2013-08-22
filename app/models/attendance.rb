@@ -57,7 +57,7 @@ class Attendance < ActiveRecord::Base
       employees = Employee.find(:all, :conditions => sql, :order => "username")
     end
 
-    unless (Time.parse(this_date).wday==6 or Time.parse(this_date).wday==0) and flag==false #如果为周末，默认为不处理，若flag为true则照常处理
+    if (![0, 6].include?(Time.parse(this_date).wday)) and flag #如果为周末，默认为不处理，若flag为true则照常处理
       employees.each do |employee|
         record_in = AttendRecord.get_clock_in_record(employee.id, this_date)
         record_out = AttendRecord.get_clock_out_record(employee.id, this_date)
