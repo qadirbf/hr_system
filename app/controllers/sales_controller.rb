@@ -467,7 +467,7 @@ class SalesController < ApplicationController
       else
         @employees = Employee.active_emps.sales.select('id,username').order("username").map { |e| [e.username, e.id] }
       end
-    elsif current_user.is_manager?  # 经理权限
+    elsif current_user.is_manager? or current_user.is_leader?  # 经理或者主管权限
       user_id = params[:user_id].to_i
       type_id = res_sys? ? 2 : 1
       # 获取经理管辖的行业的所有员工
@@ -873,6 +873,13 @@ class SalesController < ApplicationController
           # send message to shared employees
           EmpMsg.send_msg(0,share["employee_id_#{i}"],"你有新的分单","你有新的分单，详情请点击链接。<a href='/#{params[:db_type]}/show_order/#{@order.id}.php'>详细</a>")
         end
+        # 新增签约销售的订单提成
+        if !share["percentage_99"].blank? && !share["employee_id_99"].blank?
+          ShareOrder.create!({:order_id => @order.id, :employee_id => share["employee_id_99"], :created_by => current_user.id,
+                              :percentage => share["percentage_99"], :money => (@order.total_amount * share["percentage_99"].to_i / 100)})
+          # send message to shared employees
+          EmpMsg.send_msg(0,share["employee_id_99"],"你有新的分单","你有新的分单，详情请点击链接。<a href='/#{params[:db_type]}/show_order/#{@order.id}.php'>详细</a>")
+        end
         redirect_to :action => "my_orders", :format => "php"
       else
         render :action => :submit_order
@@ -958,6 +965,16 @@ class SalesController < ApplicationController
     end
   end
 
+  def set_signing_sales
+    f = Firm.where("id = #{params[:id]}").first
+    if f
+      f.update_attribute(:signing_sales, params[:sales].to_i)
+      render :text => %?{"success":"true","username":"#{f.signing_sale.username}"}?
+    else
+      render :text => %?{"success":"false","info":"操作失败！"}?
+    end
+  end
+
   protected
 
   def init_menu
@@ -975,7 +992,7 @@ class SalesController < ApplicationController
     end
     @sys_nav_menus << ['/res/contact_list', '候选人列表'] if user.is_res?
     @sys_nav_menus << ['/res/my_daily', '我的日报'] if user.is_res?
-    @sys_nav_menus << ['/res/interview_list', '面试安排'] if user.is_res? or user.right_level > 3
+    @sys_nav_menus << ['/res/interview_list', '面试安排'] if user.is_res? or user.right_level > 2
     @sys_nav_menus << ['/res/my_orders/', '我的订单']
 
   end
@@ -1038,7 +1055,7 @@ class SalesController < ApplicationController
         obj = firm
     end
     @contacts = contacts.compact.map { |c| [c.full_name(true, true), c.id] }
-    if current_user.is_manager?
+    if current_user.is_manager? or current_user.is_leader?
       firm_types = EmployeesFirmType.where("employee_id = #{current_user.id}").select("firm_type_id").collect(&:firm_type_id)
       emps = EmployeesFirmType.where("firm_type_id in (?)", firm_types).select("distinct employee_id").collect(&:employee_id)
       @pending_calls = obj.recalls.where("completed_at is null and employee_id in (?)", emps).order("appt_date desc").limit(5)

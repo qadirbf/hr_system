@@ -36,7 +36,7 @@ module DailyController
     else
       daily = params[:daily]
       ary = []
-      (1..5).each do |i|
+      (1..10).each do |i|
         if !daily["phone_#{i}"].blank? && !daily["firm_name_#{i}"].blank? && !daily["contact_name_#{i}"].blank? && !daily["day_#{i}"].blank?
           ary << [daily["firm_name_#{i}"], daily["obj_id_#{i}"], daily["contact_name_#{i}"], daily["contact_id_#{i}"],
                   daily["phone_#{i}"], daily["day_#{i}"], daily["notes_#{i}"], daily["position_cn_#{i}"], daily["completed_flag_#{i}"], daily["demand_id_#{i}"], daily["app_interview_date_#{i}"]]
@@ -44,9 +44,18 @@ module DailyController
       end
 
       ary.each do |d|
+        # 如果该公司不在系统内，则保存该公司到系统内
+        if d[1].blank? && d[0]
+          firm = Firm.where("firm_name like '%#{d[0].strip}%'").first
+          if firm.blank?
+            firm = Firm.new(:firm_name => d[0], :created_by => current_user.id, :updated_by => current_user.id)
+            firm.save(:validate => false)
+          end
+          d[0], d[1] = [firm.firm_name, firm.id]
+        end
         # 联系人是否在系统内，否则添加到系统
         if d[3].blank?
-          contact = Contact.new({:firm_id => d[1], :mobile => d[4], :first_name => d[2], :last_name => "", :position_cn => d[7]})
+          contact = Contact.new({:firm_id => d[1], :mobile => d[4], :first_name => "", :last_name => d[2], :position_cn => d[7]})
           contact.save(:validate => false)
           d[3] = contact.id
         end
@@ -117,7 +126,7 @@ module DailyController
 
   def auto_object
     key = params[:q] if params[:q]
-    @results = Firm.where("firm_name like '%#{key}%'").all
+    @results = Firm.where("firm_name like '%#{key.strip}%'").all
     render :template => "/daily/auto_firm"
   end
 
@@ -140,7 +149,7 @@ module DailyController
   def output_daily
     if request.post? && !params[:id].blank?
       demand = ContactDemand.where("id = #{params[:id]}").first
-      if current_user.right_level > 3
+      if current_user.right_level > 2
         ary = Daily.find_by_sql("select obj_id, count(obj_id) as num from dailies where demand_id = #{params[:id].to_i} group by obj_id order by num desc;").collect(&:obj_id)
         dailies = Daily.where("demand_id = ?", demand.id).order("find_in_set(obj_id,'#{ary.join(',')}')")
       else

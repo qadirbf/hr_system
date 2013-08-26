@@ -30,9 +30,10 @@
         <tr>
           <td colspan="2" id="tag_td">
             产品关键字：
-            <% if firm.firm_tags then firm.firm_tags.each do |firm_tag| -%>
-                <%= firm_tag.tag.name -%>
-            <% end -%>
+            <% if firm.firm_tags then
+                 firm.firm_tags.each do |firm_tag| -%>
+                    <%= firm_tag.tag.name -%>
+                <% end -%>
             <% end -%>
             <%= link_to_function "添加关键字", "open_url('/#{params[:db_type]}/edit_firm_tag.php?firm_id=#{firm.id}')" -%>
           </td>
@@ -57,6 +58,44 @@
     <td>
       <div class="follow_info_title">跟进信息</div>
       <div class="follow_info"><%= firm.grab_user_info %></div>
+      <br/>
+
+      <div class="follow_info_title">签约销售</div>
+      <div class="follow_info">
+        <span id="signing_sales_span"><%= firm.signing_sale.username rescue "暂无" -%></span>
+        <br/>
+        <% if current_user.right_level > 2 -%>
+            <%= select_tag :signing_sales, options_for_select(([['', '']]+@emps), firm.try(:signing_sales)), :style => "width:100px;" %>
+            <%= button_to_function "设置签约销售", "set_sales()", :class => "btn btn-primary" -%>
+        <% end -%>
+      </div>
     </td>
   </tr>
 </table>
+<% if current_user.right_level > 2 -%>
+    <script>
+        function set_sales() {
+            var id = $("#recall_firm_id").val()
+            var sales_id = $("#signing_sales").val()
+            $.ajax({
+                type:"POST",
+                url:"/res/set_signing_sales",
+                data:{id:id, sales:sales_id},
+                beforeSend:function () {
+                    $("#signing_sales_span").html("正在努力加载...")
+                },
+                success:function (json) {
+                    var j = eval('(' + json + ')');
+                    if (j.success == "true") {
+                        alert("操作成功！");
+                        $("#signing_sales_span").html(j.username)
+                    }
+                    else {
+                        $("#signing_sales_span").html("未知")
+                        alert(j.info);
+                    }
+                }
+            });
+        }
+    </script>
+<% end -%>

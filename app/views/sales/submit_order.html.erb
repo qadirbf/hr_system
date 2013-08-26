@@ -18,7 +18,17 @@
       <tr>
         <th>到账日期</th>
         <td>
-          <%= f.text_field :credited_date,:value => format_date(@order.credited_date, :date),:class=>"datepicker" %>
+          <%= f.text_field :credited_date, :value => format_date(@order.credited_date, :date), :class => "datepicker" %>
+        </td>
+      </tr>
+      <tr>
+        <th>签约销售</th>
+        <td>
+          <%= @order.firm.signing_sale.username rescue "暂无" -%>
+          <%= hidden_field_tag "share[employee_id_99]", @order.firm.signing_sales -%>
+          <%= text_field :share, :percentage_99, :maxlength => 2, :onkeyup => "clearNonum(this);clu_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "clu_money();", :style => "width:100px;" -%>
+          %
+          金额：<span id="money_99"></span>&nbsp;元
         </td>
       </tr>
       <tr>
@@ -27,27 +37,32 @@
           <ul style="list-style: none;margin-left: 0;" id="per">
             <li id="li1" class="show">
               <%= select :share, :employee_id_1, options_for_select([['', '']]+@emps, current_user.id) %>
-              <%= text_field :share, :percentage_1, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>%
+              <%= text_field :share, :percentage_1, :value => 5, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              %
               金额：<span id="money_1"></span>&nbsp;元&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="add_one()">添加</a>
             </li>
             <li id="li2">
               <%= select :share, :employee_id_2, options_for_select([['', '']]+@emps) %>
-              <%= text_field :share, :percentage_2, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>%
+              <%= text_field :share, :percentage_2, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              %
               金额：<span id="money_2"></span>&nbsp;元
             </li>
             <li id="li3">
               <%= select :share, :employee_id_3, options_for_select([['', '']]+@emps) %>
-              <%= text_field :share, :percentage_3, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>%
+              <%= text_field :share, :percentage_3, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              %
               金额：<span id="money_3"></span>&nbsp;元
             </li>
             <li id="li4">
               <%= select :share, :employee_id_4, options_for_select([['', '']]+@emps) %>
-              <%= text_field :share, :percentage_4, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>%
+              <%= text_field :share, :percentage_4, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              %
               金额：<span id="money_4"></span>&nbsp;元
             </li>
             <li id="li5">
               <%= select :share, :employee_id_5, options_for_select([['', '']]+@emps) %>
-              <%= text_field :share, :percentage_5, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>%
+              <%= text_field :share, :percentage_5, :maxlength => 2, :onkeyup => "clearNonum(this);cal_money();", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();", :style => "width:100px;" -%>
+              %
               金额：<span id="money_5"></span>&nbsp;元
             </li>
           </ul>
@@ -92,6 +107,15 @@
             return true;
         } else {
             return false;
+        }
+    }
+
+    function clu_money() {
+        if ($("#share_employee_99").val() != undefined && $("#share_employee_99").val() != "") {
+            var money = parseFloat($("#order_total_amount").val());
+            var per = parseInt($("#share_percentage_99").val());
+            var tmp = money * per / 100
+            $("#money_99").html(tmp)
         }
     }
 

@@ -6,6 +6,7 @@ class Employee < ActiveRecord::Base
   validates_presence_of :active, :message => "请选择是否允许登录！"
   validates_uniqueness_of :username, :message => "用户名已经存在！"
   belongs_to :department
+  has_many :firms, :foreign_key => "signing_sales"
   has_many :attend_records
   has_many :orders
   has_many :share_orders
@@ -33,6 +34,10 @@ class Employee < ActiveRecord::Base
 
   def is_manager?
     self.right_level == 4
+  end
+
+  def is_leader?
+    self.right_level == 3
   end
 
   def to_s
