@@ -11,13 +11,13 @@ class Firm < ActiveRecord::Base
   has_many :firm_tags
   has_many :orders
   has_many :firms_contacts
-  belongs_to  :signing_sale, :foreign_key => "signing_sales", :class_name => "Employee"
-  validates_presence_of :firm_name,:message=>"公司名字不能为空"
-  validates_presence_of :province_id,:message=>"请选择省份"
-  validates_presence_of :city_id,:message=>"请选择城市"
-  validates_presence_of :firm_type_id,:message=>"请选择公司类型"
+  belongs_to :signing_sale, :foreign_key => "signing_sales", :class_name => "Employee"
+  validates_presence_of :firm_name, :message => "公司名字不能为空"
+  validates_presence_of :province_id, :message => "请选择省份"
+  validates_presence_of :city_id, :message => "请选择城市"
+  validates_presence_of :firm_type_id, :message => "请选择公司类型"
 
-  FOREIGN_TYPES = [['内资',1],['外资',2]]
+  FOREIGN_TYPES = [['内资', 1], ['外资', 2]]
   RATING_TYPE = [["A+", 9], ["A", 8], ["B", 7], ["C", 6], ["D", 2]]
 
   include HrLib::Functions
@@ -31,7 +31,7 @@ class Firm < ActiveRecord::Base
   end
 
   def is_followed_by?(user)
-    !!FirmLead.first(:select=>"id",:conditions=>["firm_id=? and employee_id=?",self.id,user.id]) or user.is_admin?
+    !!FirmLead.first(:select => "id", :conditions => ["firm_id=? and employee_id=?", self.id, user.id]) or user.is_admin?
   end
 
   def lead_by_manager?(user, type)
@@ -56,7 +56,7 @@ class Firm < ActiveRecord::Base
     lead.employee_id==0
   end
 
-  def all_candidates     # 获取该公司所有的候选人
+  def all_candidates # 获取该公司所有的候选人
     Contact.find(:all, :conditions => "contacts.firm_id = #{self.id}",
                  :joins => "left join candidates on candidates.contact_id = contacts.id")
   end
@@ -68,8 +68,8 @@ class Firm < ActiveRecord::Base
   end
 
   def lead_by_id(tid=1)
-    FirmLead.first(:conditions=>["firm_id=? and leads_type_id=?",self.id,tid])||
-        FirmLead.new(:firm_id=>self.id,:leads_type_id=>tid,:employee_id=>0)
+    FirmLead.first(:conditions => ["firm_id=? and leads_type_id=?", self.id, tid])||
+        FirmLead.new(:firm_id => self.id, :leads_type_id => tid, :employee_id => 0)
   end
 
   def grab_user_info
@@ -79,7 +79,7 @@ class Firm < ActiveRecord::Base
   end
 
   def firm_categories
-    self.firm_cat_links.map{|c| c.firm_category}
+    self.firm_cat_links.map { |c| c.firm_category }
   end
 
   def firm_tag_names

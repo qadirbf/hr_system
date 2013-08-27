@@ -713,6 +713,7 @@ class SalesController < ApplicationController
     @firm = @demand.firm
     @can_edit = @firm.sales_followed_by?(user) or user.is_admin?
     @can_recommend = [2, 3, 4].include?(@demand.status_id)&&(user.is_res? or user.is_admin?)
+    #@emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
     render :template => "/sales/demand_view"
   end
 
@@ -738,8 +739,17 @@ class SalesController < ApplicationController
     @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
     @salary_types = Contact::SALARY_TYPES.map { |t| [t[0], t[1].to_s] }
     @status = ContactDemand::STATUS
+    firm_types = []
+    unless current_user.is_admin?
+      firm_types = EmployeesFirmType.where("employee_id = #{current_user.id}").all.collect(&:firm_type_id)
+    end
 
-    sql, joins = ["1=1"], "join firms on firms.id=contact_demands.firm_id"
+    unless firm_types.blank?
+      sql, joins = ["1=1"], "join firms on firms.id=contact_demands.firm_id and firms.firm_type_id in (#{firm_types.join(',')})"
+    else
+      sql, joins = ["1=1"], "join firms on firms.id=contact_demands.firm_id"
+    end
+
     _sql, p_hash = ContactDemand.get_sql_by_hash(params)
     sql << _sql unless _sql.blank?
     unless params[:firm_name].blank?

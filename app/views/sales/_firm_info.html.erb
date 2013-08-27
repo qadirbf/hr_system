@@ -64,7 +64,7 @@
       <div class="follow_info">
         <span id="signing_sales_span"><%= firm.signing_sale.username rescue "暂无" -%></span>
         <br/>
-        <% if current_user.right_level > 2 -%>
+        <% if current_user.right_level > 2 && params[:action] == "firm_show" -%>
             <%= select_tag :signing_sales, options_for_select(([['', '']]+@emps), firm.try(:signing_sales)), :style => "width:100px;" %>
             <%= button_to_function "设置签约销售", "set_sales()", :class => "btn btn-primary" -%>
         <% end -%>
