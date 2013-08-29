@@ -97,8 +97,11 @@ class FinancialController < ApplicationController
       end
       redirect_to :action => "order_list", :format => "php"
     else
+      #firm = Firm.where("id=#{@order.firm_id}").first
       @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
-      @demands = firm.contact_demands.map { |c| [c.position_type_text, c.id] }
+      @demands = @order.firm.contact_demands.map { |c| [c.position_type_text, c.id] }
+      tmp = @order.share_orders.map{|s| [s.employee_id, s.percentage, s.money].join('-')}
+      @share_orders = tmp.join(";")
       render :action => :edit_order
     end
   end

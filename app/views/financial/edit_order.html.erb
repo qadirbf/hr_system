@@ -9,7 +9,11 @@
         <th style="height: 38px;width:300px;">公司名称</th>
         <td style="font-weight: bold; font-size:16px;margin: 5px;"><%= @order.firm.firm_name %></td>
       </tr>
-
+      <tr>
+        <th>项目ID</th>
+        <td><%= f.text_field :project_id, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);" -%>
+        </td>
+      </tr>
       <tr>
         <th>金额</th>
         <td><%= f.text_field :total_amount, :onkeyup => "clearNonum(this);", :onafterpaste => "clearNonum(this);", :onclick => "clearNonum(this);", :onblur => "cal_money();" -%>
@@ -62,7 +66,7 @@
       <tr>
         <th>订单状态</th>
         <td>
-          <%= f.select :status_id, Order::STATUS, {:include_blank => true} %>
+          <%= f.select :status_id, Order::STATUS, {:include_blank => true}, :onchange => "change_status()" %>
         </td>
       </tr>
       <tr>
@@ -138,6 +142,22 @@
     function add_one() {
         var i = $("#per li.show").length;
         $("#li" + (i + 1)).attr("class", "show")
+    }
+
+    function change_status(){
+        if($("#order_status_id").val() == '3'){
+            $('#order_project_id').val('')
+            $('#order_total_amount').val('')
+            var i = $("#per li.show").length;
+            if(i > 1){
+                for(var a= 2; a<=i; a++){
+                    $("#li" + a).attr("class", "");
+                    $("#share_employee_id_" + a).val('')
+                    $("#share_percentage_" + a).val('')
+                }
+                cal_money();
+            }
+        }
     }
 </script>
 <style>

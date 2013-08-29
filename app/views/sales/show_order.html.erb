@@ -4,7 +4,11 @@
     <th style="height: 38px;width: 240px;">公司名称</th>
     <td style="font-weight: bold; font-size:16px;margin: 5px;"><%= @order.firm.firm_name %></td>
   </tr>
-
+  <tr>
+    <th>项目ID</th>
+    <td><%= @order.project_id -%>
+    </td>
+  </tr>
   <tr>
     <th>订单金额</th>
     <td><%= number_with_delimiter(@order.total_amount, :local => :cn) -%>

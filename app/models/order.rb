@@ -9,7 +9,7 @@ class Order < ActiveRecord::Base
 
   validates_presence_of :total_amount, :message => "请输入订单金额！"
 
-  STATUS = [["未到账", 1], ["已到账", 2]]
+  STATUS = [["未到账", 1], ["已到账", 2], ["补充招聘", 3]]
 
   include HrLib::Functions
 
