@@ -2,7 +2,7 @@
 <%= include_datepicker %>
 <%= form_for @order, :url => "/financial/update_order", :html => {:onsubmit => "return before_submit();"} do |f| %>
     <%= errors_for @order %>
-    <%= hidden_field_tag :firm_id, params[:firm_id] %>
+    <%= hidden_field_tag :firm_id, @order.firm.id %>
     <%= hidden_field_tag :id, @order.id %>
     <table class="blue_tb">
       <tr>
@@ -69,6 +69,18 @@
           <%= f.select :status_id, Order::STATUS, {:include_blank => true}, :onchange => "change_status()" %>
         </td>
       </tr>
+      <tr class="farther">
+        <th>补充订单号</th>
+        <td>
+          <%= f.text_field :add_to %>
+        </td>
+      </tr>
+      <tr class="farther">
+        <th>此单是否计入总金额</th>
+        <td>
+          <%= f.select :count_in, options_for_select([["是", 1], ["否", 0]]) %>
+        </td>
+      </tr>
       <tr>
         <th>职位名称</th>
         <td>
@@ -95,6 +107,9 @@
 <script type="text/javascript">
     $(document).ready(function () {
         init_share_order();
+        if ($("#order_status_id").val() == "3") {
+            $(".farther").show()
+        }
     });
 
     function init_share_order() {
@@ -115,7 +130,12 @@
     }
 
     function clearNonum(obj) {
-        obj.value = obj.value.replace(/^0|\D/g, '');
+        if ($("#order_status_id").val() == "3") {
+            obj.value = obj.value.replace(/^\D/g, '');
+        }
+        else {
+            obj.value = obj.value.replace(/^0|\D/g, '');
+        }
     }
 
     function before_submit() {
@@ -146,8 +166,10 @@
 
     function change_status(){
         if($("#order_status_id").val() == '3'){
+//            window.location.href = ("/res/submit_order.php?firm_id=" + $("#firm_id").val() + "&status_id=3&add_to="+$("#id").val())
             $('#order_project_id').val('')
             $('#order_total_amount').val('')
+            $(".farther").show();
             var i = $("#per li.show").length;
             if(i > 1){
                 for(var a= 2; a<=i; a++){
@@ -155,13 +177,16 @@
                     $("#share_employee_id_" + a).val('')
                     $("#share_percentage_" + a).val('')
                 }
-                cal_money();
             }
+            cal_money();
+        }
+        else{
+            $(".farther").hide();
         }
     }
 </script>
 <style>
-    #per li {
+    #per li, .farther {
         display: none;
     }
 

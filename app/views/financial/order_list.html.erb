@@ -50,6 +50,7 @@
         <td>
           <%= link_to "详细", :controller => "sales", :action => "show_order", :id => o.id -%>
           <%= link_to "修改", :controller => "financial", :action => "edit_order", :id => o.id -%>
+          <%= link_to "补充招聘", :controller => "res", :action => "submit_order", :firm_id => o.firm.id, :status_id => 3, :add_to => o.id -%>
           <%#= link_to "删除", :action => "delete_order", :id => o.id -%>
         </td>
       </tr>

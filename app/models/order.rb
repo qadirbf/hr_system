@@ -16,7 +16,7 @@ class Order < ActiveRecord::Base
   before_save :check_status
 
   def check_status
-    unless self.credited_date.blank?
+    if !self.credited_date.blank? && self.status_id != 3
       self.status_id = 2
     end
   end

@@ -74,7 +74,19 @@
       <tr>
         <th>订单状态</th>
         <td>
-          <%= f.select :status_id, Order::STATUS, {:include_blank => true} %>
+          <%= f.select :status_id, Order::STATUS, {:include_blank => true}, :onchange => "change_status()" %>
+        </td>
+      </tr>
+      <tr class="farther">
+        <th>补充订单号</th>
+        <td>
+          <%= f.text_field :add_to %>
+        </td>
+      </tr>
+      <tr class="farther">
+        <th>此单是否计入总金额</th>
+        <td>
+          <%= f.select :count_in, options_for_select([["是", 1], ["否", 0]]) %>
         </td>
       </tr>
       <tr>
@@ -101,8 +113,20 @@
 <% end %>
 
 <script type="text/javascript">
+
+    $(document).ready(function () {
+        if ($("#order_status_id").val() == "3") {
+            $(".farther").show()
+        }
+    });
+
     function clearNonum(obj) {
-        obj.value = obj.value.replace(/^0|\D/g, '');
+        if ($("#order_status_id").val() == "3") {
+            obj.value = obj.value.replace(/^\D/g, '');
+        }
+        else {
+            obj.value = obj.value.replace(/^0|\D/g, '');
+        }
     }
 
     function before_submit() {
@@ -139,9 +163,18 @@
         var i = $("#per li.show").length;
         $("#li" + (i + 1)).attr("class", "show")
     }
+
+    function change_status(){
+        if($("#order_status_id").val() == '3'){
+            $(".farther").show();
+        }
+        else{
+            $(".farther").hide();
+        }
+    }
 </script>
 <style>
-    #per li {
+    #per li, .farther {
         display: none;
     }
 

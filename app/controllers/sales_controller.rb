@@ -853,12 +853,14 @@ class SalesController < ApplicationController
   end
 
   def submit_order
-    @title = "提交订单"
+    @title = params[:add_to].blank? ? "提交订单" : "提交补充招聘订单"
     @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
     if params[:firm_id].blank? and @order.blank?
       render :text => "参数错误，请从公司详细页面点击“提交订单按钮。”", :layout => false
     end
     @order = Order.new(:firm_id => params[:firm_id]) if @order.blank?
+    @order.status_id = params[:status_id] unless params[:status_id].blank?
+    @order.add_to = params[:add_to] unless params[:add_to].blank?
 
     firm = Firm.where("id=#{params[:firm_id]}").first
     #@candidates = firm.all_candidates.map { |c| [c.full_name, c.id] }
