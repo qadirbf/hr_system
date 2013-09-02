@@ -19,13 +19,26 @@ class FinancialController < ApplicationController
     end
 
     joins += " left join share_orders on share_orders.order_id = orders.id "
-    sql << "share_orders.employee_id in (:emps)"
-    p_hash.merge!(:emps => emps)
+    #sql << "share_orders.employee_id in (:emps)"
+    #p_hash.merge!(:emps => emps)
 
-    unless params[:share_order_employee].blank?
+    if current_user.is_admin?
+      unless params[:share_order_employee].blank?
+        sql << " share_orders.employee_id = :share_emp "
+        p_hash.merge!({:share_emp => params[:share_order_employee]})
+        joins += " left join share_orders on share_orders.order_id = orders.id "
+      end
+    else
       sql << " share_orders.employee_id = :share_emp "
-      p_hash.merge!({:share_emp => params[:share_order_employee]})
+      share_emp = current_user.is_admin? ? params[:share_order_employee] : current_user.id
+      p_hash.merge!({:share_emp => share_emp})
+      joins += " left join share_orders on share_orders.order_id = orders.id "
     end
+
+    #unless params[:share_order_employee].blank?
+    #  sql << " share_orders.employee_id = :share_emp "
+    #  p_hash.merge!({:share_emp => params[:share_order_employee]})
+    #end
 
     sql.delete_if { |s| s.blank? }
 
@@ -106,6 +119,19 @@ class FinancialController < ApplicationController
       render :action => :edit_order
     end
   end
+
+  ##删除订单，需要先删除分单
+  #def delete_order
+  #  Order.transaction do
+  #    begin
+  #      ShareOrder.delete_all("order_id = #{params[:id]}")
+  #      Order.delete_all("id = #{params[:id]}")
+  #    rescue => e
+  #      raise "Error！#{e.message}"
+  #    end
+  #    redirect_to :action => "order_list"
+  #  end
+  #end
 
   def check_right
     unless current_user.right_level > 3

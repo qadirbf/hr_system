@@ -69,7 +69,7 @@
 
       <tr>
         <td>
-          <%= text_field_tag "daily[demand_id]", @daily.try(:demand_id), :style => "width:100px;" -%>
+          <%= text_field_tag "daily[demand_id]", @daily.try(:demand_id), :style => "width:80px;" -%>
         </td>
         <td>
           <%= text_field_tag "daily[firm_name]", @daily.try(:show_firm_name), :style => "width:180px;" %>
@@ -79,12 +79,12 @@
           <%= text_field_tag "daily[contact_name]", @daily.try(:show_contact_name), :style => "width:100px;" %>
           <%= hidden_field_tag "daily[contact_id]", @daily.try(:contact_id) %>
         </td>
-        <td><%= text_field_tag "daily[phone]", @daily.try(:phone), :style => "width:160px;" %></td>
+        <td><%= text_field_tag "daily[phone]", @daily.try(:phone), :style => "width:100px;" %></td>
         <td><%= text_field_tag "daily[position_cn]", @daily.try(:position_cn), :style => "width:100px;" %></td>
         <td><%= text_field_tag "daily[day]", @daily.try(:day), :class => "datepicker" %></td>
         <td><%= check_box_tag "daily[completed_flag]", 1, (@daily.try(:completed_flag).to_i > 0 ? true : false) %> 完成任务</td>
         <td>
-          <%= text_area_tag "daily[notes]", @daily.try(:notes), :style => "width:300px;height:40px;" -%>
+          <%= text_area_tag "daily[notes]", @daily.try(:notes), :style => "width:240px;height:40px;" -%>
         </td>
         <td><%= text_field_tag "daily[app_interview_date]",  @daily.try(:app_interview_date), :class => "datepicker" -%></td>
       </tr>

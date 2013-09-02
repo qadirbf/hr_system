@@ -949,7 +949,8 @@ class SalesController < ApplicationController
         flash[:notice] = "error. #{e.messages}"
       end
     end
-    redirect_to :action => :my_orders
+    controller = (["res", "crm"].include?(params[:controller]) ? params[:db_type] : "financial")
+    redirect_to :controller => controller, :action => params[:act]
   end
 
   # 上传通讯录

@@ -134,6 +134,37 @@ class AttendanceController < ApplicationController
     #@leaves=AttendLeave.find(:all,:conditions=>["employee_id=? and (start_date>=str_to_date('#{params[:start_time]} 00:00:00','%Y-%m-%d %H:%i:%s') and end_date<=str_to_date('#{params[:end_time]} 23:59:59','%Y-%m-%d %H:%i:%s'))",params[:employee_id]],:order=>"id desc")
   end
 
+  def manager_notes_update
+    apply = ApplyLeave.find(params[:id])
+    apply.update_attributes(params[:apply].merge(:updated_by => current_user.id))
+    if apply.errors.size>0
+      flash[:notice] = apply.errors.full_messages.join("<br>")
+    else
+      apply.send_message_for_approval
+      flash[:notice] = '操作成功！'
+
+      session[:apply_info] = nil if session[:apply_info]
+    end
+
+    redirect_to :action => 'apply_leave_show', :id => apply.id
+    rescue => e
+    if e.is_a?(RuntimeError) then
+      render(:text => "<script>alert('#{e.to_s}');history.back();</script>")
+    else
+      raise e
+    end
+  end
+
+  def back_to_draft
+    apply = ApplyLeave.find(params[:id])
+    apply.reset_apply
+    apply.update_attributes(params[:apply].merge({:status => 0, :updated_by => current_user.id}))
+    apply.send_message_for_back_to_draft
+    session[:apply_info] = nil if session[:apply_info]
+    flash[:notice] = '操作成功！'
+    redirect_to :action => 'apply_leave_show', :id => apply.id
+  end
+
   def apply_leave_edit
     unless params[:id].blank?
       @title = "修改申请"
@@ -202,8 +233,8 @@ class AttendanceController < ApplicationController
     end
   rescue => e
     @notice = e.is_a?(RuntimeError) ? e.to_s : e.backtrace.join("<br>")
-    @managers ||= []                                                  .
-    render :template => "/attendance/apply_leave_approve"
+    @managers ||= [].
+        render :template => "/attendance/apply_leave_approve"
   end
 
   def apply_leave_show

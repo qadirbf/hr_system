@@ -102,6 +102,17 @@ class ApplyLeave < ActiveRecord::Base
     EmpMsg.send_message(employee.id, self.apply_to, subject, body)
   end
 
+  def send_message_for_approval
+    deal_manager = Hr.user
+    employee = self.employee
+    to_ids = (self.was_refused? ? employee.id : [get_send_msg_to, employee.id])
+    subject = "#{deal_manager.username}#{self.was_refused? ? '拒绝' : '批准'}了#{employee.username}(#{employee.name_cn})的申请！"
+    body = %{#{subject}<br><a href='/attendance/apply_leave_show?id=#{self.id}'>点击这里查看详细信息</a>
+        主管备注：#{self.manager_notes}
+        审批时间：#{Time.now.format_date(:full)}}
+    EmpMsg.send_msg(Hr.user.id, to_ids, subject, body)
+  end
+
   def notes_label
     label_hash = {"out_reason" => "事由", "org_name" => {'0' => "客户名称", '1' => "设计院名称", '2' => "供应商", '3' => "事务办理机构名称", '4' => '事务办理机构名称'},
                   "address" => "地址", "contact_name" => "联系人", "contact_method" => "联系方式", "expect_time" => "预计时间"}
@@ -194,6 +205,14 @@ class ApplyLeave < ActiveRecord::Base
     subject = "#{employee.username}希望退回已提交的申请，需要您审批"
     body = %{#{subject}<br><a href='/attendance/apply_leave_show?id=#{self.id}'>点击这里查看详细信息</a>}
     EmpMsg.send_msg(self.employee_id, self.apply_to||self.apply_to_hr, subject, body)
+  end
+
+  def send_message_for_back_to_draft
+    deal_manager = Hr.user
+    subject = "#{deal_manager.username}将您的申请退回草稿阶段！"
+    body = %{#{subject}<br><a href='/attendance/apply_leave_show?id=#{self.id}'>点击这里查看详细信息</a>
+        审批时间：#{Time.now.format_date(:full)}}
+    EmpMsg.send_msg(deal_manager.id, self.employee_id, subject, body)
   end
 
   def reset_apply

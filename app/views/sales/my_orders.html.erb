@@ -53,7 +53,7 @@
           <% if current_user.right_level > 3 -%>
               <%= link_to "修改", :controller => "financial", :action => "edit_order", :id => o.id -%>
           <% end -%>
-          <a href="javascript:void(0)" onclick="confirm_url('确定删除？','/<%= params[:db_type] -%>/delete_order/<%= o.id -%>')">删除</a>
+          <a href="javascript:void(0)" onclick="confirm_url('确定删除？','/<%= params[:db_type] -%>/delete_order?id=<%= o.id -%>&act=my_orders')">删除</a>
         </td>
       </tr>
   <% end %>

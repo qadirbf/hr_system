@@ -4,7 +4,7 @@
   <%= link_to "替别人添加申请", {:action => "apply_leave_edit", :apply_for_others => 'yes'}, :popup => true, :class => "action" if @can_edit_others %>
 </h1>
 <%= form_tag "/attendance/apply_leave_list", :method => 'post' do %>
-    <% if @def_employees.size > 0 %>
+    <% if @def_employees.size > 0 && current_user.right_level>2 %>
         申请人：<%= select_tag :employee_id, options_for_select([['所有', '']]+@def_employees.map { |e| ["#{e.username}(#{e.name_cn})", e.id] }, params[:employee_id].to_i) %>
     <% end %>
     申请原因：<%= select_tag :absence_reason, options_for_select([['所有', '']]+Attendance::ABSENCE_REASON.map { |r| [r[0], r[1].to_s] }, params[:absence_reason]) %>

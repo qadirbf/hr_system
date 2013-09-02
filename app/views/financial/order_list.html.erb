@@ -32,7 +32,7 @@
     <td>金额</td>
     <td>详细</td>
     <td>职位及联系人</td>
-    <td>备注</td>
+    <td width=200>备注</td>
     <td>操作</td>
   </tr>
   <% @orders.each do |o| %>
@@ -46,12 +46,12 @@
         <td><%= number_with_delimiter(o.total_amount, :local => :cn) -%>元</td>
         <td><%= o.share_detail(current_user) -%></td>
         <td><%= o.position_and_contact -%></td>
-        <td><%= o.notes -%></td>
+        <td><%= o.show_notes -%></td>
         <td>
-          <%= link_to "详细", :controller => "sales", :action => "show_order", :id => o.id -%>
+          <%= link_to "详细", :controller => "res", :action => "show_order", :id => o.id -%>
           <%= link_to "修改", :controller => "financial", :action => "edit_order", :id => o.id -%>
           <%= link_to "补充招聘", :controller => "res", :action => "submit_order", :firm_id => o.firm.id, :status_id => 3, :add_to => o.id -%>
-          <%#= link_to "删除", :action => "delete_order", :id => o.id -%>
+          <%= link_to "删除", {:controller => "res", :action => "delete_order", :id => o.id, :act => "order_list"}, :confirm => "Are you sure?" -%>
         </td>
       </tr>
   <% end %>

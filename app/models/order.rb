@@ -53,4 +53,16 @@ class Order < ActiveRecord::Base
     [self.contact_demand.try(:position_type_text), self.try(:candidate_name)].delete_if{|a| a.blank?}.join(", ")
   end
 
+  def show_notes
+    adds = Order.where("add_to = #{self.id}").all || []
+    h, ary = '', []
+    adds.each do |a|
+      ary << "<a href='/res/show_order/#{a.id}'>#{a.order_no}</a>"
+    end
+    h = ary.join(";").html_safe unless ary.blank?
+    h = ("拥有补充订单如下：" + h) unless h.blank?
+    tmp = [self.notes, h].delete_if{|a| a.blank?}
+    tmp.join("<br/>").html_safe
+  end
+
 end
