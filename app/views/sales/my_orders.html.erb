@@ -29,6 +29,7 @@
     <td>订单号</td>
     <td>项目</td>
     <td>公司</td>
+    <td>订单状态</td>
     <td>到账日期</td>
     <td>提交人</td>
     <td>金额</td>
@@ -38,16 +39,26 @@
     <td>操作</td>
   </tr>
   <% @orders.each do |o| %>
+      <% c = 'black;' -%>
+      <% if o.status_id.to_i == 3 -%>
+          <% c = '#4DB849;' -%>
+      <% else
+           unless o.other_orders.blank?
+             c = 'red;'
+           end
+      -%>
+      <% end -%>
       <tr>
-        <td><%= o.order_no -%></td>
+        <td style="color: <%= c -%>"><%= o.order_no -%></td>
         <td><%= open_demand_page o.project_id, o.project_id %></td>
         <td><%= o.firm.firm_name -%></td>
+        <td><%= o.status_label -%></td>
         <td><%= format_date(o.credited_date, :date) -%></td>
         <td><%= o.employee.username -%></td>
         <td><%= number_with_delimiter(o.total_amount, :local => :cn) -%>元</td>
         <td><%= o.share_detail(current_user) -%></td>
         <td><%= o.position_and_contact -%></td>
-        <td><%= o.notes -%></td>
+        <td><%= o.show_notes -%></td>
         <td>
           <%= link_to "详细", :controller => "sales", :action => "show_order", :id => o.id -%>
           <% if current_user.right_level > 3 -%>

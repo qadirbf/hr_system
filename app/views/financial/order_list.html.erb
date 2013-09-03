@@ -7,7 +7,8 @@
         <td>提交人： <%= select :order, :employee_id_eq, options_for_select([['所有', '']]+@emps, (params[:order][:employee_id_eq] rescue '')) %></td>
         <td>公司名称：<%= text_field_tag :firm_name, params[:firm_name] -%> </td>
         <td>订单状态：<%= select :order, :status_id_eq, options_for_select([['所有', '']] + Order::STATUS, (params[:order][:status_id_eq] rescue '')), {}, :style => "width:100px;" %> </td>
-        <td>到账时间：<%= text_field_tag "order[credited_date_gte]", (params[:order][:credited_date_gte] rescue ''), :class => 'datepicker' %>~
+        <td>到账时间：<%= text_field_tag "order[credited_date_gte]", (params[:order][:credited_date_gte] rescue ''), :class => 'datepicker' %>
+          ~
           <%= text_field_tag "order[credited_date_lte]", (params[:order][:credited_date_lte] rescue ''), :class => 'datepicker' %></td>
         <td>备注：<%= text_field_tag "order[notes_like]", (params[:order][:notes_like] rescue '') %></td>
         <td><%= submit_tag "搜索", :class => "btn btn-primary" %></td>
@@ -36,8 +37,17 @@
     <td>操作</td>
   </tr>
   <% @orders.each do |o| %>
+      <% c = 'black;' -%>
+      <% if o.status_id.to_i == 3 -%>
+          <% c = '#4DB849;' -%>
+      <% else
+           unless o.other_orders.blank?
+             c = 'red;'
+           end
+      -%>
+      <% end -%>
       <tr>
-        <td><%= o.order_no -%></td>
+        <td style="color: <%= c -%>"><%= o.order_no -%></td>
         <td><%= open_demand_page o.project_id, o.project_id %></td>
         <td><%= o.firm.firm_name -%></td>
         <td><%= o.status_label -%></td>
@@ -50,7 +60,7 @@
         <td>
           <%= link_to "详细", :controller => "res", :action => "show_order", :id => o.id -%>
           <%= link_to "修改", :controller => "financial", :action => "edit_order", :id => o.id -%>
-          <%= link_to "补充招聘", :controller => "res", :action => "submit_order", :firm_id => o.firm.id, :status_id => 3, :add_to => o.id -%>
+          <%#= link_to "补充招聘", :controller => "res", :action => "submit_order", :firm_id => o.firm.id, :status_id => 3, :add_to => o.id -%>
           <%= link_to "删除", {:controller => "res", :action => "delete_order", :id => o.id, :act => "order_list"}, :confirm => "Are you sure?" -%>
         </td>
       </tr>

@@ -86,7 +86,7 @@ class FinancialController < ApplicationController
     firm = Firm.where("id=#{@order.firm_id}").first
     #@candidates = firm.all_candidates.map { |c| [c.full_name, c.id] }
     @demands = firm.contact_demands.map { |c| [c.position_type_text, c.id] }
-    tmp = @order.share_orders.map{|s| [s.employee_id, s.percentage, s.money].join('-')}
+    tmp = @order.share_orders.map { |s| [s.employee_id, s.percentage, s.money].join('-') }
     @share_orders = tmp.join(";")
   end
 
@@ -109,12 +109,19 @@ class FinancialController < ApplicationController
         ShareOrder.create!({:order_id => @order.id, :employee_id => share["employee_id_#{i}"], :created_by => current_user.id,
                             :percentage => share["percentage_#{i}"], :money => (@order.total_amount * share["percentage_#{i}"].to_i / 100)})
       end
+      # 如果是补充招聘的订单
+      OtherOrder.delete_all("order_id = #{@order.id}")
+      unless @order.status_id == 3
+        params[:other_no].split(/,|;/).each do |o|
+          OtherOrder.create({:order_id => @order.id, :added_order_id => o})
+        end
+      end
       redirect_to :action => "order_list", :format => "php"
     else
       #firm = Firm.where("id=#{@order.firm_id}").first
       @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
       @demands = @order.firm.contact_demands.map { |c| [c.position_type_text, c.id] }
-      tmp = @order.share_orders.map{|s| [s.employee_id, s.percentage, s.money].join('-')}
+      tmp = @order.share_orders.map { |s| [s.employee_id, s.percentage, s.money].join('-') }
       @share_orders = tmp.join(";")
       render :action => :edit_order
     end

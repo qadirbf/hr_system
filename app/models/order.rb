@@ -6,6 +6,7 @@ class Order < ActiveRecord::Base
   belongs_to :contact_demand
   belongs_to :contact
   has_many :share_orders
+  has_many :other_orders
 
   validates_presence_of :total_amount, :message => "请输入订单金额！"
 
@@ -50,18 +51,32 @@ class Order < ActiveRecord::Base
   end
 
   def position_and_contact
-    [self.contact_demand.try(:position_type_text), self.try(:candidate_name)].delete_if{|a| a.blank?}.join(", ")
+    [self.contact_demand.try(:position_type_text), self.try(:candidate_name)].delete_if { |a| a.blank? }.join(", ")
+  end
+
+  def show_other_orders
+    a = self.other_orders || []
+    a.collect(&:added_order_id).join(',')
   end
 
   def show_notes
-    adds = Order.where("add_to = #{self.id}").all || []
-    h, ary = '', []
-    adds.each do |a|
-      ary << "<a href='/res/show_order/#{a.id}'>#{a.order_no}</a>"
+    r = []
+    if self.status_id == 3 # 该订单是补充订单
+      ary = OtherOrder.where("added_order_id = #{self.id}").all || []
+      ary.each do |a|
+        r << "<a href='/res/show_order/#{a.order_id}'>#{a.order_id}</a>&nbsp;"
+      end
+      h = r.join(";") unless r.blank?
+      h = ("该订单是以下订单的补充：" + h) unless h.blank?
+    else # 该订单是普通订单
+      ary = self.other_orders || []
+      ary.each do |a|
+        r << "<a href='/res/show_order/#{a.added_order_id}'>#{a.added_order_id}</a>&nbsp;"
+      end
+      h = r.join(";") unless r.blank?
+      h = ("拥有补充订单如下：" + h) unless h.blank?
     end
-    h = ary.join(";").html_safe unless ary.blank?
-    h = ("拥有补充订单如下：" + h) unless h.blank?
-    tmp = [self.notes, h].delete_if{|a| a.blank?}
+    tmp = [self.notes, h].delete_if { |a| a.blank? }
     tmp.join("<br/>").html_safe
   end
 

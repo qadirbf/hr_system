@@ -82,23 +82,25 @@
               <th>备注</th>
             </tr>
             <% @attends.each do |attend| %>
-                <tr>
-                  <td><%= attend.this_date.strftime("%Y-%m-%d") %></td>
-                  <td><%= format_date(attend.start_time, :full) %></td>
-                  <td><%= format_date(attend.end_time, :full) %></td>
-                  <td>
-                    <% if attend.try(:late).to_i > 0 then %>迟到
-                    <% end %></td>
-                  <td>
-                    <% if attend.try(:early).to_i > 0 then %>早退
-                    <% end %>
-                  </td>
-                  <td>
-                    <% if attend.try(:absence).to_i > 0 then %>缺席
-                    <% end %>
-                  </td>
-                  <td><%= attend.reason %></td>
-                </tr>
+                <% unless [0, 6].include?(attend.this_date.wday) -%>
+                    <tr>
+                      <td><%= attend.this_date.strftime("%Y-%m-%d") %></td>
+                      <td><%= format_date(attend.start_time, :full) %></td>
+                      <td><%= format_date(attend.end_time, :full) %></td>
+                      <td>
+                        <% if attend.try(:late).to_i > 0 then %>迟到
+                        <% end %></td>
+                      <td>
+                        <% if attend.try(:early).to_i > 0 then %>早退
+                        <% end %>
+                      </td>
+                      <td>
+                        <% if attend.try(:absence).to_i > 0 then %>缺席
+                        <% end %>
+                      </td>
+                      <td><%= attend.reason %></td>
+                    </tr>
+                <% end -%>
             <% end %>
           </table>
       </span>

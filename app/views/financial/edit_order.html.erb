@@ -69,16 +69,22 @@
           <%= f.select :status_id, Order::STATUS, {:include_blank => true}, :onchange => "change_status()" %>
         </td>
       </tr>
-      <tr class="farther">
-        <th>原订单号</th>
+      <tr class="other_no">
+        <th>补充订单号</th>
         <td>
-          <%= f.text_field :add_to %>
+          <%= text_field_tag "other_no", @order.show_other_orders %>
         </td>
       </tr>
+      <!--<tr class="farther">-->
+        <!--<th>原订单号</th>-->
+        <!--<td>-->
+          <!--<%#= f.text_field :add_to %>-->
+        <!--</td>-->
+      <!--</tr>-->
       <tr>
         <th>此单是否计入总金额</th>
         <td>
-          <%= f.select :count_in, options_for_select([["是", 1], ["否", 0]]), :include_blank => true %>
+          <%= f.select :count_in, options_for_select([["是", 1], ["否", 0]], @order.try(:count_in)), :include_blank => true %>
         </td>
       </tr>
       <tr>
@@ -109,6 +115,7 @@
         init_share_order();
         if ($("#order_status_id").val() == "3") {
             $(".farther").show()
+            $(".other_no").hide()
         }
     });
 
@@ -170,6 +177,7 @@
             $('#order_project_id').val('')
             $('#order_total_amount').val('')
             $(".farther").show();
+            $(".other_no").hide()
             var i = $("#per li.show").length;
             if(i > 1){
                 for(var a= 2; a<=i; a++){
@@ -182,6 +190,7 @@
         }
         else{
             $(".farther").hide();
+            $(".other_no").show()
         }
     }
 </script>
