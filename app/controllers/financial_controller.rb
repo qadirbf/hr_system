@@ -43,7 +43,7 @@ class FinancialController < ApplicationController
     sql.delete_if { |s| s.blank? }
 
     @orders = Order.paginate :select => "orders.*", :conditions => [sql.join(" AND "), p_hash],
-                             :joins => joins, :order => "created_at desc", :per_page => 30, :page => params[:page]
+                             :joins => joins, :order => "credited_date desc", :per_page => 30, :page => params[:page]
 
     start_time = order_hash[:credited_date_gte].blank? ? "#{Time.now.year}-01-01 00:00:00" : order_hash[:credited_date_gte]
     end_time = order_hash[:credited_date_lte].blank? ? Time.now.strftime("%Y-%m-%d 23:59:59") : order_hash[:credited_date_lte]
@@ -113,7 +113,15 @@ class FinancialController < ApplicationController
       OtherOrder.delete_all("order_id = #{@order.id}")
       unless @order.status_id == 3
         params[:other_no].split(/,|;/).each do |o|
-          OtherOrder.create({:order_id => @order.id, :added_order_id => o})
+          if o.to_i > 0
+            order = Order.where("id = #{o}").first
+          else
+            order = Order.where("order_no = '#{o}'").first
+          end
+
+          unless order.blank?
+            OtherOrder.create({:order_id => @order.id, :added_order_id => order.id})
+          end
         end
       end
       redirect_to :action => "order_list", :format => "php"

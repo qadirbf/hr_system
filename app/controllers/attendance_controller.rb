@@ -221,7 +221,8 @@ class AttendanceController < ApplicationController
     if request.post?
       raise "请选择审批主管！" if params[:apply_to].blank?
       raise "该主管不能对您的申请进行审批，请选择其他主管！" unless @managers.map { |m| m.id }.include?(params[:apply_to].to_i)
-      p_hash = (@apply.is_draft? ? {:status => 1, :apply_to => params[:apply_to]} : {:status => 3, :apply_to => params[:apply_to]})
+      #p_hash = (@apply.is_draft? ? {:status => 1, :apply_to => params[:apply_to]} : {:status => 3, :apply_to => params[:apply_to]})
+      p_hash = {:status => 3, :apply_to => params[:apply_to]}
       @apply.update_attributes(p_hash.merge!({:back_reason => nil})) #对退回修改后再提交的申请，需要请退回原因清空
       raise @apply.errors.full_messages.join("<br>") if @apply.errors.size > 0
       @apply.send_message_for_apply
