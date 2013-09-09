@@ -147,7 +147,7 @@ class AttendanceController < ApplicationController
     end
 
     redirect_to :action => 'apply_leave_show', :id => apply.id
-    rescue => e
+  rescue => e
     if e.is_a?(RuntimeError) then
       render(:text => "<script>alert('#{e.to_s}');history.back();</script>")
     else
@@ -259,11 +259,21 @@ class AttendanceController < ApplicationController
     m_ids = @can_change_managers.map { |e| e.id }
     @can_manager_check = true if m_ids.include?(current_user.id)
 
-    #@checks = AttendCheck.find_by_sql("select a.* from attend_checks ac left join attendances a on a.id=ac.attendance_id where
-    #    a.this_date between to_date1('#{@apply.start_date.format_date(:date)} 00:00:00') and to_date1('#{@apply.end_date.format_date(:date)} 23:00:00')
-    #    and ac.active=0 and a.employee_id=#{@apply.employee_id}")
-    #@apply.manager_notes = "该员工曾将 #{@checks.map{|c| c.this_date.format_date(:date)}.join('、')}的考勤设置为“确认无误”" if @checks.size>0&&@can_manager_check
+    @checks = AttendCheck.find_by_sql("select a.* from attend_checks ac left join attendances a on a.id=ac.attendance_id where
+        a.this_date between '#{@apply.start_date.format_date(:date)} 00:00:00' and '#{@apply.end_date.format_date(:date)} 23:00:00'
+        and ac.active=0 and a.employee_id=#{@apply.employee_id}")
+    @apply.manager_notes = "该员工曾将 #{@checks.map { |c| c.this_date.format_date(:date) }.join('、')}的考勤设置为“确认无误”" if @checks.size > 0 && @can_manager_check
 
+  end
+
+  def skip_for_urgent
+    if session["#{params[:skip_type]}_info".to_sym] and session["#{params[:skip_type]}_info".to_sym][:notice_count].to_i <= 3
+      session["#{params[:skip_type]}_info".to_sym] = nil
+      flash[:notice] = "操作成功！"
+      redirect_to :controller=>"main"
+    else
+      render :text=>"<script>alert('已经提醒过3次，必须对考勤做出处理！');history.back()</script>",:layout=>false
+    end
   end
 
   def cancel_apply
