@@ -63,6 +63,7 @@ class ApplicationController < ActionController::Base
     return if %w{attendance main}.include?(params[:controller])
     #return if RAILS_ENV=='development'
     if session[:attend_info]
+      return if current_user.is_admin?
       attend = Attendance.find(session[:attend_info][:attendance_id])
       notice = "<img src='/images/notice_pic.gif'> <span style='font-size:14px;'>"
       notice << "#{attend.this_date}日的考勤可能与实际不符，请核实后进行一下操作："
