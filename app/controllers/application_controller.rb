@@ -96,7 +96,7 @@ class ApplicationController < ActionController::Base
     #=========检查是否有需要调整的考勤==========
     attend = Attendance.first(:conditions => ["not exists (select id from apply_leaves where status in (1,2,3) and
       start_date<=attendances.this_date and end_date>=attendances.this_date and employee_id=:employee_id)
-      and not exists (select id from attend_checks where attendance_id=attendances.id and active=0)
+      and not exists (select id from attend_checks where attendance_id=attendances.id and active = 0)
       and (absence_reason=1 or late=2 or early=2 )
       and employee_id=:employee_id and this_date between :start_date and :end_date", p_hash])
     if attend

@@ -54,55 +54,63 @@ class Attendance < ActiveRecord::Base
     sql = "active = 1 "
     if emp_id
       sql += (emp_id.is_a?(Array) ? ' and id in (?)' : ' and id = ?')
-      employees = Employee.find(:all, :conditions => [sql, emp_id], :order => "username")
+      employees = Employee.where([sql, emp_id]).order("username").all
     else
-      employees = Employee.find(:all, :conditions => sql, :order => "username")
+      employees = Employee.where(sql).order("username").first
     end
 
     if (![0, 6].include?(Time.parse(this_date).wday)) and flag #如果为周末，默认为不处理，若flag为true则照常处理
       employees.each do |employee|
-        unless Attendance.exists?("employee_id = #{employee.id} and this_date = '#{this_date}'")
-          record_in = AttendRecord.get_clock_in_record(employee.id, this_date)
-          record_out = AttendRecord.get_clock_out_record(employee.id, this_date)
-          attend = Attendance.new({:employee_id => employee.id, :this_date => this_date, :real_start_time => record_in.try(:record_time),
-                                   :real_end_time => record_out.try(:record_time), :edit_by => user_name||'system', :edit_time => Time.now, :early => 0, :late => 0, :absence_reason => 0})
-          attend.memo = "已离职" unless employee.leave_date.blank?
-          this_start_time = Time.parse("#{this_date} #{real_start_time}")
-          this_end_time = Time.parse("#{this_date} #{real_end_time}")
+        attend = Attendance.find_by_sql("SELECT `attendances`.* FROM `attendances` WHERE (employee_id = #{employee.id} and this_date = '#{this_date}')")
+        record_in = AttendRecord.get_clock_in_record(employee.id, this_date)
+        record_out = AttendRecord.get_clock_out_record(employee.id, this_date)
+        if attend.blank?
+          attend = Attendance.new({:employee_id => employee.id, :this_date => this_date, :real_start_time => real_start_time,
+                                   :real_end_time => real_end_time, :edit_by => user_name||'system', :edit_time => Time.now, :early => 0, :late => 0, :absence_reason => 0})
+        end
+        attend.memo = "已离职" unless employee.leave_date.blank?
+        this_start_time = Time.parse("#{this_date} #{real_start_time}")
+        this_end_time = Time.parse("#{this_date} #{real_end_time}")
 
-          unless record_in.blank?
-            attend.start_time = record_in.record_time.to_s[11, 8]
-            attend.start_ip = record_in.ip
-            if (record_in.record_time > this_start_time)
-              if record_in.record_time > this_start_time + 10.minutes
-                attend.late = 2
-              else
-                attend.late = 1       #普通迟到
-              end
+        unless record_in.blank?
+          attend.start_time = record_in.record_time.to_s[11, 8]
+          attend.start_ip = record_in.ip
+          if (record_in.record_time > this_start_time)
+            if record_in.record_time > this_start_time + 10.minutes
+              attend.late = 2
+            else
+              attend.late = 1 #普通迟到
             end
           end
-
-          unless record_out.blank?
-            attend.end_time = record_out.record_time.to_s[11, 8]
-            attend.end_ip = record_out.ip
-            if (record_out.record_time < this_end_time)
-              if record_out.record_time < this_end_time - 15.minutes
-                attend.early = 2
-              else
-                attend.early = 1
-              end
-            end
-          end
-
-          if record_in.blank? || record_out.blank?
-            attend.absence = 1
-            attend.absence_reason = 1
-          end
-
-          attend.save
         end
 
+        unless record_out.blank?
+          attend.end_time = record_out.record_time.to_s[11, 8]
+          attend.end_ip = record_out.ip
+          if (record_out.record_time < this_end_time)
+            if record_out.record_time < this_end_time - 15.minutes
+              attend.early = 2
+            else
+              attend.early = 1
+            end
+          end
+        end
+
+        if record_in.blank? || record_out.blank?
+          attend.absence = 1
+          attend.absence_reason = 1
+        end
+        attend.update_absence_reason
+        attend.save
+
       end
+    end
+  end
+
+  def update_absence_reason
+    a = ApplyLeave.where("employee_id = #{self.employee_id} and status = 4 and start_date > '#{self.this_date} 00:00:00' and end_date < '#{self.this_date} 23:59:59'").first
+    if a
+      self.absence_reason = a.absence_reason
     end
   end
 
@@ -136,15 +144,15 @@ class Attendance < ActiveRecord::Base
   end
 
   def self.rebuild_employee_attendance(emp_id, this_date)
-    this_date_str = format_date(this_date.beginning_of_day, :full)
-    employee = Employee.first(:conditions=>["id = ?", emp_id])
-    attend = self.first(:conditions=>["this_date = ? and employee_id = ?", this_date_str, emp_id])
+    this_date_str = this_date.beginning_of_day.format_date(:full)
+    employee = Employee.first(:conditions => ["id = ?", emp_id])
+    attend = self.first(:conditions => ["this_date = ? and employee_id = ?", this_date_str, emp_id])
     attend.destroy if attend
-    setted_record = Attendance.where("employee_id = -1 and this_date = '#{this_date_str}'")
+    setted_record = Attendance.where("employee_id = -1 and this_date = '#{this_date_str}'").first
     if setted_record
-      create_employee_attendance(nil, this_date.format_date(:date), setted_record.real_start_time, setted_record.real_end_time, true, Hr.user.username, emp_id)
+      create_employee_attendance(this_date.format_date(:date), setted_record.real_start_time, setted_record.real_end_time, true, Hr.user.username, emp_id)
     else
-      create_employee_attendance(nil, this_date.format_date(:date), S_TIME, E_TIME, true, Hr.user.username, emp_id) unless [0,6].include?(this_date.wday)
+      create_employee_attendance(this_date.format_date(:date), S_TIME, E_TIME, true, Hr.user.username, emp_id) unless [0, 6].include?(this_date.wday)
     end
   end
 

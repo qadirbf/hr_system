@@ -192,6 +192,9 @@ class AttendanceController < ApplicationController
       params[:apply][:employee_id]||= current_user.id
       @apply = ApplyLeave.new(params[:apply].merge({:status => 0, :created_by => current_user.id, :updated_by => current_user.id}))
     end
+    if @apply.not_record_attendance?
+      @apply.end_date = @apply.start_date
+    end
     @apply.upload_file(params[:attachment]) unless params[:attachment].blank?
     if @apply.save
       if @apply.absence_reason==4

@@ -29,6 +29,8 @@ class ApplyLeave < ActiveRecord::Base
   include HrLib::Functions
   include HrLib::BaseAttendance
 
+  before_update :rebuild_attendance
+
   def submit_by_others?
     self.employee_id != self.created_by
   end
@@ -84,6 +86,28 @@ class ApplyLeave < ActiveRecord::Base
 
   def approval_managers
     [Employee.where("id=1").first]
+  end
+
+  def rebuild_attendance
+    if self.status_changed? && self.was_approved?
+      if self.absence_reason == 13   #关于加班的
+        #EmployeeLeave.add_overtime(self.employee_id, self.start_date, self.end_date)
+      elsif self.not_record_attendance?
+        #AttendLeave.set_leave(self.employee_id, self.absence_reason, self.start_date.format_date(:min), self.end_date.format_date(:min), self.id)
+        Attendance.rebuild_employee_attendance(self.employee_id, self.start_date) if self.start_date < Time.now.beginning_of_day
+      else
+        #AttendLeave.set_leave(self.employee_id, self.absence_reason, self.start_date.format_date(:min),
+        #                      self.end_date.format_date(:min), self.id, self.feed_type)
+        if self.end_date < Time.now.beginning_of_day
+          Attendance.rebuild_attendances(self.employee_id, self.start_date, self.end_date)
+        elsif self.start_date >= Time.now.beginning_of_day
+        else
+          Attendance.rebuild_attendances(self.employee_id, self.start_date, (Time.now-1.day).end_of_day)
+        end
+      end
+      #self.send_msg_for_protect_leads if self.leads_status==1
+      self.approved_at = Time.now if self.approved_at.blank? #记录主管第一次审批的时间
+    end
   end
 
   def send_message_for_apply
