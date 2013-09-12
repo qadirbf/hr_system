@@ -23,18 +23,22 @@
       <% end %>
       <tr>
         <th width="15%" nowrap>申请原因<span style="color:red;font-size:8pt">*</span></th>
-        <td><%= select :apply, :absence_reason, @absence_reasons, {} %></td>
+        <td><%= select :apply, :absence_reason, @absence_reasons, {}, :onchange => "change_leave(this.value)" %></td>
       </tr>
       <tr>
         <th>
           <span id="sd_label"><%= @apply.not_record_attendance? ? "日期" : "开始时间" %></span><span style="color:red;font-size:8pt">*</span>
         </th>
-        <td><%= tag "input", {:type => "text", :name => "apply[start_date]", :id => "apply_start_date", :class => "dtimepicker", :maxlength => 16,
+        <td>
+          <%= text_field :apply, :start_date ,:class=>"dtimepicker", :maxlength => 16,:value => format_date(@apply.start_date, (@apply.not_record_attendance?||@apply.need_feed? ? :date : :min)).gsub(/\s+/, " ") %>
+          <%#= tag "input", {:type => "text", :name => "apply[start_date]", :id => "apply_start_date", :class => "dtimepicker", :maxlength => 16,
                               :value => format_date(@apply.start_date, (@apply.not_record_attendance?||@apply.need_feed? ? :date : :min)).gsub(/\s+/, " ")} %></td>
       </tr>
       <tr id="ed_row" style="display:<%= @apply.not_record_attendance? ? 'none' : '' %>">
         <th>结束时间<span style="color:red;font-size:8pt">*</span></th>
-        <td><%= tag "input", {:type => "text", :name => "apply[end_date]", :id => "apply_end_date", :class => "dtimepicker", :maxlength => 16,
+        <td>
+          <%= text_field :apply, :end_date, :class=>"dtimepicker", :maxlength => 16,:value => format_date(@apply.end_date, (@apply.not_record_attendance?||@apply.need_feed? ? :date : :min)).gsub(/\s+/, " ") %>
+          <%#= tag "input", {:type => "text", :name => "apply[end_date]", :id => "apply_end_date", :class => "dtimepicker", :maxlength => 16,
                               :value => format_date(@apply.end_date, (@apply.not_record_attendance?||@apply.need_feed? ? :date : :min)).gsub(/\s+/, " ")} %></td>
       </tr>
       <tr id="feed" style="display:<%= @apply.need_feed? ? '' : 'none' %>">
@@ -45,7 +49,7 @@
       <tr id="deponent" style="display:<%= @apply.not_record_attendance? ? '' : 'none' %>">
         <th>证明人</th>
         <td><%= text_area :apply, :deponent_text, :cols => 30, :rows => 4 %>
-          <div style="color:gray;margin:3px;">输入用户名，并用逗号（,）隔开；例如：w.deng,shaowen.peng</div>
+          <div style="color:gray;margin:3px;">输入用户名，并用逗号（,）隔开；例如：admin,willa.xiao</div>
         </td>
       </tr>
       <tr>
@@ -80,22 +84,6 @@
             <div id="f_1">
               <table class="c_table" cellpadding="5" cellspacing="0">
                 <tr>
-                  <td width="20%" nowrap>设计院名称</td>
-                  <td><%= text_field :out, :org_name %></td>
-                </tr>
-                <tr>
-                  <td>地点或联系方式</td>
-                  <td><%= text_area :out, :address, :rows => 5, :cols => 30 %></td>
-                </tr>
-                <tr>
-                  <td>预计时间</td>
-                  <td><%= text_field :out, :expect_time %></td>
-                </tr>
-              </table>
-            </div>
-            <div id="f_2">
-              <table class="c_table" cellpadding="5" cellspacing="0">
-                <tr>
                   <td width="20%" nowrap>供应商名称</td>
                   <td><%= text_field :out, :org_name %></td>
                 </tr>
@@ -109,7 +97,7 @@
                 </tr>
               </table>
             </div>
-            <div id="f_3">
+            <div id="f_2">
               <table class="c_table" cellpadding="5" cellspacing="0">
                 <tr>
                   <td>事由</td>
@@ -129,7 +117,7 @@
                 </tr>
               </table>
             </div>
-            <div id="f_4"></div>
+            <div id="f_3"></div>
           </div>
           <div id="normal_notes"> <%= text_area_tag :leave_notes, @apply.leave_notes, :rows => 5, :cols => 30, :id => 'f_100' %></div>
         </td>
@@ -163,6 +151,53 @@
 因不可抗力未打卡：指由于外界原因导致申请人没有打卡；比如：网络故障，公司搬迁等。
 </pre>
 <script type="text/javascript">
+
+    function change_leave(reason) {
+        var c_obj = {}
+        if (reason == '11') {
+            $('#out').show()
+            $('#out_out_type').attr("disabled", false)
+            $('#normal_notes').hide()
+        } else {
+            $('#out').hide()
+            $('#out_out_type').attr("disabled", true)
+            $('#normal_notes').show()
+        }
+        if ($.inArray(reason, ['12', '16', '14', '17'])>-1) {
+            $('#sd_label').html('日期')
+            $('#ed_row').hide()
+            $('#deponent').show()
+            $("#apply_start_date").attr("class", 'datepicker')
+        }
+        else {
+            $('#sd_label').html('开始时间')
+            $('#ed_row').show()
+            $('#deponent').hide()
+            $("#apply_start_date").attr("class", 'dtimepicker')
+
+            //哺乳假只选择日期，不选择具体时间
+            if (reason == 15) {
+                $('#feed').show()
+                c_obj = {icon:'/images/calendar.png', use24hrs:true}
+            } else {
+                $('#feed').style.display = 'none'
+                c_obj = {icon:'/images/calendar.png', timePicker:true, timePickerAdjacent:true, use24hrs:true}
+            }
+
+        }
+        refresh_date_picker()
+    }
+
+    function refresh_date_picker(){
+        var args = {
+            hourGrid:4,minuteGrid:10,
+            dateFormat:'yy-mm-dd',changeYear:true,changeMonth:true,showMonthAfterYear:true,
+            dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"],
+            monthNamesShort:['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月']
+        }
+        $('.dtimepicker').datetimepicker(args)
+        $('.datepicker').datepicker(args)
+    }
 
     function change_box(type) {
         hide_all_box()

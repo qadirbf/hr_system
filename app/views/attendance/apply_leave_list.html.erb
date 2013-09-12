@@ -34,7 +34,7 @@
   <% @applies.each do |apply| %>
       <tr>
         <td><%= link_to [apply.username, "(#{apply.name_cn})"].join, {:action => "apply_leave_show", :id => apply.id}, :popup => true %>
-          <%= image_tag "problem.gif", :title => "该申请由#{apply.created_user.username}替#{apply.employee.username}提交" if apply.submit_by_others? %></td>
+          <%= image_tag "/images/problem.gif", :title => "该申请由#{apply.created_user.username}替#{apply.employee.username}提交" if apply.submit_by_others? %></td>
         <td><%= apply.absence_label %></td>
         <td><%= apply.start_date_label %></td>
         <td><%= apply.not_record_attendance? ? '' : format_date(apply.end_date, :min) %></td>
