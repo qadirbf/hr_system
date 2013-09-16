@@ -103,7 +103,7 @@ class EmployeesController < ApplicationController
         not_need_record = (!record_in.blank? || user.is_admin?)
         record_url = url_for(:controller => "attendance", :action => "attend_notice", :rtype => "notice")
 
-        #check_attendance
+        check_attendance
 
         redirect_to(not_need_record ? url_for(:controller => "main") : record_url)
         return false
