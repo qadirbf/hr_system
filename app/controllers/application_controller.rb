@@ -60,14 +60,14 @@ class ApplicationController < ActionController::Base
   end
 
   def need_check_attendance
-    return if %w{attendance main}.include?(params[:controller])
+    return if %w{attendance main msg}.include?(params[:controller])
     #return if RAILS_ENV=='development'
     if session[:attend_info]
       return if current_user.is_admin?
       attend = Attendance.find(session[:attend_info][:attendance_id])
       notice = "<img src='/images/notice_pic.gif'> <span style='font-size:14px;'>"
       notice << "#{attend.this_date}日的考勤可能与实际不符，请核实后进行一下操作："
-      notice << "<p><a href='/attendance/confirm_absence/#{attend.id}' style='margin:5px;color:blue;'>确认无误</a>(将发消息通知总监)</p>" unless attend.absence_reason==1
+      notice << "<p><a href='/attendance/confirm_absence/#{attend.id}' style='margin:5px;color:blue;'>确认无误</a>(将发消息通知管理员)</p>" unless attend.absence_reason==1
       notice << "<p><a href='/attendance/apply_leave_edit' style='margin:5px;color:blue;'>考勤有误，提交申请</a></p>"
       if session[:attend_info][:notice_count]<=3
         notice << "<p><a href='/attendance/skip_for_urgent?skip_type=attend' style='margin:5px;color:blue;'>下次提醒，继续使用系统</a></p>"

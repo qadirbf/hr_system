@@ -269,6 +269,22 @@ class AttendanceController < ApplicationController
 
   end
 
+  def confirm_absence
+    check = AttendCheck.find_by_attendance_id(params[:id])
+    check.update_attributes(:active => 0)
+    session[:attend_info] = nil
+
+    director = ApplyLeave.get_dep_director(current_user.id)
+    date = check.attendance.this_date.format_date(:date)
+    url = "/attendance/show_record?record_time=#{date}"
+    subject = %{#{current_user.username}将其#{date}的考勤设置为确实是旷工！}
+    body = %{#{subject}<br><a href="#{url}">点击查看考勤</a>}
+    EmpMsg.send_msg(current_user.id, director.id, subject, body, url)
+
+    flash[:notice] = "操作成功！"
+    redirect_to :controller => "main"
+  end
+
   def skip_for_urgent
     if session["#{params[:skip_type]}_info".to_sym] and session["#{params[:skip_type]}_info".to_sym][:notice_count].to_i <= 3
       session["#{params[:skip_type]}_info".to_sym] = nil

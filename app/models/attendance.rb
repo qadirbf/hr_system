@@ -101,6 +101,9 @@ class Attendance < ActiveRecord::Base
           attend.absence_reason = 1
         end
         attend.update_absence_reason
+        if attend.attend_checks
+          attend.attend_checks.each{|c| c.update_attrubutes({:active => 0})}
+        end
         attend.save
 
       end

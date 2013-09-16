@@ -88,6 +88,13 @@ class ApplyLeave < ActiveRecord::Base
     [Employee.where("id=1").first]
   end
 
+  def self.get_dep_director(emp_id)
+    dep_directors = {1=>"admin"}
+    dep_directors.default = 'admin'
+    emp = Employee.find(emp_id)
+    return Employee.find_by_username(dep_directors[1])
+  end
+
   def rebuild_attendance
     if self.status_changed? && self.was_approved?
       if self.absence_reason == 13   #关于加班的
