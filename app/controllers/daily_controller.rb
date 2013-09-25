@@ -142,7 +142,16 @@ module DailyController
 
   def interview_list
     @title = "面试安排"
-    @dailies = Daily.where("app_interview_date is not null").all
+    @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
+    _sql, hash = Daily.get_sql_by_hash(params)
+    sql = [_sql]
+    sql << "app_interview_date is not null and app_interview_date != ''"
+    if params[:created_by_eq].blank?
+      sql << "created_by = :created_by"
+      hash.merge!({:created_by => current_user.id})
+    end
+    sql.delete_if { |a| a.blank? }
+    @dailies = Daily.paginate :conditions => [sql.join(" and "), hash], :order => "day desc, created_at desc", :per_page => 20, :page => params[:page]
     render :template => "/daily/interview_list"
   end
 

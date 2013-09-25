@@ -47,8 +47,10 @@
     </tr>
     <tr>
       <th>出生日期</th>
-      <td colspan="3"><%= f.date_select :birthday, {:start_year => 1900, :use_month_numbers => true,
+      <td colspan=""><%= f.date_select :birthday, {:start_year => 1900, :use_month_numbers => true,
                                                     :include_blank => true}, :style => "width:100px;" %></td>
+      <th>QQ</th>
+      <td><%= f.text_field :qq %></td>
       <th>开始工作时间</th>
       <td><%= f.date_select :start_work_date, {:start_year => 1900, :discard_day => true,
                                                :use_month_numbers => true, :include_blank => true}, :style => "width:100px;" %></td>

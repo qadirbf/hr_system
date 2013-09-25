@@ -1,4 +1,14 @@
 <h1 class="title"><%= @title %></h1>
+<%= include_datepicker %>
+<%= form_tag "/#{params[:db_type]}/interview_list" do %>
+    <table>
+      <tr>
+        <td>添加人：<%= select_tag :created_by_eq, options_for_select([['所有', '']]+@emps, (params[:created_by_eq] rescue '')) %></td>
+        <td>&nbsp;面试日期：<%= text_field_tag :app_interview_date_eq, params[:app_interview_date_eq], :class => 'datepicker' %></td>
+        <td>&nbsp;&nbsp;<%= submit_tag "确定", :class => "btn btn-primary" -%></td>
+      </tr>
+    </table>
+<% end %>
 <table class="list_tb">
   <tr class="title">
     <td>项目ID</td>
@@ -7,19 +17,24 @@
     <td>职位</td>
     <td>电话</td>
     <td>面试日期</td>
+    <td>备注</td>
+    <td>最后修改</td>
   </tr>
   <% @dailies.each do |d| %>
       <tr>
         <td><%= open_demand_page d.demand_id, d.demand_id %></td>
         <td>
-          <%= d.show_firm_name -%>
+          <%= link_to d.show_firm_name, {:controller => "res", :action => "firm_show", :id => d.obj_id}, :target => "_blank" -%>
+          <%=  -%>
         </td>
         <td><%= d.show_contact_name %></td>
         <td><%= d.position_cn %></td>
         <td><%= d.phone %></td>
         <td>
-          <%= d.app_interview_date -%>
+          <%= d.app_interview_date -%>&nbsp;(<%= show_day_of_week(d.app_interview_date) -%>)
         </td>
+        <td><%= d.notes -%></td>
+        <td><%= d.edit_info %></td>
       </tr>
   <% end %>
 </table>

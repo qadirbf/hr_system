@@ -43,6 +43,7 @@
             年龄： <span class="blue_span"><%= contact.age_label %></span> <br/>
             开始工作时间： <span class="blue_span"><%= format_date contact.start_work_date, :mon %></span> <br/>
             工作年数： <span class="blue_span"><%= contact.work_year_label %></span> <br/>
+            QQ： <span class="blue_span"><%= contact.qq %></span> <br/>
             简历：
             <% unless contact.contact_resumes.blank? -%>
                 <% contact.contact_resumes.each do |resume| -%>

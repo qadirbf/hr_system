@@ -56,12 +56,12 @@ class Attendance < ActiveRecord::Base
       sql += (emp_id.is_a?(Array) ? ' and id in (?)' : ' and id = ?')
       employees = Employee.where([sql, emp_id]).order("username").all
     else
-      employees = Employee.where(sql).order("username").first
+      employees = Employee.where(sql).order("username").all
     end
 
     if (![0, 6].include?(Time.parse(this_date).wday)) and flag #如果为周末，默认为不处理，若flag为true则照常处理
       employees.each do |employee|
-        attend = Attendance.find_by_sql("SELECT `attendances`.* FROM `attendances` WHERE (employee_id = #{employee.id} and this_date = '#{this_date}')")
+        attend = Attendance.find_by_sql("SELECT `attendances`.* FROM `attendances` WHERE (employee_id = #{employee.id} and this_date = '#{this_date}')").first
         record_in = AttendRecord.get_clock_in_record(employee.id, this_date)
         record_out = AttendRecord.get_clock_out_record(employee.id, this_date)
         if attend.blank?
@@ -96,13 +96,15 @@ class Attendance < ActiveRecord::Base
           end
         end
 
+        puts attend.absence
+        puts '============'
         if record_in.blank? || record_out.blank?
           attend.absence = 1
           attend.absence_reason = 1
         end
         attend.update_absence_reason
         if attend.attend_checks
-          attend.attend_checks.each{|c| c.update_attrubutes({:active => 0})}
+          attend.attend_checks.each{|c| c.update_attributes({:active => 0})}
         end
         attend.save
 
