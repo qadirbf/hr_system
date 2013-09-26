@@ -60,6 +60,7 @@
         <th>公司名</th>
         <th>联系人/候选人</th>
         <th>电话</th>
+        <th>QQ</th>
         <th>职位</th>
         <th>日期</th>
         <th>已完成？</th>
@@ -69,18 +70,19 @@
 
       <tr>
         <td>
-          <%= text_field_tag "daily[demand_id]", @daily.try(:demand_id), :style => "width:80px;" -%>
+          <%= text_field_tag "daily[demand_id]", @daily.try(:demand_id), :class => "name_text" -%>
         </td>
         <td>
-          <%= text_field_tag "daily[firm_name]", @daily.try(:show_firm_name), :style => "width:180px;" %>
+          <%= text_field_tag "daily[firm_name]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
           <%= hidden_field_tag "daily[obj_id]", @daily.try(:obj_id) %>
         </td>
         <td>
-          <%= text_field_tag "daily[contact_name]", @daily.try(:show_contact_name), :style => "width:100px;" %>
+          <%= text_field_tag "daily[contact_name]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
           <%= hidden_field_tag "daily[contact_id]", @daily.try(:contact_id) %>
         </td>
-        <td><%= text_field_tag "daily[phone]", @daily.try(:phone), :style => "width:100px;" %></td>
-        <td><%= text_field_tag "daily[position_cn]", @daily.try(:position_cn), :style => "width:100px;" %></td>
+        <td><%= text_field_tag "daily[phone]", @daily.try(:phone), :class => "phone_text" %></td>
+        <td><%= text_field_tag "daily[qq]", @daily.try(:qq), :class => "qq" %></td>
+        <td><%= text_field_tag "daily[position_cn]", @daily.try(:position_cn), :class => "position_text" %></td>
         <td><%= text_field_tag "daily[day]", @daily.try(:day), :class => "datepicker" %></td>
         <td><%= check_box_tag "daily[completed_flag]", 1, (@daily.try(:completed_flag).to_i > 0 ? true : false) %> 完成任务</td>
         <td>
@@ -96,3 +98,17 @@
       </tr>
     </table>
 <% end %>
+<style>
+    .auto_firm_name {
+        width: 180px;
+    }
+
+    .phone_text, .auto_contact_name, .position_text, .qq {
+        width: 90px;
+    }
+
+    .name_text {
+        width: 50px;
+    }
+
+</style>

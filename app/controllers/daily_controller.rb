@@ -39,7 +39,8 @@ module DailyController
       (1..10).each do |i|
         if !daily["phone_#{i}"].blank? && !daily["firm_name_#{i}"].blank? && !daily["contact_name_#{i}"].blank? && !daily["day_#{i}"].blank?
           ary << [daily["firm_name_#{i}"], daily["obj_id_#{i}"], daily["contact_name_#{i}"], daily["contact_id_#{i}"],
-                  daily["phone_#{i}"], daily["day_#{i}"], daily["notes_#{i}"], daily["position_cn_#{i}"], daily["completed_flag_#{i}"], daily["demand_id_#{i}"], daily["app_interview_date_#{i}"]]
+                  daily["phone_#{i}"], daily["day_#{i}"], daily["notes_#{i}"], daily["position_cn_#{i}"], daily["completed_flag_#{i}"],
+                  daily["demand_id_#{i}"], daily["app_interview_date_#{i}"], daily["qq_#{i}"]]
         end
       end
 
@@ -55,9 +56,14 @@ module DailyController
         end
         # 联系人是否在系统内，否则添加到系统
         if d[3].blank?
-          contact = Contact.new({:firm_id => d[1], :mobile => d[4], :first_name => "", :last_name => d[2], :position_cn => d[7]})
+          contact = Contact.new({:firm_id => d[1], :mobile => d[4], :first_name => "", :last_name => d[2], :position_cn => d[7], :qq => d[11]})
           contact.save(:validate => false)
           d[3] = contact.id
+        else
+          contact = Contact.where("id = #{d[3]} and firm_id = #{d[1]}").first
+          unless contact.blank?
+            contact.update_attributes({:firm_id => d[1], :mobile => d[4], :first_name => "", :last_name => d[2], :position_cn => d[7], :qq => d[11]})
+          end
         end
         flag = (d[5] > Time.now.strftime("%Y-%m-%d") ? 0 : d[8].to_i) # 标记是否已完成的日报
         if flag > 0 #已完成的日报，同步一条call
@@ -71,7 +77,7 @@ module DailyController
 
         Daily.create({:firm_name => d[0], :obj_id => d[1], :contact_name => d[2], :contact_id => d[3], :phone => d[4],
                       :day => d[5], :notes => d[6], :position_cn => d[7], :completed_flag => flag, :created_by => current_user.id,
-                      :updated_by => current_user.id, :recall_id => r.try(:id), :demand_id => d[9], :app_interview_date => d[10]})
+                      :updated_by => current_user.id, :recall_id => r.try(:id), :demand_id => d[9], :app_interview_date => d[10], :qq => d[11]})
       end
       redirect_to :action => :my_daily
     end

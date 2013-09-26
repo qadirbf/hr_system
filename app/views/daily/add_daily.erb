@@ -63,6 +63,7 @@
     <th>公司名</th>
     <th>联系人/候选人</th>
     <th>电话</th>
+    <th>QQ</th>
     <th>职位</th>
     <th>日期</th>
     <th>已完成？</th>
@@ -81,6 +82,7 @@
       <%= hidden_field_tag "daily[contact_id_1]" %>
     </td>
     <td><%= text_field_tag "daily[phone_1]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[qq_1]", "", :class => "qq" %></td>
     <td><%= text_field_tag "daily[position_cn_1]", "", :class => "position_text" %></td>
     <td><%= text_field_tag "daily[day_1]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_1]", 1, false %> 完成任务</td>
@@ -98,6 +100,7 @@
       <%= hidden_field_tag "daily[contact_id_2]" %>
     </td>
     <td><%= text_field_tag "daily[phone_2]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[qq_2]", "", :class => "qq" %></td>
     <td><%= text_field_tag "daily[position_cn_2]", "", :class => "position_text" %></td>
     <td><%= text_field_tag "daily[day_2]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_2]", 1, false %> 完成任务</td>
@@ -115,6 +118,7 @@
       <%= hidden_field_tag "daily[contact_id_3]" %>
     </td>
     <td><%= text_field_tag "daily[phone_3]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[qq_3]", "", :class => "qq" %></td>
     <td><%= text_field_tag "daily[position_cn_3]", "", :class => "position_text" %></td>
     <td><%= text_field_tag "daily[day_3]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_3]", 1, false %> 完成任务</td>
@@ -132,6 +136,7 @@
       <%= hidden_field_tag "daily[contact_id_4]" %>
     </td>
     <td><%= text_field_tag "daily[phone_4]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[qq_4]", "", :class => "qq" %></td>
     <td><%= text_field_tag "daily[position_cn_4]", "", :class => "position_text" %></td>
     <td><%= text_field_tag "daily[day_4]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_4]", 1, false %> 完成任务</td>
@@ -149,6 +154,7 @@
       <%= hidden_field_tag "daily[contact_id_5]" %>
     </td>
     <td><%= text_field_tag "daily[phone_5]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[qq_5]", "", :class => "qq" %></td>
     <td><%= text_field_tag "daily[position_cn_5]", "", :class => "position_text" %></td>
     <td><%= text_field_tag "daily[day_5]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_5]", 1, false %> 完成任务</td>
@@ -166,6 +172,7 @@
       <%= hidden_field_tag "daily[contact_id_6]" %>
     </td>
     <td><%= text_field_tag "daily[phone_6]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[qq_6]", "", :class => "qq" %></td>
     <td><%= text_field_tag "daily[position_cn_6]", "", :class => "position_text" %></td>
     <td><%= text_field_tag "daily[day_6]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_6]", 1, false %> 完成任务</td>
@@ -183,6 +190,7 @@
       <%= hidden_field_tag "daily[contact_id_7]" %>
     </td>
     <td><%= text_field_tag "daily[phone_7]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[qq_7]", "", :class => "qq" %></td>
     <td><%= text_field_tag "daily[position_cn_7]", "", :class => "position_text" %></td>
     <td><%= text_field_tag "daily[day_7]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_7]", 1, false %> 完成任务</td>
@@ -200,6 +208,7 @@
       <%= hidden_field_tag "daily[contact_id_8]" %>
     </td>
     <td><%= text_field_tag "daily[phone_8]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[qq_8]", "", :class => "qq" %></td>
     <td><%= text_field_tag "daily[position_cn_8]", "", :class => "position_text" %></td>
     <td><%= text_field_tag "daily[day_8]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_8]", 1, false %> 完成任务</td>
@@ -217,6 +226,7 @@
       <%= hidden_field_tag "daily[contact_id_9]" %>
     </td>
     <td><%= text_field_tag "daily[phone_9]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[qq_9]", "", :class => "qq" %></td>
     <td><%= text_field_tag "daily[position_cn_9]", "", :class => "position_text" %></td>
     <td><%= text_field_tag "daily[day_9]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_9]", 1, false %> 完成任务</td>
@@ -234,6 +244,7 @@
       <%= hidden_field_tag "daily[contact_id_10]" %>
     </td>
     <td><%= text_field_tag "daily[phone_10]", "", :class => "phone_text" %></td>
+    <td><%= text_field_tag "daily[qq_10]", "", :class => "qq" %></td>
     <td><%= text_field_tag "daily[position_cn_10]", "", :class => "position_text" %></td>
     <td><%= text_field_tag "daily[day_10]", '', :class => "datepicker" %></td>
     <td><%= check_box_tag "daily[completed_flag_10]", 1, false %> 完成任务</td>
@@ -253,7 +264,7 @@
 <script>
     function before_submit() {
         var flag = true
-        $("tr.show_tr input[type!='hidden'][class!='datepicker hasDatepicker']").each(function (i, ele) {
+        $("tr.show_tr input[type!='hidden'][class!='datepicker hasDatepicker'][class!='qq']").each(function (i, ele) {
             if ($(ele).val() == "" || $(ele).val() == undefined) {
                 flag = false
             }
@@ -284,11 +295,12 @@
         width: 180px;
     }
 
-    .phone_text, .auto_contact_name, .position_text {
-        width: 100px;
+    .phone_text, .auto_contact_name, .position_text, .qq {
+        width: 90px;
     }
 
     .name_text {
-        width: 80px;
+        width: 50px;
     }
+
 </style>

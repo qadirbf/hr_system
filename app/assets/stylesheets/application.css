@@ -47,7 +47,7 @@ h1.title{border-bottom: 1px solid #8CACBB;margin-bottom: 10px;font-size: 15px;pa
 #q_link_box a:hover{color:#F2DEDE}
 #user_info{float:right;margin-right:25px;}
 .blue_tb{width: 100%;border-spacing:3px;border-collapse: separate;}
-.blue_tb th,.blue_tb td{font-weight: normal;text-align: left;padding:0px 3px;min-width: 100px;}
+.blue_tb th,.blue_tb td{font-weight: normal;text-align: left;padding:0px 3px;}
 .blue_tb th{background-color: #C5E2E9;white-space: nowrap;}
 .blue_tb .splitor{background-color: #FCF8E3;}
 .common_tb th,.common_tb td{vertical-align: top;}
