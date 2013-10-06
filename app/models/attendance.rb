@@ -39,7 +39,7 @@ class Attendance < ActiveRecord::Base
   end
 
   def self.add_attendance(this_date, real_start_time, real_end_time, flag, user_name=nil)
-    setted_records = Attendance.where("employee_id = -1 and this_date = str_to_date('#{this_date} 00:00:00', '%Y-%m-%d %H:%i:%s')").all
+    setted_records = Attendance.where("employee_id = -1 and this_date ='#{this_date}'").all
     setted_records.uniq!
     if setted_records.size > 0
       setted_records.each do |record| #记录已设置上下班时间公司员工的考勤信息
@@ -73,7 +73,7 @@ class Attendance < ActiveRecord::Base
         this_end_time = Time.parse("#{this_date} #{real_end_time}")
 
         unless record_in.blank?
-          attend.start_time = record_in.record_time.to_s[11, 8]
+          attend.start_time = record_in.record_time.to_s[0, 19]
           attend.start_ip = record_in.ip
           if (record_in.record_time > this_start_time)
             if record_in.record_time > this_start_time + 10.minutes
@@ -85,7 +85,7 @@ class Attendance < ActiveRecord::Base
         end
 
         unless record_out.blank?
-          attend.end_time = record_out.record_time.to_s[11, 8]
+          attend.end_time = record_out.record_time.to_s[0, 19]
           attend.end_ip = record_out.ip
           if (record_out.record_time < this_end_time)
             if record_out.record_time < this_end_time - 15.minutes
@@ -96,8 +96,6 @@ class Attendance < ActiveRecord::Base
           end
         end
 
-        puts attend.absence
-        puts '============'
         if record_in.blank? || record_out.blank?
           attend.absence = 1
           attend.absence_reason = 1

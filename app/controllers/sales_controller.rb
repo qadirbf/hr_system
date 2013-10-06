@@ -103,7 +103,7 @@ class SalesController < ApplicationController
     unless params[:ids].blank?
       user = current_user
       notice = []
-      if user.is_admin?
+      if user.right_level > 2
         params[:ids].split(",").each do |id|
           firm = Firm.find(id)
           leads_type = crm_sys? ? 1 : 2
