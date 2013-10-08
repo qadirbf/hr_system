@@ -1068,18 +1068,21 @@ class SalesController < ApplicationController
         obj = firm
     end
     @contacts = contacts.compact.map { |c| [c.full_name(true, true), c.id] }
-    if current_user.is_manager? or current_user.is_leader?
-      firm_types = EmployeesFirmType.where("employee_id = #{current_user.id}").select("firm_type_id").collect(&:firm_type_id)
-      emps = EmployeesFirmType.where("firm_type_id in (?)", firm_types).select("distinct employee_id").collect(&:employee_id)
-      @pending_calls = obj.recalls.where("completed_at is null and employee_id in (?)", emps).order("appt_date desc").limit(5)
-      @com_calls = obj.recalls.where("completed_at is not null and employee_id in (?)", emps).order("appt_date desc").limit(5)
-    elsif current_user.is_admin?
-      @pending_calls = obj.recalls.where("completed_at is null").order("appt_date desc").limit(5)
-      @com_calls = obj.recalls.where("completed_at is not null").order("appt_date desc").limit(5)
-    else
-      @pending_calls = obj.recalls.dep_recalls(current_user.department_id).where("completed_at is null").order("appt_date desc").limit(5)
-      @com_calls = obj.recalls.dep_recalls(current_user.department_id).where("completed_at is not null").order("appt_date desc").limit(5)
-    end
+    # 2013。10.08 姚一提出公司里面call要对所有人可见
+    @pending_calls = obj.recalls.where("completed_at is null").order("appt_date desc").limit(5)
+    @com_calls = obj.recalls.where("completed_at is not null").order("appt_date desc").limit(5)
+    #if current_user.is_manager? or current_user.is_leader?
+    #  firm_types = EmployeesFirmType.where("employee_id = #{current_user.id}").select("firm_type_id").collect(&:firm_type_id)
+    #  emps = EmployeesFirmType.where("firm_type_id in (?)", firm_types).select("distinct employee_id").collect(&:employee_id)
+    #  @pending_calls = obj.recalls.where("completed_at is null and employee_id in (?)", emps).order("appt_date desc").limit(5)
+    #  @com_calls = obj.recalls.where("completed_at is not null and employee_id in (?)", emps).order("appt_date desc").limit(5)
+    #elsif current_user.is_admin?
+    #  @pending_calls = obj.recalls.where("completed_at is null").order("appt_date desc").limit(5)
+    #  @com_calls = obj.recalls.where("completed_at is not null").order("appt_date desc").limit(5)
+    #else
+    #  @pending_calls = obj.recalls.dep_recalls(current_user.department_id).where("completed_at is null").order("appt_date desc").limit(5)
+    #  @com_calls = obj.recalls.dep_recalls(current_user.department_id).where("completed_at is not null").order("appt_date desc").limit(5)
+    #end
   end
 
 end

@@ -1,7 +1,7 @@
 #encoding:utf-8
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  before_filter :authorize, :except => :logout
+  before_filter :authorize, :except => [:logout, :auto_object, :auto_contact]
   #before_filter :need_check_attendance, :except => [:login, :logout]
 
   helper_method :current_user, :logged_in?
