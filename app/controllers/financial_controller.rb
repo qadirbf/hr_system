@@ -42,7 +42,7 @@ class FinancialController < ApplicationController
 
     sql.delete_if { |s| s.blank? }
 
-    @orders = Order.paginate :select => "orders.*", :conditions => [sql.join(" AND "), p_hash],
+    @orders = Order.paginate :select => "distinct orders.*", :conditions => [sql.join(" AND "), p_hash],
                              :joins => joins, :order => "credited_date desc", :per_page => 30, :page => params[:page]
 
     start_time = order_hash[:credited_date_gte].blank? ? "#{Time.now.year}-01-01 00:00:00" : order_hash[:credited_date_gte]
