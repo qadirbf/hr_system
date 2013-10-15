@@ -506,7 +506,17 @@ class SalesController < ApplicationController
 
   def search_result
     @title = "搜索结果"
+    if res_sys?
+      @employees = Employee.active_emps.res.select('id,username').order("username").map { |e| [e.username, e.id] }
+    else
+      @employees = Employee.active_emps.sales.select('id,username').order("username").map { |e| [e.username, e.id] }
+    end
+
     f_hash, c_hash, d_hash = params[:firm]||{}, params[:contact]||{}, params[:demand]||{}
+
+    f_hash.delete_if{|k ,v| v.blank? }
+    c_hash.delete_if{|k ,v| v.blank? }
+    d_hash.delete_if{|k ,v| v.blank? }
 
     if f_hash.all? { |v, k| k.blank? } and c_hash.all? { |v, k| k.blank? } and d_hash.all? { |v, k| k.blank? }
       render :text => "请输入搜索条件！"

@@ -6,6 +6,21 @@
     <%= button_to_function "获取公司", "batch_grab()", :class => "btn" -%>
   </div>
 </h1>
+<% if current_user.right_level > 2 -%>
+    <%= form_tag "/#{params[:db_type]}/my_firms", :style => "margin-bottom:0px;" do %>
+        <table style="" class="common_tb">
+          <tr>
+            <% if current_user.is_admin? -%>
+                <td>分配给：</td>
+                <td>
+                  <%= select_tag :to_sales_id, options_for_select([['', 0]]+@employees, params[:to_sales_id].to_i) %>
+                </td>
+                <td><%= button_to_function "确定", "batch_grab_leads()", :class => "btn" -%></td>
+            <% end -%>
+          </tr>
+        </table>
+    <% end -%>
+<% end -%>
 <%= page_links @firms %>
 <table class="list_tb">
   <tr class="title">
@@ -96,5 +111,28 @@
             }
         }
 
+    }
+
+    function batch_grab_leads() {
+        var ids = _.compact(_.map($(".chk"), function (c) {
+            return (c.checked ? c.value : null);
+        })).join(",");
+        var emp_id = $("#to_sales_id").val();
+        if (emp_id == 0){
+            alert("请选择员工！");
+            return
+        }
+        if (ids.length == 0) {
+            alert("请选择公司！");
+        }
+        else {
+            if (confirm("确定要分配吗?")) {
+                $.post("<%= url_for(:action=>"batch_grab_leads", :controller => params[:db_type]) -%>", { ids:ids, to_sales:emp_id },
+                        function (data) {
+                            alert("操作成功！");
+                            window.location.reload();
+                        });
+            }
+        }
     }
 </script>

@@ -10,7 +10,7 @@
 <%= render :partial => "auto_complete" -%>
 <h1 class="title"><%= @title %></h1>
 <%= include_datepicker %>
-<%= form_tag "/#{params[:db_type]}/search_result.php" do %>
+<%= form_tag "/#{params[:db_type]}/search_result.php", :method => :get do %>
     <%= hidden_field_tag :add_now, params[:add_now] %>
     <table class="blue_tb">
       <tr class="splitor">
