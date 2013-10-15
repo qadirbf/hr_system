@@ -1079,8 +1079,14 @@ class SalesController < ApplicationController
     end
     @contacts = contacts.compact.map { |c| [c.full_name(true, true), c.id] }
     # 2013。10.08 姚一提出公司里面call要对所有人可见
-    @pending_calls = obj.recalls.where("completed_at is null").order("appt_date desc").limit(5)
-    @com_calls = obj.recalls.where("completed_at is not null").order("appt_date desc").limit(5)
+    if current_user.is_res? and current_user.right_level.to_i < 3
+      @pending_calls = obj.recalls.where("completed_at is null and stage_id is null").order("appt_date desc").limit(5)
+      @com_calls = obj.recalls.where("completed_at is not null and stage_id is null").order("appt_date desc").limit(5)
+    else
+      @pending_calls = obj.recalls.where("completed_at is null").order("appt_date desc").limit(5)
+      @com_calls = obj.recalls.where("completed_at is not null").order("appt_date desc").limit(5)
+    end
+
     #if current_user.is_manager? or current_user.is_leader?
     #  firm_types = EmployeesFirmType.where("employee_id = #{current_user.id}").select("firm_type_id").collect(&:firm_type_id)
     #  emps = EmployeesFirmType.where("firm_type_id in (?)", firm_types).select("distinct employee_id").collect(&:employee_id)
