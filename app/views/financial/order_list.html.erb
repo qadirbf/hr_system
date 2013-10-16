@@ -50,7 +50,7 @@
         <td style="color: <%= c -%>"><%= o.order_no -%></td>
         <td><%= open_demand_page o.project_id, o.project_id %></td>
         <td><%= o.firm.firm_name -%></td>
-        <td><%= o.status_label -%></td>
+        <td><%= o.status_label -%><%= "(不计入)".red.html_safe if o.count_in == 0 -%></td>
         <td><%= format_date(o.credited_date, :date) -%></td>
         <td><%= o.employee.username -%></td>
         <td><%= number_with_delimiter(o.total_amount, :local => :cn) -%>元</td>

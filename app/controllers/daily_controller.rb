@@ -153,8 +153,12 @@ module DailyController
     sql = [_sql]
     sql << "app_interview_date is not null and app_interview_date != ''"
     if params[:created_by_eq].blank?
-      sql << "created_by = :created_by"
-      hash.merge!({:created_by => current_user.id})
+      if current_user.right_level > 3
+        sql << "created_by is not null"
+      else
+        sql << "created_by = :created_by"
+        hash.merge!({:created_by => current_user.id})
+      end
     end
     sql.delete_if { |a| a.blank? }
     @dailies = Daily.paginate :conditions => [sql.join(" and "), hash], :order => "day desc, created_at desc", :per_page => 20, :page => params[:page]

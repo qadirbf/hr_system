@@ -47,7 +47,7 @@ class FinancialController < ApplicationController
 
     start_time = order_hash[:credited_date_gte].blank? ? "#{Time.now.year}-01-01 00:00:00" : order_hash[:credited_date_gte]
     end_time = order_hash[:credited_date_lte].blank? ? Time.now.strftime("%Y-%m-%d 23:59:59") : order_hash[:credited_date_lte]
-    @credited_money = Order.find_by_sql("select sum(total_amount) as money from orders where credited_date between '#{start_time}' and '#{end_time}' and ((status_id = 2) or (status_id =3 and count_in =1))").first.try(:money).to_f
+    @credited_money = Order.find_by_sql("select sum(total_amount) as money from orders where credited_date between '#{start_time}' and '#{end_time}' and (status_id in (2,3) and (count_in is null or count_in = 1))").first.try(:money).to_f
     @uncredited_money = Order.find_by_sql("select sum(total_amount) as money from orders where created_at between '#{start_time}' and '#{end_time}' and status_id = 1").first.try(:money).to_f
   end
 
