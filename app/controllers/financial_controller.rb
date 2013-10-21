@@ -19,26 +19,14 @@ class FinancialController < ApplicationController
     end
 
     joins += " left join share_orders on share_orders.order_id = orders.id "
-    #sql << "share_orders.employee_id in (:emps)"
-    #p_hash.merge!(:emps => emps)
-
-    if current_user.is_admin?
-      unless params[:share_order_employee].blank?
-        sql << " share_orders.employee_id = :share_emp "
-        p_hash.merge!({:share_emp => params[:share_order_employee]})
-        joins += " left join share_orders on share_orders.order_id = orders.id "
-      end
+    if current_user.right_level > 2
+      sql << "share_orders.employee_id in (:emps)"
+      p_hash.merge!(:emps => emps)
     else
       sql << " share_orders.employee_id = :share_emp "
       share_emp = current_user.is_admin? ? params[:share_order_employee] : current_user.id
       p_hash.merge!({:share_emp => share_emp})
-      joins += " left join share_orders on share_orders.order_id = orders.id "
     end
-
-    #unless params[:share_order_employee].blank?
-    #  sql << " share_orders.employee_id = :share_emp "
-    #  p_hash.merge!({:share_emp => params[:share_order_employee]})
-    #end
 
     sql.delete_if { |s| s.blank? }
 
