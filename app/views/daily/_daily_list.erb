@@ -24,7 +24,7 @@
         <td style="color: <%= color -%>">
           <%= d.show_firm_name -%>
         </td>
-        <td style="color: <%= color -%>"><%= d.show_contact_name %></td>
+        <td style="color: <%= color -%>"><a href="/res/contact_edit/<%= d.contact_id -%>" target="_blank"><%= d.show_contact_name %></a></td>
         <td style="color: <%= color -%>"><%= d.position_cn  %></td>
         <td style="color: <%= color -%>"><%= d.phone  %></td>
         <td style="color: <%= color -%>"><%= d.day %></td>

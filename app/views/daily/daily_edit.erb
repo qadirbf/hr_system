@@ -50,54 +50,64 @@
                 });
     });
 </script>
-<%= form_for @daily, :url => "/#{params[:db_type]}/daily_update" do |f| %>
-    <%= hidden_field_tag "id", params[:id] -%>
-    <%= hidden_field_tag "type", params[:db_type] -%>
-    <%= errors_for @daily %>
-    <table class="blue_tb" witdh=100%>
-      <tr class="title">
-        <th>项目ID</th>
-        <th>公司名</th>
-        <th>联系人/候选人</th>
-        <th>电话</th>
-        <th>QQ</th>
-        <th>职位</th>
-        <th>日期</th>
-        <th>已完成？</th>
-        <th>备注</th>
-        <th>面试安排</th>
-      </tr>
+<div style="width: 100%;overflow-y:scroll;">
+  <%= form_for @daily, :url => "/#{params[:db_type]}/daily_update" do |f| %>
+      <%= hidden_field_tag "id", params[:id] -%>
+      <%= hidden_field_tag "type", params[:db_type] -%>
+      <%= errors_for @daily %>
+      <table class="blue_tb" witdh=100%>
+        <tr class="title">
+          <th>项目ID</th>
+          <th>公司名</th>
+          <th>联系人/候选人</th>
+          <th>电话</th>
+          <th>QQ</th>
+          <th>职位</th>
+          <th>日期</th>
+          <th>已完成？</th>
+          <th>备注</th>
+          <th>面试安排</th>
+          <th>考虑工作变动</th>
+          <th>设置为候选人</th>
+          <th>期望薪资</th>
+        </tr>
 
-      <tr>
-        <td>
-          <%= text_field_tag "daily[demand_id]", @daily.try(:demand_id), :class => "name_text" -%>
-        </td>
-        <td>
-          <%= text_field_tag "daily[firm_name]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
-          <%= hidden_field_tag "daily[obj_id]", @daily.try(:obj_id) %>
-        </td>
-        <td>
-          <%= text_field_tag "daily[contact_name]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
-          <%= hidden_field_tag "daily[contact_id]", @daily.try(:contact_id) %>
-        </td>
-        <td><%= text_field_tag "daily[phone]", @daily.try(:phone), :class => "phone_text" %></td>
-        <td><%= text_field_tag "daily[qq]", @daily.try(:qq), :class => "qq" %></td>
-        <td><%= text_field_tag "daily[position_cn]", @daily.try(:position_cn), :class => "position_text" %></td>
-        <td><%= text_field_tag "daily[day]", @daily.try(:day), :class => "datepicker" %></td>
-        <td><%= check_box_tag "daily[completed_flag]", 1, (@daily.try(:completed_flag).to_i > 0 ? true : false) %> 完成任务</td>
-        <td>
-          <%= text_area_tag "daily[notes]", @daily.try(:notes), :style => "width:240px;height:40px;" -%>
-        </td>
-        <td><%= text_field_tag "daily[app_interview_date]",  @daily.try(:app_interview_date), :class => "datepicker" -%></td>
-      </tr>
-      <tr>
-        <th></th>
-        <td colspan="6">
-          <%= submit_tag "保存", :class => "btn btn-primary" %>
-          <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
-      </tr>
-    </table>
-<% end %>
+        <tr>
+          <td>
+            <%= text_field_tag "daily[demand_id]", @daily.try(:demand_id), :class => "name_text" -%>
+          </td>
+          <td>
+            <%= text_field_tag "daily[firm_name]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
+            <%= hidden_field_tag "daily[obj_id]", @daily.try(:obj_id) %>
+          </td>
+          <td>
+            <%= text_field_tag "daily[contact_name]", @daily.try(:show_contact_name), :class => "auto_contact_name" %>
+            <%= hidden_field_tag "daily[contact_id]", @daily.try(:contact_id) %>
+          </td>
+          <td><%= text_field_tag "daily[phone]", @daily.try(:phone), :class => "phone_text" %></td>
+          <td><%= text_field_tag "daily[qq]", @daily.try(:qq), :class => "qq" %></td>
+          <td><%= text_field_tag "daily[position_cn]", @daily.try(:position_cn), :class => "position_text" %></td>
+          <td><%= text_field_tag "daily[day]", @daily.try(:day), :class => "datepicker" %></td>
+          <td><%= check_box_tag "daily[completed_flag]", 1, (@daily.try(:completed_flag).to_i > 0 ? true : false) %>
+            完成任务
+          </td>
+          <td>
+            <%= text_area_tag "daily[notes]", @daily.try(:notes), :style => "width:240px;height:40px;" -%>
+          </td>
+          <td><%= text_field_tag "daily[app_interview_date]", @daily.try(:app_interview_date), :class => "datepicker" -%></td>
+          <td><%= check_box_tag "daily[want_new_job]", 1, (@daily.try(:want_new_job).to_i > 0 ? true : false) -%></td>
+          <td><%= check_box_tag "daily[set_contact_candidate]", 1, (@daily.try(:set_contact_candidate).to_i > 0 ? true : false) -%></td>
+          <td><%= text_field_tag "daily[salary_notes]", @daily.try(:salary_notes), :class => "qq" -%></td>
+        </tr>
+        <tr>
+          <th></th>
+          <td colspan="6">
+            <%= submit_tag "保存", :class => "btn btn-primary" %>
+            <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
+        </tr>
+      </table>
+  <% end %>
+</div>
 <style>
     .auto_firm_name {
         width: 180px;

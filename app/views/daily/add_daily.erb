@@ -55,6 +55,7 @@
                 });
     });
 </script>
+<div style="width: 100%;overflow-y:scroll;">
 <%= form_tag "/#{params[:db_type]}/add_daily", :autocomplete => "off", :onsubmit => "return before_submit();" %>
 <%= hidden_field_tag "type", params[:db_type] -%>
 <table class="blue_tb" witdh=100%>
@@ -69,6 +70,9 @@
     <th>已完成？</th>
     <th>备注</th>
     <th>面试安排</th>
+    <th>考虑工作变动</th>
+    <th>设置为候选人</th>
+    <th>期望薪资</th>
   </tr>
 
   <tr class="show_tr" id="tr1">
@@ -90,7 +94,11 @@
       <%= text_area_tag "daily[notes_1]", '', :style => "width:240px;height:40px;" -%>
     </td>
     <td><%= text_field_tag "daily[app_interview_date_1]", '', :class => "datepicker" -%></td>
+    <td><%= check_box_tag "daily[want_new_job_1]", 1, false -%></td>
+    <td><%= check_box_tag "daily[set_contact_candidate_1]", 1, false -%></td>
+    <td><%= text_field_tag "daily[salary_notes_1]", '', :class => "qq" -%></td>
   </tr>
+
   <tr class="hide" id="tr2">
     <td><%= text_field_tag "daily[demand_id_2]", "", :class => "name_text" %></td>
     <td><%= text_field_tag "daily[firm_name_2]", @daily.try(:show_firm_name), :class => "auto_firm_name" %>
@@ -108,6 +116,9 @@
       <%= text_area_tag "daily[notes_2]", '', :style => "width:240px;height:40px;" -%>
     </td>
     <td><%= text_field_tag "daily[app_interview_date_2]", '', :class => "datepicker" -%></td>
+    <td><%= check_box_tag "daily[want_new_job_2]", 1, false -%></td>
+    <td><%= check_box_tag "daily[set_contact_candidate_2]", 1, false -%></td>
+    <td><%= text_field_tag "daily[salary_notes_2]", '', :class => "qq" -%></td>
   </tr>
   <tr class="hide" id="tr3">
     <td><%= text_field_tag "daily[demand_id_3]", "", :class => "name_text" %></td>
@@ -126,6 +137,9 @@
       <%= text_area_tag "daily[notes_3]", '', :style => "width:240px;height:40px;" -%>
     </td>
     <td><%= text_field_tag "daily[app_interview_date_3]", '', :class => "datepicker" -%></td>
+    <td><%= check_box_tag "daily[want_new_job_3]", 1, false -%></td>
+    <td><%= check_box_tag "daily[set_contact_candidate_3]", 1, false -%></td>
+    <td><%= text_field_tag "daily[salary_notes_3]", '', :class => "qq" -%></td>
   </tr>
   <tr class="hide" id="tr4">
     <td><%= text_field_tag "daily[demand_id_4]", "", :class => "name_text" %></td>
@@ -144,6 +158,9 @@
       <%= text_area_tag "daily[notes_4]", '', :style => "width:240px;height:40px;" -%>
     </td>
     <td><%= text_field_tag "daily[app_interview_date_4]", '', :class => "datepicker" -%></td>
+    <td><%= check_box_tag "daily[want_new_job_4]", 1, false -%></td>
+    <td><%= check_box_tag "daily[set_contact_candidate_4]", 1, false -%></td>
+    <td><%= text_field_tag "daily[salary_notes_4]", '', :class => "qq" -%></td>
   </tr>
   <tr class="hide" id="tr5">
     <td><%= text_field_tag "daily[demand_id_5]", "", :class => "name_text" %></td>
@@ -162,6 +179,9 @@
       <%= text_area_tag "daily[notes_5]", '', :style => "width:240px;height:40px;" -%>
     </td>
     <td><%= text_field_tag "daily[app_interview_date_5]", '', :class => "datepicker" -%></td>
+    <td><%= check_box_tag "daily[want_new_job_5]", 1, false -%></td>
+    <td><%= check_box_tag "daily[set_contact_candidate_5]", 1, false -%></td>
+    <td><%= text_field_tag "daily[salary_notes_5]", '', :class => "qq" -%></td>
   </tr>
   <tr class="hide" id="tr6">
     <td><%= text_field_tag "daily[demand_id_6]", "", :class => "name_text" %></td>
@@ -180,6 +200,9 @@
       <%= text_area_tag "daily[notes_6]", '', :style => "width:240px;height:40px;" -%>
     </td>
     <td><%= text_field_tag "daily[app_interview_date_6]", '', :class => "datepicker" -%></td>
+    <td><%= check_box_tag "daily[want_new_job_6]", 1, false -%></td>
+    <td><%= check_box_tag "daily[set_contact_candidate_6]", 1, false -%></td>
+    <td><%= text_field_tag "daily[salary_notes_6]", '', :class => "qq" -%></td>
   </tr>
   <tr class="hide" id="tr7">
     <td><%= text_field_tag "daily[demand_id_7]", "", :class => "name_text" %></td>
@@ -198,6 +221,9 @@
       <%= text_area_tag "daily[notes_7]", '', :style => "width:240px;height:40px;" -%>
     </td>
     <td><%= text_field_tag "daily[app_interview_date_7]", '', :class => "datepicker" -%></td>
+    <td><%= check_box_tag "daily[want_new_job_7]", 1, false -%></td>
+    <td><%= check_box_tag "daily[set_contact_candidate_7]", 1, false -%></td>
+    <td><%= text_field_tag "daily[salary_notes_7]", '', :class => "qq" -%></td>
   </tr>
   <tr class="hide" id="tr8">
     <td><%= text_field_tag "daily[demand_id_8]", "", :class => "name_text" %></td>
@@ -216,6 +242,9 @@
       <%= text_area_tag "daily[notes_8]", '', :style => "width:240px;height:40px;" -%>
     </td>
     <td><%= text_field_tag "daily[app_interview_date_8]", '', :class => "datepicker" -%></td>
+    <td><%= check_box_tag "daily[want_new_job_8]", 1, false -%></td>
+    <td><%= check_box_tag "daily[set_contact_candidate_8]", 1, false -%></td>
+    <td><%= text_field_tag "daily[salary_notes_8]", '', :class => "qq" -%></td>
   </tr>
   <tr class="hide" id="tr9">
     <td><%= text_field_tag "daily[demand_id_9]", "", :class => "name_text" %></td>
@@ -234,6 +263,9 @@
       <%= text_area_tag "daily[notes_9]", '', :style => "width:240px;height:40px;" -%>
     </td>
     <td><%= text_field_tag "daily[app_interview_date_9]", '', :class => "datepicker" -%></td>
+    <td><%= check_box_tag "daily[want_new_job_9]", 1, false -%></td>
+    <td><%= check_box_tag "daily[set_contact_candidate_9]", 1, false -%></td>
+    <td><%= text_field_tag "daily[salary_notes_9]", '', :class => "qq" -%></td>
   </tr>
   <tr class="hide" id="tr10">
     <td><%= text_field_tag "daily[demand_id_10]", "", :class => "name_text" %></td>
@@ -252,7 +284,11 @@
       <%= text_area_tag "daily[notes_10]", '', :style => "width:240px;height:40px;" -%>
     </td>
     <td><%= text_field_tag "daily[app_interview_date_10]", '', :class => "datepicker" -%></td>
+    <td><%= check_box_tag "daily[want_new_job_10]", 1, false -%></td>
+    <td><%= check_box_tag "daily[set_contact_candidate_10]", 1, false -%></td>
+    <td><%= text_field_tag "daily[salary_notes_10]", '', :class => "qq" -%></td>
   </tr>
+
   <tr>
     <th><a href="javascript:void(0)" onclick="add_one()">再添加一个</a>&nbsp;&nbsp;</th>
     <td colspan="6">
@@ -260,6 +296,7 @@
       <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
   </tr>
 </table>
+</div>
 
 <script>
     function before_submit() {
@@ -301,6 +338,11 @@
 
     .name_text {
         width: 50px;
+    }
+
+    .blue_tb{ table-layout : auto;}
+    .blue_tb tr{
+        overflow-y: scroll;
     }
 
 </style>
