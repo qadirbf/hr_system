@@ -32,6 +32,7 @@
     <td>提交人</td>
     <td>金额</td>
     <td>详细</td>
+    <td>提交时间</td>
     <td>职位及联系人</td>
     <td width=200>备注</td>
     <td>操作</td>
@@ -55,6 +56,7 @@
         <td><%= o.employee.username -%></td>
         <td><%= number_with_delimiter(o.total_amount, :local => :cn) -%>元</td>
         <td><%= o.share_detail(current_user) -%></td>
+        <td><%= format_date(o.created_at, :full) -%></td>
         <td><%= o.position_and_contact -%></td>
         <td><%= o.show_notes -%></td>
         <td>

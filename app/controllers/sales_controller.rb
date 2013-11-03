@@ -998,6 +998,33 @@ class SalesController < ApplicationController
     end
   end
 
+  def output_contacts
+    contacts = Contact.where("(last_name is not null or first_name is not null) and mobile is not null and mobile != ''").select(" last_name, first_name, mobile").all
+    send_data(xls_content_for_contacts(contacts),
+              :type => "text/excel;charset=utf-8; header=present",
+              :filename => "联系人.xls")
+  end
+
+  def xls_content_for_contacts(objs)
+    xls_report = StringIO.new
+    book = Spreadsheet::Workbook.new
+    sheet1 = book.create_worksheet :name => "联系人"
+
+    blue = Spreadsheet::Format.new :color => :blue, :weight => :bold, :size => 10
+    sheet1.row(0).default_format = blue
+    sheet1.row(0).concat %w{ 姓名 手机 }
+    count_row = 1
+    objs.each do |obj|
+      c = obj
+      sheet1[count_row, 0]= c.full_name
+      sheet1[count_row, 1]= c.mobile
+      count_row += 1
+    end
+    book.write xls_report
+    xls_report.string
+  end
+
+
   protected
 
   def init_menu

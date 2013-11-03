@@ -66,6 +66,7 @@
 <% if user.is_admin? -%>
     <h1 class="title">设置</h1>
     <%= link_to "职位类型一览", {:controller => "firm_types", :action => "list"}, :target => "_blank" %>
+    <%= link_to "导出联系人", {:controller => "res", :action => "output_contacts"} %>
 <% end -%>
 
 
