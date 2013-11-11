@@ -1,0 +1,13 @@
+<h1 class="title"><%= @title %></h1>
+<%= form_tag :url => "/#{params[:db_type]}/output_contacts" do %>
+    <table class="blue_tb">
+      <tr>
+        <th width=100>所属行业类型</th>
+        <td> <%= select_tag :firm_type_id, options_for_select(@firm_types), {:include_blank => true} -%> </td>
+      </tr>
+      <tr>
+        <td colspan="5"><%= submit_tag "保存", :class => "btn btn-primary" %> &nbsp;
+          <%= button_to_function "取消", "cancel()", :class => "btn" %></td>
+      </tr>
+    </table>
+<% end %>

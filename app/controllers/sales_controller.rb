@@ -999,10 +999,25 @@ class SalesController < ApplicationController
   end
 
   def output_contacts
-    contacts = Contact.where("(last_name is not null or first_name is not null) and mobile is not null and mobile != ''").select(" last_name, first_name, mobile").all
-    send_data(xls_content_for_contacts(contacts),
-              :type => "text/excel;charset=utf-8; header=present",
-              :filename => "联系人.xls")
+    if request.get?
+      @title = "导出联系人"
+      @firm_types = FirmType.all.map{ |t| [t.name, t.id] }
+    else
+      if params[:firm_type_id].blank?
+        contacts = Contact.active.where("(last_name is not null or first_name is not null) and mobile is not null and mobile != ''").select(" last_name, first_name, mobile").all
+      else
+        contacts = Contact.active.where("(last_name is not null or first_name is not null) and mobile is not null and mobile != '' and firms.firm_type_id = #{params[:firm_type_id]}").
+                                joins("left join firms on firms.id = contacts.firm_id").
+                                select(" last_name, first_name, mobile").all
+      end
+      if contacts.blank?
+        render :text => "<script>alert('没有找到符合该条件的结果！');history.back()</script>".html_safe
+      else
+        send_data(xls_content_for_contacts(contacts),
+                  :type => "text/excel;charset=utf-8; header=present",
+                  :filename => "联系人.xls")
+      end
+    end
   end
 
   def xls_content_for_contacts(objs)
