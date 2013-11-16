@@ -142,7 +142,13 @@ class AttendanceController < ApplicationController
     else
       apply.send_message_for_approval
       flash[:notice] = '操作成功！'
-
+      # 更新考勤信息
+      if apply.status.to_i == 4
+        day = apply.start_date.strftime("%Y-%m-%d")
+        attendance = Attendance.where("employee_id = #{apply.employee_id} and this_date = '#{day}'").first
+        attendance.absence_reason = apply.absence_reason
+        attendance.save
+      end
       session[:apply_info] = nil if session[:apply_info]
     end
 
