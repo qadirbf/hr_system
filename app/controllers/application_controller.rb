@@ -1,6 +1,7 @@
 #encoding:utf-8
 class ApplicationController < ActionController::Base
   protect_from_forgery
+  before_filter :refuse_spider
   before_filter :authorize, :except => [:logout, :auto_object, :auto_contact]
   #before_filter :need_check_attendance, :except => [:login, :logout]
 
@@ -11,6 +12,12 @@ class ApplicationController < ActionController::Base
     return @current_user if defined?(@current_user)
 
     @current_user = current_user_session
+  end
+
+  def refuse_spider
+    agent = request.user_agent
+    s = ['YodaoBot','sogou spider','Slurp','Msnbot','Yahoo Slurp','Googlebot','Baiduspider', 'bingbot']
+    return if (!agent.blank? and s.any?{|bot| agent.downcase.include?(bot.downcase)})
   end
 
   def current_user_session
