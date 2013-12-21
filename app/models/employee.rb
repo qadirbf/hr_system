@@ -29,7 +29,7 @@ class Employee < ActiveRecord::Base
   end
 
   def is_admin?
-    self.id==1
+    self.id==1 or self.right_level == 5    # 管理员
   end
 
   def is_manager?
@@ -38,6 +38,10 @@ class Employee < ActiveRecord::Base
 
   def is_leader?
     self.right_level == 3
+  end
+
+  def is_partner?
+    self.username == 'amy'
   end
 
   def to_s
