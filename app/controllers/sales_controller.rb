@@ -223,6 +223,7 @@ class SalesController < ApplicationController
         attr = @contact.attributes
         attr.delete('id')
         c.attributes = attr
+        c.attributes = attr
         c.firm_id = params[:new_firm_id]
         c.resigned = 0
         c.save
@@ -293,6 +294,7 @@ class SalesController < ApplicationController
       session[:down_resume_count] += 1
       _t = current_user.is_admin? ? 30 : 20
       if session[:down_resume_count] > _t
+        EmpMsg.send_msg(0, 1, "简历下载预警", "#{current_user.username}于#{Time.now.strftime("%Y-%m-%d")}下载简历超过#{_t}个！")
         render :text => "<script>alert('你下载的简历数量超出了#{_t}个，将不能再下载简历！');history.back()</script>".html_safe
         return false
       end
