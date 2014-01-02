@@ -43,7 +43,7 @@ class Attendance < ActiveRecord::Base
     setted_records.uniq!
     if setted_records.size > 0
       setted_records.each do |record| #记录已设置上下班时间公司员工的考勤信息
-        self. (this_date, record.real_start_time, record.real_end_time, true, user_name)
+        self.create_employee_attendance(this_date, record.real_start_time, record.real_end_time, true, user_name)
       end
     else
       self.create_employee_attendance(this_date, real_start_time, real_end_time, flag, user_name)
@@ -51,7 +51,7 @@ class Attendance < ActiveRecord::Base
   end
 
   def self.create_employee_attendance(this_date, real_start_time, real_end_time, flag, user_name=nil, emp_id=nil)
-    sql = "active = 1 "
+    sql = "active = 1"
     if emp_id
       sql += (emp_id.is_a?(Array) ? ' and id in (?)' : ' and id = ?')
       employees = Employee.where([sql, emp_id]).order("username").all
@@ -68,7 +68,7 @@ class Attendance < ActiveRecord::Base
           attend = Attendance.new({:employee_id => employee.id, :this_date => this_date, :real_start_time => real_start_time,
                                    :real_end_time => real_end_time, :edit_by => user_name||'system', :edit_time => Time.now, :early => 0, :late => 0, :absence_reason => 0})
         end
-        attend.memo = "已离职" unless employee.leave_date.blank?
+        #attend.memo = "已离职" unless employee.leave_date.blank?
         this_start_time = Time.parse("#{this_date} #{real_start_time}")
         this_end_time = Time.parse("#{this_date} #{real_end_time}")
 
