@@ -450,7 +450,7 @@ class SalesController < ApplicationController
     params[:firm_id_eq] = params[:firm_id]
 
     @recalls = Recall.dep_recalls(user.department_id).paginate :conditions => Recall.get_sql_by_hash(params),
-                                                               :order => "appt_date desc", :per_page => 30, :page => params[:page]
+                                                               :order => "appt_date desc", :per_page => 10, :page => params[:page]
   end
 
   def my_firms
