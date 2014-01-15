@@ -50,6 +50,7 @@
     <%= link_to "我的订单", {:controller => "res", :action => "my_orders"} %>
     <%= link_to "我的日报", {:controller => "res", :action => "my_daily"} %>
     <%= link_to "补充资源库", {:controller => "res", :action => "other_db_list"} -%>
+    <%= link_to "上传统计", {:controller => "res", :action => "upload_resumes_count"} -%>
 <% end -%>
 
 <% if user.is_hr? or user.is_admin? -%>

@@ -202,7 +202,7 @@ class SalesController < ApplicationController
       @contact.employee_id ||= user.id if user.is_res?
       @contact.update_attributes(params[:contact].merge(:updated_by => user.id))
     else
-      @contact = Contact.create(params[:contact].merge(:created_by => user.id, :updated_by => user.id))
+      @contact = Contact.create(params[:contact].merge(:created_by => user.id, :updated_by => user.id, :employee_id => user.id))
     end
     if @contact.errors.empty?
       flash[:notice] = "成功保存！"
@@ -317,7 +317,8 @@ class SalesController < ApplicationController
         ContactPosition.get_positions(params[:expect_firm_type_id_eq]).map { |p| [p.name, p.id] }
     @salary_types = Contact::SALARY_TYPES.map { |t| [t[0], t[1].to_s] }
 
-    #params[:res_id]||=current_user.id
+    #params[:employee_id]||=current_user.id
+    params[:employee_id_eq] = params[:res_id] unless params[:res_id].blank?
 
     sql, p_hash = Contact.get_sql_by_hash(params)
     sql = "1=1" if sql.blank?
@@ -358,7 +359,7 @@ class SalesController < ApplicationController
       p_hash.merge!(:tag_name => params[:tag_name])
     end
     @contacts = Contact.active.paginate :select => "contacts.*,firms.firm_name,employees.username", :joins => joins,
-                                 :conditions => [sql, p_hash], :order => "candidates.created_at desc", :per_page => 30, :page => params[:page]
+                                        :conditions => [sql, p_hash], :order => "candidates.created_at desc", :per_page => 30, :page => params[:page]
   end
 
   def recall_edit
@@ -469,7 +470,7 @@ class SalesController < ApplicationController
       else
         @employees = Employee.active_emps.sales.select('id,username').order("username").map { |e| [e.username, e.id] }
       end
-    elsif current_user.is_manager? or current_user.is_leader?  # 经理或者主管权限
+    elsif current_user.is_manager? or current_user.is_leader? # 经理或者主管权限
       user_id = params[:user_id].to_i
       type_id = res_sys? ? 2 : 1
       # 获取经理管辖的行业的所有员工
@@ -516,9 +517,9 @@ class SalesController < ApplicationController
 
     f_hash, c_hash, d_hash = params[:firm]||{}, params[:contact]||{}, params[:demand]||{}
 
-    f_hash.delete_if{|k ,v| v.blank? }
-    c_hash.delete_if{|k ,v| v.blank? }
-    d_hash.delete_if{|k ,v| v.blank? }
+    f_hash.delete_if { |k, v| v.blank? }
+    c_hash.delete_if { |k, v| v.blank? }
+    d_hash.delete_if { |k, v| v.blank? }
 
     if f_hash.all? { |v, k| k.blank? } and c_hash.all? { |v, k| k.blank? } and d_hash.all? { |v, k| k.blank? }
       render :text => "请输入搜索条件！"
@@ -543,12 +544,12 @@ class SalesController < ApplicationController
     f_sqls, c_sqls, d_sqls = [f_arr[0]], [c_arr[0]], [d_arr[0]]
 
     [f_sqls, c_sqls, d_sqls].each do |a| #------------
-      a.delete_if{|b| b.blank?}
+      a.delete_if { |b| b.blank? }
     end #------------
 
     f_joins, c_joins, d_joins = "", "", ""
-    join = ""       #-------------------
-    join += " left join contacts on contacts.firm_id = firms.id and contacts.delete_at is null"   #-------------------
+    join = "" #-------------------
+    join += " left join contacts on contacts.firm_id = firms.id and contacts.delete_at is null" #-------------------
 
     p_hash = f_arr[1].merge(c_arr[1]).merge(d_arr[1])
     unless f_hash[:phone_like].blank?
@@ -566,7 +567,7 @@ class SalesController < ApplicationController
     end
 
     unless f_hash[:category_ids].blank?
-      join += " right join firm_cat_links on firm_cat_links.firm_id = firms.id"      #-------------------
+      join += " right join firm_cat_links on firm_cat_links.firm_id = firms.id" #-------------------
       f_joins += " right join firm_cat_links on firm_cat_links.firm_id = firms.id"
       f_sqls << "(firm_cat_links.firm_category_id = :category_ids)"
       p_hash.merge!(:category_ids => f_hash[:category_ids])
@@ -585,13 +586,13 @@ class SalesController < ApplicationController
       p_hash.merge!(:age1 => c_hash[:age1])
     end
     unless c_hash[:res_id].blank?
-      join += " left join firm_leads on firm_leads.firm_id=firms.id and firm_leads.leads_type_id=2"      #-------------------
+      join += " left join firm_leads on firm_leads.firm_id=firms.id and firm_leads.leads_type_id=2" #-------------------
       c_joins += "left join firm_leads on firm_leads.firm_id=firms.id and firm_leads.leads_type_id=2"
       c_sqls << "firm_leads.employee_id=:res_id"
       p_hash.merge!(:res_id => c_hash[:res_id])
     end
     unless d_hash[:sales_id].blank?
-      join += " left join firm_leads on firm_leads.firm_id=firms.id and firm_leads.leads_type_id=1"      #-------------------
+      join += " left join firm_leads on firm_leads.firm_id=firms.id and firm_leads.leads_type_id=1" #-------------------
       d_joins += "left join firm_leads on firm_leads.firm_id=firms.id and firm_leads.leads_type_id=1"
       d_sqls << "firm_leads.employee_id=:sales_id"
       p_hash.merge!(:sales_id => d_hash[:sales_id])
@@ -603,7 +604,7 @@ class SalesController < ApplicationController
       p_hash.merge!(:firm_phone => "#{f_hash[:phone]}%")
     end
 
-    con = [f_sqls, c_sqls, d_sqls].delete_if{|b| b.blank?}.join(" and ")
+    con = [f_sqls, c_sqls, d_sqls].delete_if { |b| b.blank? }.join(" and ")
 
     @firms = Firm.paginate :conditions => [con, p_hash], :select => "firms.*, COUNT(contacts.firm_id) as num",
                            :joins => join, :per_page => 30, :page => params[:page],
@@ -895,14 +896,14 @@ class SalesController < ApplicationController
           ShareOrder.create!({:order_id => @order.id, :employee_id => share["employee_id_#{i}"], :created_by => current_user.id,
                               :percentage => share["percentage_#{i}"], :money => (@order.total_amount * share["percentage_#{i}"].to_i / 100)})
           # send message to shared employees
-          EmpMsg.send_msg(0,share["employee_id_#{i}"],"你有新的分单","你有新的分单，详情请点击链接。<a href='/#{params[:db_type]}/show_order/#{@order.id}.php'>详细</a>")
+          EmpMsg.send_msg(0, share["employee_id_#{i}"], "你有新的分单", "你有新的分单，详情请点击链接。<a href='/#{params[:db_type]}/show_order/#{@order.id}.php'>详细</a>")
         end
         # 新增签约销售的订单提成
         if !share["percentage_99"].blank? && !share["employee_id_99"].blank?
           ShareOrder.create!({:order_id => @order.id, :employee_id => share["employee_id_99"], :created_by => current_user.id,
                               :percentage => share["percentage_99"], :money => (@order.total_amount * share["percentage_99"].to_i / 100)})
           # send message to shared employees
-          EmpMsg.send_msg(0,share["employee_id_99"],"你有新的分单","你有新的分单，详情请点击链接。<a href='/#{params[:db_type]}/show_order/#{@order.id}.php'>详细</a>")
+          EmpMsg.send_msg(0, share["employee_id_99"], "你有新的分单", "你有新的分单，详情请点击链接。<a href='/#{params[:db_type]}/show_order/#{@order.id}.php'>详细</a>")
         end
         redirect_to :action => "my_orders", :format => "php"
       else
@@ -990,6 +991,28 @@ class SalesController < ApplicationController
     end
   end
 
+  def upload_resumes_count
+    @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
+    if request.post?
+      sql = ['1=1']
+      p_hash = {}
+      unless params[:employee_id].blank?
+        sql << "upload_by = :upload_by"
+        p_hash.merge!({:upload_by => params[:employee_id]})
+      end
+      unless params[:created_at].blank?
+        sql << "created_at >= :created_at"
+        p_hash.merge!({:created_at => params[:created_at]})
+      end
+      unless params[:created_at1].blank?
+        sql << "created_at <= :created_at1"
+        p_hash.merge!({:created_at1 => params[:created_at1]})
+      end
+      @contact_resumes = ContactResume.paginate :select => "contact_resumes.*", :conditions => [sql.join(" AND "), p_hash],
+                                                :per_page => 15, :page => params[:page]
+    end
+  end
+
   def set_signing_sales
     f = Firm.where("id = #{params[:id]}").first
     if f
@@ -1003,14 +1026,14 @@ class SalesController < ApplicationController
   def output_contacts
     if request.get?
       @title = "导出联系人"
-      @firm_types = FirmType.all.map{ |t| [t.name, t.id] }
+      @firm_types = FirmType.all.map { |t| [t.name, t.id] }
     else
       if params[:firm_type_id].blank?
         contacts = Contact.active.where("(last_name is not null or first_name is not null) and mobile is not null and mobile != ''").select(" last_name, first_name, mobile").all
       else
         contacts = Contact.active.where("(last_name is not null or first_name is not null) and mobile is not null and mobile != '' and firms.firm_type_id = #{params[:firm_type_id]}").
-                                joins("left join firms on firms.id = contacts.firm_id").
-                                select(" last_name, first_name, mobile").all
+            joins("left join firms on firms.id = contacts.firm_id").
+            select(" last_name, first_name, mobile").all
       end
       if contacts.blank?
         render :text => "<script>alert('没有找到符合该条件的结果！');history.back()</script>".html_safe

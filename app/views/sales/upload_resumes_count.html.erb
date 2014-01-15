@@ -1,0 +1,41 @@
+<style>
+    table select, table input[type=text] {
+        width: 120px;
+    }
+</style>
+<h1 class="title"><%= @title %></h1>
+<%= form_tag "/#{params[:db_type]}/upload_resumes_count" do %>
+    <table style="width:50%" class="common_tb">
+      <tr>
+        <td>上传人： <%= select_tag :employee_id, options_for_select([['所有', '']]+@emps, params[:employee_id].to_i) %></td>
+        <td>上传时间：<%= text_field_tag "created_at", (params[:created_at] rescue ''), :class => 'datepicker' %>
+          ~
+          <%= text_field_tag "created_at1", (params[:created_at1] rescue ''), :class => 'datepicker' %></td>
+        <td><%= submit_tag "搜索", :class => "btn btn-primary" %></td>
+        </td>
+      </tr>
+    </table>
+<% end %>
+
+<p style="float: left;margin-right: 60px;font-size: 14px;font-weight: bold;">
+  上传数量：<%= @contact_resumes.size -%>个
+</p>
+
+<%= page_links @contact_resumes %>
+<table class="list_tb">
+  <tr class="title">
+     <td>候选人</td>
+     <td>文件名</td>
+     <td>时间</td>
+     <td>上传人</td>
+  </tr>
+  <% @contact_resumes.each do |c| %>
+      <tr>
+        <td><%= c.contact.full_name -%></td>
+        <td><%= c.load_path[8, c.load_path.length] -%></td>
+        <td><%= format_date(c.created_at, :full) -%></td>
+        <td><%= c.employee.username -%></td>
+      </tr>
+  <% end %>
+</table>
+<%= page_links @contact_resumes %>

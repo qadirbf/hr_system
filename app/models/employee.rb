@@ -11,13 +11,14 @@ class Employee < ActiveRecord::Base
   has_many :orders
   has_many :share_orders
   has_many :dailies
+  has_many :contact_resumes
   has_one :roles_employee
 
   include HrLib::Security
 
   scope :active_emps, where(:active => 1)
   scope :sales, where("department_id = 1 or id = 1")
-  scope :res, where("department_id = 2 or id = 1")
+  scope :res, where("department_id = 2 or id in (1 ,16)")
   scope :dep_emps, lambda { |dep_id| where(:department_id => dep_id) }
   attr_accessor :click_count
 
