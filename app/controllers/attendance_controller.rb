@@ -260,7 +260,7 @@ class AttendanceController < ApplicationController
     @can_view_attachment = cdn1||cdn2
 
     @can_hr_check, @can_manager_check, @can_change_managers = false, false, []
-    admin = Employee.where("username = 'admin'").first
+    admin = Employee.where("id = 1").first
     emp = @apply.employee
 
     @can_change_managers << admin
