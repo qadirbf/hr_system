@@ -34,7 +34,7 @@
         <td><%= c.contact.full_name -%></td>
         <td><%= c.load_path[8, c.load_path.length] -%></td>
         <td><%= format_date(c.created_at, :full) -%></td>
-        <td><%= c.employee.username -%></td>
+        <td><%= c.employee.try(:username) -%></td>
       </tr>
   <% end %>
 </table>
