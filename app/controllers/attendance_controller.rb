@@ -264,7 +264,6 @@ class AttendanceController < ApplicationController
     emp = @apply.employee
 
     @can_change_managers << admin
-    @can_change_managers = @can_change_managers
     m_ids = @can_change_managers.map { |e| e.id }
     @can_manager_check = true if m_ids.include?(current_user.id)
 

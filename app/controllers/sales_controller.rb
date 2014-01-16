@@ -993,24 +993,22 @@ class SalesController < ApplicationController
 
   def upload_resumes_count
     @emps = Employee.active_emps.select('id,username').order("username").map { |e| [e.username, e.id] }
-    if request.post?
-      sql = ['1=1']
-      p_hash = {}
-      unless params[:employee_id].blank?
-        sql << "upload_by = :upload_by"
-        p_hash.merge!({:upload_by => params[:employee_id]})
-      end
-      unless params[:created_at].blank?
-        sql << "created_at >= :created_at"
-        p_hash.merge!({:created_at => params[:created_at]})
-      end
-      unless params[:created_at1].blank?
-        sql << "created_at <= :created_at1"
-        p_hash.merge!({:created_at1 => params[:created_at1]})
-      end
-      @contact_resumes = ContactResume.paginate :select => "contact_resumes.*", :conditions => [sql.join(" AND "), p_hash],
-                                                :per_page => 15, :page => params[:page]
+    sql = ['1=1']
+    p_hash = {}
+    unless params[:employee_id].blank?
+      sql << "upload_by = :upload_by"
+      p_hash.merge!({:upload_by => params[:employee_id]})
     end
+    unless params[:created_at].blank?
+      sql << "created_at >= :created_at"
+      p_hash.merge!({:created_at => params[:created_at]})
+    end
+    unless params[:created_at1].blank?
+      sql << "created_at <= :created_at1"
+      p_hash.merge!({:created_at1 => params[:created_at1]})
+    end
+    @contact_resumes = ContactResume.paginate :select => "contact_resumes.*", :conditions => [sql.join(" AND "), p_hash],
+                                              :per_page => 15, :page => params[:page]
   end
 
   def set_signing_sales
