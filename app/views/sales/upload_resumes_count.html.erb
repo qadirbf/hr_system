@@ -18,7 +18,7 @@
 <% end %>
 
 <p style="float: left;margin-right: 60px;font-size: 14px;font-weight: bold;">
-  上传数量：<%= @contact_resumes.try(:size) -%>个
+  上传数量：<%= @contact_resumes.try(:total_entries) -%>个
 </p>
 
 <%= page_links @contact_resumes %>
