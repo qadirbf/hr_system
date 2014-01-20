@@ -241,7 +241,7 @@ class SalesController < ApplicationController
     if @contact.delete_at.blank?
       @title = "联系人 - #{@contact.full_name(true)}"
       @firm = @contact.firm
-      @can_edit = (@firm.is_followed_by?(current_user) or current_user.is_admin? or current_user.right_level > 2)
+      @can_edit = (@firm.is_followed_by?(current_user) or current_user.is_admin? or current_user.right_level > 2 or @contact.employee_id == current_user.id)
       preload_recall
       render :template => "/sales/contact_view"
     else
